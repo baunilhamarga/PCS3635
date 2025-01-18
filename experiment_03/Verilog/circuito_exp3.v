@@ -1,63 +1,77 @@
 module circuito_exp3 (
- input clock,
- input reset,
- input iniciar,
- input [3:0] chaves,
- output pronto,
- output db_igual,
- output db_iniciar,
- output [6:0] db_contagem,
- output [6:0] db_memoria,
- output [6:0] db_chaves,
- output [6:0] db_estado
+    input clock,
+    input reset,
+    input iniciar,
+    input [3:0] chaves,
+    output pronto,
+    output db_igual,
+    output db_iniciar,
+    output [6:0] db_contagem,
+    output [6:0] db_memoria,
+    output [6:0] db_chaves,
+    output [6:0] db_estado
 );
 
-// Fluxo de Dados
-exp3_fluxo_dados FD (
-    .clock()
-    .chaves()
-    .zeraR()
-    .registraR()
-    .contaC()
-    .zeraC()
-    .chavesIgualMemoria()
-    .fimC()
-    .db_contagem()
-    .db_chaves()
-    .db_memoria()
-);
+    wire [3:0] s_chaves;
+    wire [3:0] s_contagem;
+    wire [3:0] s_memoria;
+    wire [3:0] s_estado;
+    wire s_fimC;
+    wire s_contaC;
+    wire s_registraR;
+    wire s_zeraC;
+    wire s_zeraR;
 
-exp3_unidade_controle UC (
-    .clock()
-    .reset()
-    .iniciar()
-    .fimC()
-    .zeraC()
-    .contaC()
-    .zeraR()
-    .registraR()
-    .pronto()
-    .db_estado()
-);
+    // Fluxo de Dados
+    exp3_fluxo_dados FD (
+        .clock(clock)
+        .chaves(chaves)
+        .zeraR(s_zeraR) // zera registradores
+        .registraR(s_registraR) // 
+        .contaC(s_contaC) // incrementa contagem
+        .zeraC(s_zeraC) // zera contagem
+        .chavesIgualMemoria(db_igual)
+        .fimC(s_fimC) // fim da contagem
+        .db_contagem(s_contagem)
+        .db_chaves(s_chaves)
+        .db_memoria(s_memoria)
+    );
 
-hexa7seg HEX2 (
-    .hexa()
-    .display()
-);
+    // Unidade de Controle
+    exp3_unidade_controle UC (
+        .clock(clock)
+        .reset(reset)
+        .iniciar(iniciar)
+        .fimC(s_fimC)
+        .zeraC(s_zeraC)
+        .contaC(s_contaC)
+        .zeraR(s_zeraR)
+        .registraR(s_registraR)
+        .pronto(pronto)
+        .db_estado(s_estado)
+    );
 
-hexa7seg HEX0 (
-    .hexa()
-    .display()
-);
+    // Display das chaves
+    hexa7seg HEX2 (
+        .hexa(s_chaves)
+        .display(db_chaves)
+    );
 
-hexa7seg HEX1 (
-    .hexa()
-    .display()
-);
+    // Display dos endereços codificados
+    hexa7seg HEX0 (
+        .hexa(s_contagem)
+        .display(db_contagem)
+    );
 
-hexa7seg HEX5 (
-    .hexa()
-    .display()
-);
+    // Display do conteúdo em uma posição de memória
+    hexa7seg HEX1 (
+        .hexa(s_memoria)
+        .display(db_memoria)
+    );
 
+    // Display do estado atual
+    hexa7seg HEX5 (
+        .hexa(s_estado)
+        .display(db_estado)
+    );
 endmodule
