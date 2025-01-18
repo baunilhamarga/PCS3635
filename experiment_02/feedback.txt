@@ -1,0 +1,23 @@
+Planejamento
+
+1.1 - Estudo de Componentes (Valor 0,5) ==> Nota 0,5.
+a-c) Contador:  Descrição e simulações bem feitas e documentadas. Inclui figuras do Digital para todos os casos simulados.
+d-f) Comparador: Descrição e simulações bem feitas e documentadas. Inclui figuras do Digital para todos os casos simulados.
+
+1.2 - Fluxo de Dados (Valor 0,75) ==> Nota 0,65
+g) Descrição funcional muito boa. Bem detalhada e bem escrita.
+h) Código OK, com sinais de controle ativos em alto e integração dos componentes correta ao se analisar o resultado do RTL Viewer. Fizeram descrição estrutural e dividida em arquivos; porém, não entregaram arquivos Verilog do contador e do comparador (-0,05).
+i- j) Projetaram as simulações no Digital e mostraram os resultados no planejamento; contudo, o relato inclui as simulações apenas do circuito geral (item "i"), sem uma comparação ou discussão sobre e equidade com o item "j" (-0,05).
+
+1.3 - Atividades Práticas (Valor 0,35) ==> Nota 0,2
+n-p) Projeto e pinagem OK, com print do pin planner.
+q-t) Não replicaram plano de testes da simulação. Deixaram tabela do plano de testes em branco (-0,05). Estratégia de simulação foi mantida com texto do template quando, na prática, deveria ser um roteiro dos passos a serem seguidos para programar e testar o projeto (-0,05). Sem QAR; apenas Verilog do projeto final (-0,05).
+
+1.4 - Desafio (Valor 0,4) ==> Nota 0,5 (bônus 0,1 pela ótima simulação além do que foi pedido).
+u-v) Projeto lógico realizado. Descrição sucinta. Pinagem pronta.
+w) Projetaram casos de teste e simularam no Digital (bônus +0,1 por ser extra).
+x-y) Idem q-t: Sem QAR; apenas arquivo Verilog e simulações no Digital.
+
+Relatório com conclusão preliminar boa.
+
+Nota Final: 1,85 (arred. 1,9). Parabéns por um bom primeiro planejamento!
