@@ -74,4 +74,6 @@ module circuito_exp3 (
         .hexa    ( s_estado ),
         .display ( db_estado )
     );
+
+    assign db_iniciar = iniciar;
 endmodule
