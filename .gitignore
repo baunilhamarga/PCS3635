@@ -6,6 +6,8 @@
 *c5_pin_model_dump.txt
 **.qpf
 **.qsf
+*_restored/
+*log
 
 # VSCode settings
 .vscode/
