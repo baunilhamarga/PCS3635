@@ -11,8 +11,13 @@ module circuito_exp3_desafio (
  output [6:0] db_contagem,
  output [6:0] db_memoria,
  output [6:0] db_chaves,
- output [6:0] db_estado
-);
+ output [6:0] db_estado,
+ output db_zeraC,
+ output db_contaC,
+ output db_fimC,
+ output db_zeraR,
+ output db_registraR
+ );
     wire [3:0] s_chaves;
     wire [3:0] s_contagem;
     wire [3:0] s_memoria;
@@ -82,5 +87,9 @@ module circuito_exp3_desafio (
 
     assign db_iniciar = iniciar;
     assign db_igual = s_igual;
-
+	 assign db_zeraC = s_zeraC;
+	 assign db_contaC = s_contaC;
+	 assign db_fimC = s_fimC;
+	 assign db_zeraR = s_zeraR;
+	 assign db_registraR = s_registraR;
 endmodule

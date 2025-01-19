@@ -9,7 +9,12 @@ module circuito_exp3 (
     output [6:0] db_contagem,
     output [6:0] db_memoria,
     output [6:0] db_chaves,
-    output [6:0] db_estado
+    output [6:0] db_estado,
+	 output db_zeraC,
+	 output db_contaC,
+	 output db_fimC,
+	 output db_zeraR,
+	 output db_registraR
 );
 
     wire [3:0] s_chaves;
@@ -27,11 +32,11 @@ module circuito_exp3 (
         .clock              ( clock       ),
         .chaves             ( chaves      ),
         .zeraR              ( s_zeraR     ), // zera registradores
-        .registraR          ( s_registraR ), // registra registradores
+        .registraR          ( s_registraR ), // registra nos registradores
         .contaC             ( s_contaC    ), // incrementa contagem
         .zeraC              ( s_zeraC     ), // zera contagem
         .chavesIgualMemoria ( db_igual    ),
-        .fimC               ( s_fimC      ), // fim da contagem
+        .fimC               ( s_fimC      ),
         .db_contagem        ( s_contagem  ),
         .db_chaves          ( s_chaves    ),
         .db_memoria         ( s_memoria   )
@@ -42,7 +47,7 @@ module circuito_exp3 (
         .clock     ( clock       ),
         .reset     ( reset       ),
         .iniciar   ( iniciar     ),
-        .fimC      ( s_fimC      ),
+        .fimC      ( s_fimC      ), // fim da contagem
         .zeraC     ( s_zeraC     ),
         .contaC    ( s_contaC    ),
         .zeraR     ( s_zeraR     ),
@@ -76,4 +81,9 @@ module circuito_exp3 (
     );
 
     assign db_iniciar = iniciar;
+	 assign db_zeraC = s_zeraC;
+	 assign db_contaC = s_contaC;
+	 assign db_fimC = s_fimC;
+	 assign db_zeraR = s_zeraR;
+	 assign db_registraR = s_registraR;
 endmodule
