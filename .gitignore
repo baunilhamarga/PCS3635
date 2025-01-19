@@ -1,11 +1,21 @@
 # Quartus compilation files
-*/db/
-*/incremental_db/
-*/output_files/
-*/simulation/
-*c5_pin_model_dump.txt
-**.qpf
-**.qsf
+**/db/
+**/incremental_db/
+**/output_files/
+**/simulation/
+**/c5_pin_model_dump.txt
+**/*.qpf
+**/*.qsf
+**/*_restored/
+**/*log
+**/work/
+**/*.qws
+**/*.rpt
+**/*transcript
+**/*.wlf
+**/*.mpf
+**/*.mti
+
 
 # VSCode settings
 .vscode/
