@@ -1,0 +1,37 @@
+Planejamento
+
+Prazo de Entrega: Atraso de 35 minutos (sem desconto).
+
+1.1.2 - Adaptação do Fluxo de Dados (Valor 0,3) ==> Nota 0,27
+b) Registrador (0,05): Descrito de forma sucinta, mas adequada e suficiente. Bom.
+ROM (0,05): Descrita de forma sucinta. Faltou explorar o conteúdo pré-programado na ROM na descrição textual (como é armazenado e lido) (-0,03).
+Integração (exp3_fluxo_dados) (0,1): Descrição OK. Arquivo apresentado nos materiais complementares entregues (ZIPs e QARs).
+
+c) Simulação do Plano de Testes - Novas Formas de Onda e Anotações / Análises (0,1): Excelente. Simularam, anotaram e analisaram todos os casos do plano de teste.
+
+1.1.3 - Unidade de Controle (Valor 0,25) ==> Nota 0,17
+d-e) Estudo do Código Verilog (0,25): Descrição detalhada e com análise comparativa entre o conteúdo da apostila e o código Verilog. Avaliado em texto e com uma tabela. Faltou identificar uma inconsistência entre apostila e código: no código original, zeraC e zeraR são ativados nos estados inicial e preparação; na apostila, zeraC e zeraR são ativados apenas nos estados preparação e inicial, respectivamente (-0,08).
+
+1.1.4 - Integração do Sistema Digital (Valor 0,6)  ==> Nota 0,6
+f) Projeto da Entidade Topo (circuito_exp3 (0,2)): Descrição boa. Detalhada e didática.
+g) Execução e Análise das Simulações (0,3): Excelente. Simularam, anotaram e analisaram todos os casos do plano de teste.
+h) RTL Viewer (0,1): Apresentado e coerente com o projeto. Dica de texto: evitar adjetivação excessiva ("importantíssimo").
+
+1.2 - Atividades Práticas (Valor 0,4)  ==> Nota 0,4
+i) Pinagem (0,1): Feita com tabela e print do pin planner.
+j) QAR Preliminar (0,1): Entregue.
+k) Roteiro Experimental e Método de Depuração (0,2): Redação compreende o escopo do experimento e traz informações relevantes para a boa prática laboratorial. Já incluíram tabelas com o plano de testes e campos para preencher apenas se o resultado foi, ou não, confirmado na prática.
+l) QAR Experimental - Fora do escopo do planejamento.
+
+1.3 - Desafio (Valor 0,45) ==> Nota 0,45
+m-i) Projeto Lógico das Modificações (0,15): Projeto adequado e descrição boa. Revisar mínimos detalhes de texto (sem desconto).
+m-ii) Plano de Testes (0,1): Excelente. Cobriram cenários de acerto e erro.
+n) Projeto, Execução e Análise das Simulações (0,1): Excelente. Simularam integralmente todos os casos de teste previstos.
+o) Pinagem (0,05): Feita com tabela e print do pin planner.
+p) Programação e Testes Físicos: Fora do escopo do planejamento. Já incluíram tabelas com o plano de testes e campos para preencher apenas se o resultado foi, ou não, confirmado na prática.
+q) QAR (versão inicial) (0,05): Entregue.
+QAR (versão final): Fora do escopo do planejamento.
+
+Conclusão do Relatório: Ótima. Bem detalhada.
+
+Nota e Resumo da Avaliação: 1,89 (arred. 1,9). Excelente planejamento. Parabéns à equipe pelo desempenho e pelo esmero na qualidade técnica e da redação. Continuem assim! Os ajustes sugeridos demandam apenas um parágrafo a mais na descrição funcional da ROM e mínimas revisões de texto. Também faltou identificar um detalhe técnico de diferença entre a UC da apostila e a UC fornecida, tal como comentado em detalhes anteriormente.
