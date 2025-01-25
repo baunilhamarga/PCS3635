@@ -31,7 +31,7 @@ module contador_m_tb;
   wire        meio_out;
 
   // Componente a ser testadp (Device Under Test -- DUT)
-  contador_m_v #( .M(5000), .N(13) ) 
+  contador_m_v #( .M(5000), .N(13) )
   dut (
     .clock  ( clock_in ),
     .zera_as( zera_as_in ),
@@ -52,7 +52,7 @@ module contador_m_tb;
   integer caso;
   initial begin
     $display("Inicio da simulacao");
-    
+
     // Valores iniciais
     clock_in   = 1'b0;
     zera_as_in = 1'b0;

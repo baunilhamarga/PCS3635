@@ -1,11 +1,11 @@
 /* --------------------------------------------------------------------
  * Arquivo   : circuito_exp4_tb-MODELO.v
- * Projeto   : Experiencia 4 - Desenvolvimento de Projeto de 
+ * Projeto   : Experiencia 4 - Desenvolvimento de Projeto de
  *             Circuitos Digitais em FPGA
  * --------------------------------------------------------------------
- * Descricao : testbench Verilog MODELO para circuito da Experiencia 5 
+ * Descricao : testbench Verilog MODELO para circuito da Experiencia 5
  *
- *             1) Plano de teste com 4 jogadas certas  
+ *             1) Plano de teste com 4 jogadas certas
  *                e erro na quinta jogada
  *
  * --------------------------------------------------------------------
@@ -66,7 +66,7 @@ module circuito_exp4_tb_modelo;
       .db_estado      ( db_estado_out      ),
       .db_jogadafeita ( db_jogadafeita_out ),
       .db_clock       ( db_clock_out       ),
-      .db_iniciar     ( db_iniciar_out     ),    
+      .db_iniciar     ( db_iniciar_out     ),
       .db_tem_jogada  ( db_tem_jogada_out  )
     );
 

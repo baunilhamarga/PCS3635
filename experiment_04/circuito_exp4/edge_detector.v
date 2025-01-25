@@ -6,9 +6,9 @@
  *  Descricao : detector de borda
  *              gera um pulso na saida de 1 periodo de clock
  *              a partir da detecao da borda de subida sa entrada
- * 
+ *
  *              sinal de reset ativo em alto
- * 
+ *
  *              > codigo adaptado a partir de codigo VHDL disponivel em
  *                https://surf-vhdl.com/how-to-design-a-good-edge-detector/
  * ------------------------------------------------------------------------
@@ -17,7 +17,7 @@
  *      26/01/2024  1.0     Edson Midorikawa  versao inicial
  * ------------------------------------------------------------------------
  */
- 
+
 module edge_detector (
     input  clock,
     input  reset,

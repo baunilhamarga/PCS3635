@@ -8,7 +8,7 @@
  *             M (modulo do contador) e N (numero de bits),
  *             sinais para clear assincrono (zera_as) e sincrono (zera_s)
  *             e saidas de fim e meio de contagem
- *             
+ *
  *-----------------------------------------------------------------------
  * Revisoes  :
  *     Data        Versao  Autor             Descricao
