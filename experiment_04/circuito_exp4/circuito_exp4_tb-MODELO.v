@@ -51,7 +51,7 @@ module circuito_exp4_tb_modelo;
     always #((clockPeriod / 2)) clock_in = ~clock_in;
 
     // instanciacao do DUT (Device Under Test)
-    circuito_exp5 dut (
+    circuito_exp4 dut (
       .clock          ( clock_in    ),
       .reset          ( reset_in    ),
       .iniciar        ( iniciar_in  ),
@@ -64,7 +64,7 @@ module circuito_exp4_tb_modelo;
       .db_contagem    ( db_contagem_out    ),
       .db_memoria     ( db_memoria_out     ),
       .db_estado      ( db_estado_out      ),
-      .db_jogadafeita ( db_jogadafeita_out ),
+      .db_jogada      ( db_jogada_out      ),
       .db_clock       ( db_clock_out       ),
       .db_iniciar     ( db_iniciar_out     ),
       .db_tem_jogada  ( db_tem_jogada_out  )

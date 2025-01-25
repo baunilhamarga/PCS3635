@@ -73,7 +73,7 @@ module exp4_unidade_controle (
         zeraR     = (Eatual == inicial) ? 1'b1 : 1'b0;
         registraR = (Eatual == registra) ? 1'b1 : 1'b0;
         contaC    = (Eatual == proximo) ? 1'b1 : 1'b0;
-        pronto    = (Eatual == fim_acerto || Eatual = fim_erro) ? 1'b1 : 1'b0;
+        pronto    = (Eatual == fim_acerto || Eatual == fim_erro) ? 1'b1 : 1'b0;
         acertou   = (Eatual == fim_acerto) ? 1'b1 : 1'b0;
         errou     = (Eatual == fim_erro) ? 1'b1 : 1'b0;
 
