@@ -8,9 +8,10 @@
 // máquinas de estado de unidades de controle            
 //------------------------------------------------------------------
 // Revisoes  :
-//     Data        Versao  Autor             Descricao
-//     14/01/2024  1.0     Edson Midorikawa  versao inicial
-//     12/01/2025  1.1     Edson Midorikawa  revisao
+//     Data        Versao  Autor                        Descricao
+//     14/01/2024  1.0     Edson Midorikawa             versao inicial
+//     12/01/2025  1.1     Edson Midorikawa             revisao
+//     24/01/2025  1.2     Ana Murad, Heitor Gama       exercício
 //------------------------------------------------------------------
 //
 module exp4_unidade_controle (
@@ -33,10 +34,12 @@ module exp4_unidade_controle (
     // Define estados
     parameter inicial    = 4'b0000;  // 0
     parameter preparacao = 4'b0001;  // 1
+    parameter espera     = 4'b0011;  // 3
     parameter registra   = 4'b0100;  // 4
     parameter comparacao = 4'b0101;  // 5
     parameter proximo    = 4'b0110;  // 6
-    parameter fim        = 4'b1111;  // F
+    parameter fim_erro   = 4'b1110;  // E
+    parameter fim_acerto = 4'b1010;  // A
 
     // Variaveis de estado
     reg [3:0] Eatual, Eprox;
@@ -53,11 +56,13 @@ module exp4_unidade_controle (
     always @* begin
         case (Eatual)
             inicial:     Eprox = iniciar ? preparacao : inicial;
-            preparacao:  Eprox = registra;
+            preparacao:  Eprox = espera;
+            espera:      Eprox = jogada ? registra : espera;
             registra:    Eprox = comparacao;
-            comparacao:  Eprox = (fimC || ~igual) ? fim : proximo;
-            proximo:     Eprox = registra;
-            fim:         Eprox = inicial;
+            comparacao:  Eprox = igual ? (fim ? fim_acerto : proximo) : fim_erro;
+            proximo:     Eprox = espera;
+            fim_acerto:  Eprox = iniciar ? preparacao : fim_acerto;
+            fim_erro:    Eprox = iniciar ? preparacao : fim_erro;
             default:     Eprox = inicial;
         endcase
     end
@@ -65,22 +70,24 @@ module exp4_unidade_controle (
     // Logica de saida (maquina Moore)
     always @* begin
         zeraC     = (Eatual == inicial || Eatual == preparacao) ? 1'b1 : 1'b0;
-        zeraR     = (Eatual == inicial || Eatual == preparacao) ? 1'b1 : 1'b0;
+        zeraR     = (Eatual == inicial) ? 1'b1 : 1'b0;
         registraR = (Eatual == registra) ? 1'b1 : 1'b0;
         contaC    = (Eatual == proximo) ? 1'b1 : 1'b0;
-        pronto    = (Eatual == fim) ? 1'b1 : 1'b0;
-        acertou   = (Eatual == fim && igual == 1'b1) ? 1'b1 : 1'b0;
-        errou     = (Eatual == fim && igual == 1'b0) ? 1'b1 : 1'b0;
+        pronto    = (Eatual == fim_acerto || Eatual = fim_erro) ? 1'b1 : 1'b0;
+        acertou   = (Eatual == fim_acerto) ? 1'b1 : 1'b0;
+        errou     = (Eatual == fim_erro) ? 1'b1 : 1'b0;
 
         // Saida de depuracao (estado)
         case (Eatual)
             inicial:     db_estado = 4'b0000;  // 0
             preparacao:  db_estado = 4'b0001;  // 1
+            espera:      db_estado = 4'b0011;  // 3
             registra:    db_estado = 4'b0100;  // 4
             comparacao:  db_estado = 4'b0101;  // 5
             proximo:     db_estado = 4'b0110;  // 6
-            fim:         db_estado = 4'b1111;  // F
-            default:     db_estado = 4'b1110;  // E (erro)
+            fim_acerto:  db_estado = 4'b1010;  // A
+            fim_erro:    db_estado = 4'b1110;  // E
+            default:     db_estado = 4'b1111;  // F (deu ruim)
         endcase
     end
 

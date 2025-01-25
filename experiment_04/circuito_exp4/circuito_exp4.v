@@ -48,7 +48,7 @@ module circuito_exp4 (
         .igual              ( s_igual        ),
         .fimC               ( s_fimC         ), // fim da contagem
         .db_contagem        ( s_contagem     ),
-        .db_jogada          ( s_jogada       ), // x
+        .db_jogada          ( s_jogada       ),
         .db_memoria         ( s_memoria      ),
         .db_tem_jogada      ( db_tem_jogada  ),
         .jogada_feita       ( s_jogada_feita )
@@ -99,4 +99,5 @@ module circuito_exp4 (
     assign db_iniciar = iniciar;
     assign db_igual = s_igual;
     assign leds = s_jogada;
+    assign db_clock = clock;
 endmodule
