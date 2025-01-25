@@ -36,7 +36,7 @@ module circuito_exp4_tb2;
     wire [6:0] db_contagem_out   ;
     wire [6:0] db_memoria_out    ;
     wire [6:0] db_estado_out     ;
-    wire [6:0] db_jogadafeita_out;
+    wire [6:0] db_jogada_out;
     wire       db_clock_out      ;
     wire       db_iniciar_out    ;
     wire       db_tem_jogada_out ;
