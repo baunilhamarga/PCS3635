@@ -31,7 +31,7 @@ module exp4_fluxo_dados (
     wire [3:0] s_endereco;
     wire [3:0] s_dado;
     wire [3:0] s_chaves;
-    wire tem_jogada = |s_chaves;
+    wire tem_jogada = |chaves;
 
     // contador_163
     contador_163 contadorJ (
