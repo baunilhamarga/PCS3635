@@ -32,7 +32,7 @@ module exp4_unidade_controle (
 );
 
     // Define estados
-    parameter inicial    = 4'b0000;  // 0
+    parameter [3:0] inicial    = 4'b0000;  // 0
     parameter preparacao = 4'b0001;  // 1
     parameter espera     = 4'b0011;  // 3
     parameter registra   = 4'b0100;  // 4
@@ -43,6 +43,21 @@ module exp4_unidade_controle (
 
     // Variaveis de estado
     reg [3:0] Eatual, Eprox;
+
+    reg [10*8-1:0] Eatual_str;
+    always@(Eatual) begin
+        case(Eatual)
+            inicial:     Eatual_str = "inicial";
+            preparacao:  Eatual_str = "preparacao";
+            espera:      Eatual_str = "espera";
+            registra:    Eatual_str = "registra";
+            comparacao:  Eatual_str = "comparacao";
+            proximo:     Eatual_str = "proximo";
+            fim_acerto:  Eatual_str = "fim_acerto";
+            fim_erro:    Eatual_str = "fim_erro";
+            default:     Eatual_str = "UNKNOWN";
+        endcase
+    end
 
     // Memoria de estado
     always @(posedge clock or posedge reset) begin
