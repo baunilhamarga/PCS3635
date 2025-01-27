@@ -18,7 +18,7 @@
 
 `timescale 1ns/1ns
 
-module circuito_exp4_tb1;
+module circuito_exp4_desafio_tb1;
 
     // Sinais para conectar com o DUT
     // valores iniciais para fins de simulacao (ModelSim)
@@ -36,10 +36,11 @@ module circuito_exp4_tb1;
     wire [6:0] db_contagem_out   ;
     wire [6:0] db_memoria_out    ;
     wire [6:0] db_estado_out     ;
-    wire [6:0] db_jogadafeita_out     ;
+    wire [6:0] db_jogadafeita_out;
     wire       db_clock_out      ;
     wire       db_iniciar_out    ;
     wire       db_tem_jogada_out ;
+    wire       db_timeout_out    ;
 
     // Configuração do clock
     parameter clockPeriod = 1_000_000; // in ns, f=1KHz
@@ -51,7 +52,7 @@ module circuito_exp4_tb1;
     always #((clockPeriod / 2)) clock_in = ~clock_in;
 
     // instanciacao do DUT (Device Under Test)
-    circuito_exp4 dut (
+    circuito_exp4_desafio dut (
       .clock          ( clock_in    ),
       .reset          ( reset_in    ),
       .iniciar        ( iniciar_in  ),
@@ -64,10 +65,11 @@ module circuito_exp4_tb1;
       .db_contagem    ( db_contagem_out    ),
       .db_memoria     ( db_memoria_out     ),
       .db_estado      ( db_estado_out      ),
-      .db_jogada      ( db_jogadafeita_out      ),
+      .db_jogadafeita ( db_jogadafeita_out ),
       .db_clock       ( db_clock_out       ),
       .db_iniciar     ( db_iniciar_out     ),
-      .db_tem_jogada  ( db_tem_jogada_out  )
+      .db_tem_jogada  ( db_tem_jogada_out  ),
+      .db_timeout     ( db_timeout_out     )
     );
 
     // geracao dos sinais de entrada (estimulos)

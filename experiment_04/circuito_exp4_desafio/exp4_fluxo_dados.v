@@ -14,6 +14,7 @@
 
 module exp4_fluxo_dados (
     input clock,
+    input estado,
     input zeraC,
     input contaC,
     input zeraR,
@@ -25,7 +26,8 @@ module exp4_fluxo_dados (
     output db_tem_jogada,
     output [3:0] db_contagem,
     output [3:0] db_memoria,
-    output [3:0] db_jogadafeita
+    output [3:0] db_jogadafeita,
+    output controle_timeout
 );
 
     wire [3:0] s_endereco;
@@ -80,8 +82,18 @@ module exp4_fluxo_dados (
         .pulso (jogada_feita)
     );
 
+    contador_m #(.M(3000), .N(12)) contador_timeout ( // 50 MHz => 150 000 000 clocks
+        .clock   (clock),
+        .zera_as (zeraR | zeraC),
+        .zera_s  (contaC),
+        .conta   (estado == 4'b0011 ? 1'b1 : 1'b0),
+        .Q       (),
+        .fim     (controle_timeout), 
+        .meio    ()
+    );
+
     assign db_memoria  = s_dado;
-    assign db_jogadafeita   = s_chaves;
+    assign db_jogadafeita = s_chaves;
     assign db_contagem = s_endereco;
     assign db_tem_jogada = tem_jogada;
 endmodule
