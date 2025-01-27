@@ -38,6 +38,7 @@ module circuito_exp4_desafio (
     wire s_fimC;
     wire s_igual;
     wire s_fim_timeout;
+    wire s_contaT;
 
     // Fluxo de Dados
     exp4_fluxo_dados FD (
@@ -46,7 +47,8 @@ module circuito_exp4_desafio (
         .chaves             ( chaves         ),
         .zeraR              ( s_zeraR        ), // zera registradores
         .registraR          ( s_registraR    ), // registra registradores
-        .contaC             ( s_contaC       ), // incrementa contagem
+        .contaC             ( s_contaC       ),
+        .contaT             ( s_contaT       ), // incrementa contagem
         .zeraC              ( s_zeraC        ), // zera contagem
         .igual              ( s_igual        ),
         .fimC               ( s_fimC         ), // fim da contagem
@@ -75,7 +77,8 @@ module circuito_exp4_desafio (
         .db_estado   ( s_estado       ),
         .acertou     ( acertou        ),
         .errou       ( errou          ),
-        .deu_timeout ( db_timeout     )
+        .deu_timeout ( db_timeout     ),
+        .contaT      ( s_contaT       )
     );
 
     // Display das chaves

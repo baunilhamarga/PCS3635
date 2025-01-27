@@ -30,7 +30,8 @@ module exp4_unidade_controle (
     output reg errou,
     output reg pronto,
     output reg [3:0] db_estado,
-    output reg deu_timeout
+    output reg deu_timeout,
+    output reg contaT
 );
 
     // Define estados
@@ -81,6 +82,7 @@ module exp4_unidade_controle (
         acertou     = (Eatual == fim_acerto) ? 1'b1 : 1'b0;
         errou       = (Eatual == fim_erro || Eatual == fim_timeout) ? 1'b1 : 1'b0;
         deu_timeout = (Eatual == fim_timeout) ? 1'b1 : 1'b0;
+        contaT      = (Eatual == espera) ? 1'b1: 1'b0;
 
         // Saida de depuracao (estado)
         case (Eatual)

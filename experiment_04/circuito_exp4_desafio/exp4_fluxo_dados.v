@@ -17,6 +17,7 @@ module exp4_fluxo_dados (
     input estado,
     input zeraC,
     input contaC,
+    input contaT,
     input zeraR,
     input registraR,
     input [3:0] chaves,
@@ -86,7 +87,7 @@ module exp4_fluxo_dados (
         .clock   (clock),
         .zera_as (zeraR | zeraC),
         .zera_s  (contaC),
-        .conta   (estado == 4'b0011 ? 1'b1 : 1'b0),
+        .conta   (contaT),
         .Q       (),
         .fim     (controle_timeout), 
         .meio    ()
