@@ -1,0 +1,165 @@
+Planejamento
+
+Prazo de Entrega: OK. Antes do limite.
+
+
+
+1.1 Adaptações do Projeto (Valor 0,1) ==> Nota 0,1
+
+a) Descrição Funcional do Circuito (0.1): Realizada textualmente com as palavras do próprio grupo. Descrição boa e de maneira didática.
+
+
+
+1.1.1 - Adaptação do Fluxo de Dados (Valor 0,45) ==> Nota 0,45.
+
+Processamento do Sinal de Clock - Botão e Onda 1kHz (0,1): Comentado corretamente no projeto lógico (capítulo 2 do planejamento), com clock manual incluído na estratégia de depuração. Ligações corretas.
+
+
+
+Detector de Borda para Identificação de Jogadas (0,35):
+
+- Descrição de Funcionamento (0,1): Excelente. Bem detalhada e correta.
+
+- Decisão de Projeto + Justificativa para Interligação do Sinal de Reset (0,1): Reiniciação o edge detector a cada jogada (curto-circuito com "zeraC" no estado de preparação). Boa estratégia.
+
+- Interligação do Fluxo de Dados + Saída "jogada_feita" (0,1): OK. Bem explicado e inclui RTL Viewer do Fluxo de Dados evidenciando essas informações.
+
+- Sinais de Depuração incluindo "db_tem_jogada" (0,05): Bem explicado e inclui RTL Viewer do Fluxo de Dados evidenciando essas informações.
+
+
+
+1.1.2 - Adaptação da Unidade de Controle (Valor 0,45) ==> Nota 0,45
+
+- Espera Jogada (sinal de condição "jogada_feita") (0,1): Bem descrito. Na tabela de descrição da máquina de estados, o sinal "jogada_feita" foi chamado apenas de "jogada" na linha "espera". Completar nome do sinal (sem desconto de nota).
+
+- Situação de Acerto (0,1): Tratada corretamente. Circuito permanece no estado até ser reiniciado.
+
+- Situação de Erro (0,1): Tratada corretamente. Circuito permanece no estado até ser reiniciado.
+
+- Projeto Completo (0,1): Excelente. Incluíram "string" para denominar cada estado.
+
+- Sinais de Depuração ("db_estado") (0,05): OK. Presente no projeto para depuração via displays hexadecimais.
+
+
+
+1.1.3 - Adaptação do Sistema Digital (Valor 0,2) ==> Nota 0,2
+
+- Interligação entre Fluxo de Dados e Unidade de Controle + Sinais de Depuração (0,1): Correta e bem descrita.
+
+- Displays Hexadecimais e LEDs (0,05): Projeto OK e boa descrição.
+
+- RTL Viewer (1.1.4-d) (0,05): Incluído e comentado. Bom.
+
+
+
+1.1.4 - Verificação Funcional (Valor 0,5) ==> Nota 0,5
+
+b) Plano de Testes, Simulação e Análise de Resultados (0,45)
+
+- Plano de Testes - Especificação de Acerto (0,075): Completa e bem documentada.
+
+Sugestão: Como nem todos os sinais de saída são detalhados nos resultados esperados, sugere-se ao grupo redigir um parágrafo introdutório no capítulo 4 comentando que eventuais sinais não incluídos em uma célula do plano de testes devem ser '0' (sem desconto de nota).
+
+- Plano de Testes - Especificação de Erro (0,075): Completa e bem documentada, com erro na 4ª jogada. A sugestão do cenário de acerto vale para cá também. 
+
+- Simulação e Análise do Cenário de Acerto (0,125): Realizada e documentada em prints legíveis e com marcações. Boa análise.
+
+- Simulação e Análise do Cenário de Erro (0,125): Realizada e documentada em prints legíveis e com marcações. Boa análise.
+
+- ZIP Modelsim / Verilog Bancada de Testes (0,05): Entregue. OK.
+
+
+
+c) QAR Quartus (0,05): Entregue. OK.
+
+
+
+d) RTL Viewer - Ver item 1.1.3.
+
+
+
+1.2 - Atividades Experimentais (Valor 0,25) ==> Nota 0,25
+
+e) Pinagem (0,1): Feita com tabela e print do pin planner. Texto: Corrigir a referência cruzada com a numeração da figura do pin planner de "Figura 04" para "Figura 5" (sem desconto).
+
+f Parte 1) Roteiro Experimental, Método de Depuração e Tabelas do Plano de Testes (0,15): Redação excelente. Texto detalhado e coerente com o projeto, Inclui os sinais de depuração, as estratégias de análise e os mecanismos de monitoramento com os recursos da bancada.
+
+f Parte 2) QAR Experimental - Fora do escopo do planejamento.
+
+
+
+1.3 - Desafio (Valor 0,05) ==> Nota 0,05
+
+Planejamento: Estrutura de seções do relatório criada para o desafio? (0,05): Capítulo 6 reservado para o desafio. Toda a estrutura do capítulo foi organizada no planejamento. Bom.
+
+g) Projeto Lógico: Fora do escopo do planejamento.
+
+h) Plano de Testes: Fora do escopo do planejamento.
+
+i) Simulações: Fora do escopo do planejamento.
+
+j) Pinagem e Síntese: Fora do escopo do planejamento.
+
+k) Resultados Experimentais: Fora do escopo do planejamento.
+
+l) QAR Quartus: Fora do escopo do planejamento.
+
+
+
+Conclusão do Relatório: Há recapitulação do que foi feito, com análise crítica, e próximos passos. Excelente.
+
+
+
+Nota e Resumo da Avaliação: 2,0 (com louvor). Parabéns à equipe. O planejamento está impecável em todos os aspectos: muito bem redigido, tecnicamente bom, completo e bem estruturado. Vejam apenas pequenas sugestões de melhoria de texto (sem impacto no projeto) em poucos pontos comentados na análise detalhada (UC, simulações/testes e pinagem).
+
+Relatório
+
+Prazo de Entrega: OK. Antes do Limite.
+
+
+
+Ajustes do Planejamento:
+
+- Descrição de "jogada_feita" na UC - OK.
+
+- Nível '0' de sinais omitidos em linhas do plano de testes - OK.
+
+- Referência cruzada à Figura 5 - OK.
+
+
+
+Relato Experimental do Projeto Base:
+
+- Resultados: Bem documentados nas seções 5.4 e 5.5.
+
+- Evidências Probatórias: Apresentadas detalhadamente com fotos, anotações coloridas dos sinais de depuração (excelente) e com rastreabilidade clara de cada evidência com o código numérico do caso de teste.
+
+- Análise: Incluído dentro das tabelas de resultados. Tudo OK.
+
+
+
+Desafio:
+
+- Projeto Lógico: Relato excelente das modificações no Fluxo de Dados (contador_M) e configuração parametrizada), na Unidade de Controle (estado do timeout) e no Sistema Digital (interligações).
+
+- Plano de Testes: Mantiveram acerto e erro do circuito base e incluíram terceiro cenário de teste para o timeout.
+
+- Simulações: Realizada para os três cenários, com repetição de comportamento para os cenários reaproveitados (explicado no texto) e inclusão da forma de onda do cenário de teste do timeout. Inclui medida explícita do tempo de 3s com cursores. Excelente.
+
+- Resultados Práticos: Documentados ao longo das seções 6.3.1 até 6.3.3. Bom.
+
+- Evidências Probatórias: Inclusão de fotos e LED virtual do timeout no cenário de teste correspondente. Demais cenários tiveram resultados equivalentes aos do circuito base, com print do LED de timeout apagado. Bom!
+
+- Análise: Incluído dentro das tabelas de resultados. Tudo OK.
+
+
+
+- Perguntas Adicionais da Apostila: Ambas respondidas com soluções e comportamentos plausíveis para o circuito projetado.
+
+
+
+Conclusão do Relatório: Detalhada e reflete as ocorrências do planejamento e do experimento, como o término da experiência em sala e os problemas iniciais com o AnalogDiscovery. Cuidado apenas com plural do verbo haver ("houveram outras intercorrências"): não vai para o plural se sinônimo de existir.
+
+
+
+Nota: 1,0/1,0. Mais uma vez, parabéns à equipe pela dedicação e pela qualidade técnica do material produzido. O relatório está impecável em todos os aspectos.
