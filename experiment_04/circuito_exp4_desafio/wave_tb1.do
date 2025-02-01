@@ -1,52 +1,33 @@
 onerror {resume}
 quietly WaveActivateNextPane {} 0
-add wave -noupdate -height 35 /circuito_exp4_desafio_tb1
-/caso
-add wave -noupdate -height 35 /circuito_exp4_desafio_tb1
-/clock_in
+add wave -noupdate -height 30 /circuito_exp4_desafio_tb1/caso
+add wave -noupdate -height 30 /circuito_exp4_desafio_tb1/clock_in
 add wave -noupdate -divider Entradas
-add wave -noupdate -color Red -height 35 /circuito_exp4_desafio_tb1
-/reset_in
-add wave -noupdate -color Red -height 35 /circuito_exp4_desafio_tb1
-/iniciar_in
-add wave -noupdate -color Red -height 35 /circuito_exp4_desafio_tb1
-/chaves_in
+add wave -noupdate -color Red -height 30 /circuito_exp4_desafio_tb1/reset_in
+add wave -noupdate -color Red -height 30 /circuito_exp4_desafio_tb1/iniciar_in
+add wave -noupdate -color Red -height 30 /circuito_exp4_desafio_tb1/chaves_in
 add wave -noupdate -divider {Detecao da Jogada}
-add wave -noupdate -color Yellow -height 35 /circuito_exp4_desafio_tb1
-/db_tem_jogada_out
-add wave -noupdate -color Yellow -height 35 /circuito_exp4_desafio_tb1
-/dut/s_jogada
+add wave -noupdate -color Yellow -height 30 /circuito_exp4_desafio_tb1/db_tem_jogada_out
+add wave -noupdate -color Yellow -height 30 /circuito_exp4_desafio_tb1/dut/s_jogada
 add wave -noupdate -divider Depuracao
-add wave -noupdate -color {Orange Red} -height 35 /circuito_exp4_desafio_tb1
-/db_igual_out
+add wave -noupdate -color {Orange Red} -height 30 /circuito_exp4_desafio_tb1/db_igual_out
+add wave -noupdate -color {Orange Red} -height 30 /circuito_exp4_desafio_tb1/dut/FD/contador_timeout/conta
 add wave -noupdate -divider Resultado
-add wave -noupdate -color Cyan -height 35 /circuito_exp4_desafio_tb1
-/acertou_out
-add wave -noupdate -color Cyan -height 35 /circuito_exp4_desafio_tb1
-/errou_out
-add wave -noupdate -color Cyan -height 35 /circuito_exp4_desafio_tb1
-/pronto_out
-add wave -noupdate -color Cyan -height 35 /circuito_exp4_desafio_tb1
-/db_timeout_out
+add wave -noupdate -color Cyan -height 30 /circuito_exp4_desafio_tb1/acertou_out
+add wave -noupdate -color Cyan -height 30 /circuito_exp4_desafio_tb1/errou_out
+add wave -noupdate -color Cyan -height 30 /circuito_exp4_desafio_tb1/pronto_out
+add wave -noupdate -color Cyan -height 30 /circuito_exp4_desafio_tb1/db_timeout_out
 add wave -noupdate -divider Saidas
-add wave -noupdate -color Coral -height 35 /circuito_exp4_desafio_tb1
-/leds_out
+add wave -noupdate -color Coral -height 30 /circuito_exp4_desafio_tb1/leds_out
 add wave -noupdate -divider FD
-add wave -noupdate -color {Pale Green} -height 35 /circuito_exp4_desafio_tb1
-/dut/s_contagem
-add wave -noupdate -color {Pale Green} -height 35 /circuito_exp4_desafio_tb1
-/dut/s_memoria
+add wave -noupdate -color {Pale Green} -height 30 /circuito_exp4_desafio_tb1/dut/s_contagem
+add wave -noupdate -color {Pale Green} -height 30 /circuito_exp4_desafio_tb1/dut/s_memoria
 add wave -noupdate -divider UC
-add wave -noupdate -color Gray80 -height 35 /circuito_exp4_desafio_tb1
-/dut/s_estado
-add wave -noupdate -color Gray80 -height 35 /circuito_exp4_desafio_tb1
-/dut/s_zeraC
-add wave -noupdate -color Gray80 -height 35 /circuito_exp4_desafio_tb1
-/dut/s_contaC
-add wave -noupdate -color Gray80 -height 35 /circuito_exp4_desafio_tb1
-/dut/s_zeraR
-add wave -noupdate -color Gray80 -height 35 /circuito_exp4_desafio_tb1
-/dut/s_registraR
+add wave -noupdate -color Gray80 -height 30 /circuito_exp4_desafio_tb1/dut/s_estado
+add wave -noupdate -color Gray80 -height 30 /circuito_exp4_desafio_tb1/dut/s_zeraC
+add wave -noupdate -color Gray80 -height 30 /circuito_exp4_desafio_tb1/dut/s_contaC
+add wave -noupdate -color Gray80 -height 30 /circuito_exp4_desafio_tb1/dut/s_zeraR
+add wave -noupdate -color Gray80 -height 30 /circuito_exp4_desafio_tb1/dut/s_registraR
 TreeUpdate [SetDefaultTree]
 WaveRestoreCursors {{Cursor 1} {205 ns} 0}
 quietly wave cursor active 1
