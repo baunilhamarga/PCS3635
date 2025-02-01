@@ -111,3 +111,55 @@ Conclusão do Relatório: Há recapitulação do que foi feito, com análise cr�
 
 
 Nota e Resumo da Avaliação: 2,0 (com louvor). Parabéns à equipe. O planejamento está impecável em todos os aspectos: muito bem redigido, tecnicamente bom, completo e bem estruturado. Vejam apenas pequenas sugestões de melhoria de texto (sem impacto no projeto) em poucos pontos comentados na análise detalhada (UC, simulações/testes e pinagem).
+
+Relatório
+
+Prazo de Entrega: OK. Antes do Limite.
+
+
+
+Ajustes do Planejamento:
+
+- Descrição de "jogada_feita" na UC - OK.
+
+- Nível '0' de sinais omitidos em linhas do plano de testes - OK.
+
+- Referência cruzada à Figura 5 - OK.
+
+
+
+Relato Experimental do Projeto Base:
+
+- Resultados: Bem documentados nas seções 5.4 e 5.5.
+
+- Evidências Probatórias: Apresentadas detalhadamente com fotos, anotações coloridas dos sinais de depuração (excelente) e com rastreabilidade clara de cada evidência com o código numérico do caso de teste.
+
+- Análise: Incluído dentro das tabelas de resultados. Tudo OK.
+
+
+
+Desafio:
+
+- Projeto Lógico: Relato excelente das modificações no Fluxo de Dados (contador_M) e configuração parametrizada), na Unidade de Controle (estado do timeout) e no Sistema Digital (interligações).
+
+- Plano de Testes: Mantiveram acerto e erro do circuito base e incluíram terceiro cenário de teste para o timeout.
+
+- Simulações: Realizada para os três cenários, com repetição de comportamento para os cenários reaproveitados (explicado no texto) e inclusão da forma de onda do cenário de teste do timeout. Inclui medida explícita do tempo de 3s com cursores. Excelente.
+
+- Resultados Práticos: Documentados ao longo das seções 6.3.1 até 6.3.3. Bom.
+
+- Evidências Probatórias: Inclusão de fotos e LED virtual do timeout no cenário de teste correspondente. Demais cenários tiveram resultados equivalentes aos do circuito base, com print do LED de timeout apagado. Bom!
+
+- Análise: Incluído dentro das tabelas de resultados. Tudo OK.
+
+
+
+- Perguntas Adicionais da Apostila: Ambas respondidas com soluções e comportamentos plausíveis para o circuito projetado.
+
+
+
+Conclusão do Relatório: Detalhada e reflete as ocorrências do planejamento e do experimento, como o término da experiência em sala e os problemas iniciais com o AnalogDiscovery. Cuidado apenas com plural do verbo haver ("houveram outras intercorrências"): não vai para o plural se sinônimo de existir.
+
+
+
+Nota: 1,0/1,0. Mais uma vez, parabéns à equipe pela dedicação e pela qualidade técnica do material produzido. O relatório está impecável em todos os aspectos.
