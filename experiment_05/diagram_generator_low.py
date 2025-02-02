@@ -20,8 +20,8 @@ states_moore = {
     "registra": "registra\n-----------\nregistraR=1",
     "comparacao": "comparacao",
     "proximo": "proximo\n-----------\ncontaE=1",
-    "fim_acerto": "fim_acerto\n-----------\npronto=1\nacertou=1",
-    "fim_erro": "fim_erro\n-----------\npronto=1\nerrou=1",
+    "fim_acerto": "fim_acerto\n-----------\npronto=1\nganhou=1",
+    "fim_erro": "fim_erro\n-----------\npronto=1\nperdeu=1",
     "fim_timeout": "fim_timeout\n-----------\npronto=1\ndeu_timeout=1"
 }
 

@@ -16,8 +16,8 @@ module circuito_exp5 (
     input reset,
     input jogar,
     input [3:0] botoes,
-    output acertou,
-    output errou,
+    output ganhou,
+    output perdeu,
     output pronto,
     output [3:0] leds,
     output db_igualL,
@@ -96,8 +96,8 @@ module circuito_exp5 (
         .registraR   ( s_registraR    ),
         .pronto      ( pronto         ),
         .db_estado   ( s_estado       ),
-        .acertou     ( acertou        ),
-        .errou       ( errou          ),
+        .ganhou     ( ganhou        ),
+        .perdeu       ( perdeu          ),
         .deu_timeout ( db_timeout     ),
         .contaT      ( s_contaT       )
     );

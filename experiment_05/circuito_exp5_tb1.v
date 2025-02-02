@@ -27,8 +27,8 @@ module circuito_exp5_tb1;
     reg        jogar_in = 0;
     reg  [3:0] botoes_in  = 4'b0000;
 
-    wire       acertou_out;
-    wire       errou_out  ;
+    wire       ganhou_out;
+    wire       perdeu_out  ;
     wire       pronto_out ;
     wire [3:0] leds_out   ;
 
@@ -59,8 +59,8 @@ module circuito_exp5_tb1;
       .reset          ( reset_in    ),
       .jogar          ( jogar_in    ),
       .botoes         ( botoes_in   ),
-      .acertou        ( acertou_out ),
-      .errou          ( errou_out   ),
+      .ganhou        ( ganhou_out ),
+      .perdeu          ( perdeu_out   ),
       .pronto         ( pronto_out  ),
       .leds           ( leds_out    ),
       .db_igualE      ( db_igualE_out      ),

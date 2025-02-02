@@ -20,8 +20,8 @@ states_high_level = {
     "registra": "4: Registra\n-----------\nCaptura jogada do jogador",
     "comparacao": "5: Comparação\n-----------\nVerifica jogada",
     "proximo": "6: Próximo\n-----------\nAvança para a próxima jogada",
-    "fim_acerto": "A: Fim (Acertou)\n-----------\nJogo concluído com sucesso",
-    "fim_erro": "E: Fim (Errou)\n-----------\nJogo encerrado por erro",
+    "fim_acerto": "A: Fim (ganhou)\n-----------\nJogo concluído com sucesso",
+    "fim_erro": "E: Fim (perdeu)\n-----------\nJogo encerrado por erro",
     "fim_timeout": "D: Fim (Timeout)\n-----------\nTempo esgotado, jogo encerrado"
 }
 

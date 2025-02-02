@@ -30,8 +30,8 @@ module exp5_unidade_controle (
     output reg contaL,
     output reg zeraR,
     output reg registraR,
-    output reg acertou,
-    output reg errou,
+    output reg ganhou,
+    output reg perdeu,
     output reg pronto,
     output reg [3:0] db_estado,
     output reg deu_timeout,
@@ -85,8 +85,8 @@ module exp5_unidade_controle (
         registraR   = (Eatual == registra) ? 1'b1 : 1'b0;
         contaE      = (Eatual == proximo) ? 1'b1 : 1'b0;
         pronto      = (Eatual == fim_acerto || Eatual == fim_erro || Eatual == fim_timeout) ? 1'b1 : 1'b0;
-        acertou     = (Eatual == fim_acerto) ? 1'b1 : 1'b0;
-        errou       = (Eatual == fim_erro || Eatual == fim_timeout) ? 1'b1 : 1'b0;
+        ganhou     = (Eatual == fim_acerto) ? 1'b1 : 1'b0;
+        perdeu       = (Eatual == fim_erro || Eatual == fim_timeout) ? 1'b1 : 1'b0;
         deu_timeout = (Eatual == fim_timeout) ? 1'b1 : 1'b0;
         contaT      = (Eatual == espera) ? 1'b1: 1'b0;
         zeraL       = (Eatual == jogar || Eatual == preparacao) ? 1'b1 : 1'b0;
