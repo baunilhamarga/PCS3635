@@ -1,0 +1,127 @@
+Planejamento
+
+Prazo de Entrega: OK. Antes do prazo limite.
+
+
+
+1.1 Atividade 1 - Projeto Lógico do Jogo de Sequências de Jogadas
+
+
+
+a) Sinais de Depuração: Ver bloco "Atividades Experimentais";
+
+
+
+b) Descrição Funcional do Sistema (Valor 0,1) ==> Nota 0,1:
+
+Descrição excelente nos capítulos 1 e 2. Cobre todos os aspectos do circuito e foi redigida com as palavras da equipe.
+
+
+
+c) Diagrama de Transição de Estados de Alto Nível (Valor 0,15) ==> Nota 0,15:
+
+Bom. Apresentado e descrito no início da seção 3.2 do planejamento. Bem construído. Também incluíram versões vetorizadas como apêndices do documento.
+
+
+
+d) Descrição e Projeto Lógico do Fluxo de Dados (Valor 0,15) ==> Nota 0,15: 
+
+Descrição bem detalhada na seção 3.1. Cobre todos os componentes utilizados (incluindo timeout), detalha os sinais de controle e as ligações internas e externas dos novos componentes (contLmt e compLmt) e explicita mudança de projeto do sinal de reset do detector de borda para que ele ocorra apenas no início do jogo. Excelente!
+
+
+
+e) Descrição e Projeto Lógico da Unidade de Controle (Valor 0,2) ==> Nota 0,2:
+
+Descrição construída a partir do diagrama de transições de alto nível com diagrama detalhado (incluindo sinais de condição das transições e sinais de controle ativados em cada estado) e tabela de transição de estados com o detalhamento de todas as transições e das respectivas condições. Ótimo!
+
+
+
+f) Descrição e Projeto Lógico do Sistema Completo (Valor 0,1) ==> Nota 0,1: Descrito corretamente na seção 3.3. Na descrição, foram incluídos sinais de depuração db_estado, db_contagem, db_memoria, db_jogadafeita, db_limite, db_igualL, db_igualE, db_temjogada, db_timeout, db_clock e db_contaL (nota - sem desconto: este último não foi descrito no texto, mas está presente no diagrama do RTL Viewer). Destes, db_contaL, db_igualL e db_timeout serão monitorados em LEDs virtuais do AnalogDiscovery, conforme pinagem especificada na seção 5.1.
+
+
+
+g) Plano de Testes (Valor 0,4) ==> Nota 0,35:
+
+- Cenários de Teste (0,15): Incluíram três cenários de teste: vitória do jogo completo, derrota do jogo por jogada errada (3ª jogada da 4ª rodada), incluindo reinício e segundo erro (2ª jogada da 2ª rodada) e derrota por timeout (3ª jogada da 4ª rodada).
+
+
+
+- Especificação dos Casos de Teste dos Cenários (0,25): Especificação ótima dos três cenários de teste. Cuidado apenas com a notação dos termos "jogada" e "rodada" (-0,05):
+
+- "Jogada" corresponde à tentativa de acertar um botão (no planejamento, foi usado o termo "dado");
+
+- "Rodada" corresponde a um conjunto de jogadas, de tal forma que, se o jogo estiver na rodada "k", serão realizadas as jogadas "1" até "k" (no planejamento, foi usado o termo "jogada").
+
+Rever termos nas tabelas e nas descrições gerais do plano de testes.
+
+
+
+h) Simulação e Análise de Resultados dos Cenários (Valor 0,4) ==> Nota 0,4:
+
+- Anotações dos Casos de Teste dos Cenários (0,1): OK.
+
+i. Acerto e Vitória: Prints bem anotados das quatro primeiras rodadas e, depois, das três últimas. Anotações boas e análise OK, incluída dentro das tabelas do cenário de teste.
+
+ii. Erro por jogada e repetição do jogo: Ambas bem anotadas e detalhadas em um print e analisadas dentro da tabela do cenário de teste.
+
+iii. Erro por timeout: Print detalhado e anotado, incluindo cursores que marcam exatamente 3s para a ocorrência do timeout. Análise realizada dentro das tabelas do cenário de teste.
+
+- Análise dos Resultados dos Cenários (0,3): OK. Todas analisadas dentro das tabelas dos cenários de teste.
+
+- Arquivos ZIP/Verilog do ModelSim (não obrigatório cf. apostila): Entregue. OK.
+
+
+
+i) Diagramas do Projeto (Valor 0,15) ==> Nota 0,15:
+
+- Fluxo de Dados (RTL Viewer - 0,05): OK. Incluído na seção 3.1.
+
+- Unidade de Controle (State Machine Viewer - 0,05): OK. Incluído na seção 5 com um relato detalhado de como o projeto da UC foi depurado até que o diagrama fosse gerado pelo Quartus. O relato do processo de depuração está excelente: bem detalhado e com justificativas técnicas do problema identificado. Parabéns ao grupo pela sistemática!
+
+- Sistema Completo (RTL Viewer - 0,05): OK. Incluído na seção 3.3.
+
+
+
+[Bônus, Valor 0,1 Extra] Projeto inclui mecanismo de timeout de jogada (3s) do Desafio da Experiência 4?: Sim: toda a estrutura do timeout foi mantida no projeto e permanece operacional, tal como projetado e testado (não regressão). ==> Bônus +0,1.
+
+
+
+1.2 - Implementação e Síntese do Sistema (Valor 0,35) ==> Nota 0,35
+
+j1) Pinagem - Tabela e Pin Planner (0,1): Realizada com tabela completa e prints do Pin Planner. Inclui todos os sinais de depuração especificados conforme analisado na seção 1.1-f e a estratégia de usar LEDs virtuais do AnalogDiscovery/WaveForms para exceder a capacidade dos LEDs da placa. Excelente!
+
+j2) QAR Quartus (0,05): Entregue. OK.
+
+k) Roteiro Experimental, Método de Depuração, Sinais de Depuração e Tabelas do Plano de Testes (0,2): Sinais de depuração bem especificados e incluídos em saídas pinadas do circuito (ver itens (1.1-f e 1.2-j1). Roteiro experimental e método de depuração bem detalhados e coerentes com boas práticas laboratoriais. Tabelas dos planos de teste incluídas, populadas com dados dos mesmos cenários simulados e prontas para preenchimento. Rever apenas os termos "dado" e "jogada" para "jogada" e "rodada", respectivamente, tal qual comentado no item "1.1-g" da revisão. Ótimo.
+
+l-n) Execução do Experimento, Coleta de Dados e Análise de Resultados - Fora do escopo do planejamento.
+
+o) QAR Experimental - Fora do escopo do planejamento.
+
+
+
+1.3 - Desafio (Valor 0,0) ==> Nota 0,0 (Apenas lembrete para criar capítulo para o desafio).
+
+Planejamento: Estrutura de seções do relatório criada para o desafio?: Sim. Capítulo 6 reservado para a documentação do desafio. Bom.
+
+g) Projeto Lógico: Fora do escopo do planejamento.
+
+h) Plano de Testes: Fora do escopo do planejamento.
+
+i) Simulações: Fora do escopo do planejamento.
+
+j) Pinagem e Síntese: Fora do escopo do planejamento.
+
+k) Resultados Experimentais: Fora do escopo do planejamento.
+
+l) QAR Quartus: Fora do escopo do planejamento.
+
+
+
+Conclusão do Planejamento:  Excelente. Relatam o que foi feito, analisam criticamente e indicam próximos passos.
+
+
+
+Nota e Resumo da Avaliação: 2,05/2,0 (arred. 2,1). Sim, a nota superou o máximo devido ao bônus de excederem as expectativas ao já realizarem o projeto com o timeout (dica: ele será uma parte do desafio da aula e terá um tempo diferente de 3s). Mais uma vez, parabéns à equipe pelo planejamento excepcional! Rever apenas, nos textos e tabelas do plano de testes (simulações e testes físicos) os termos "dado" e "jogada", substituindo-os por "jogada" e "rodada" (mais detalhes na seção 1.1-g desta revisão).
+
+Amanhã conversamos sobre as 15h30min investidas no planejamento para avaliar o conforto e a saúde da equipe com esse tempo.
