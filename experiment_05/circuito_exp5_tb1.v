@@ -42,7 +42,7 @@ module circuito_exp5_tb1;
     wire       db_tem_jogada_out ;
     wire       db_timeout_out    ;
     wire       db_contaL_out     ;
-    wire       db_limite_out     ;
+    wire [6:0] db_limite_out     ;
 
     // Configuração do clock
     parameter clockPeriod = 1_000_000; // in ns, f=1KHz
