@@ -53,6 +53,23 @@ module exp5_unidade_controle (
     // Variaveis de estado
     reg [3:0] Eatual, Eprox;
 
+    reg [10*8-1:0] Eatual_str;
+    always@(Eatual) begin
+        case(Eatual)
+            inicial:     Eatual_str = "inicial";
+            preparacao:  Eatual_str = "preparacao";
+            nova_seq:    Eatual_str = "nova_seq";
+            espera:      Eatual_str = "espera";
+            registra:    Eatual_str = "registra";
+            comparacao:  Eatual_str = "comparacao";
+            proximo:     Eatual_str = "proximo";
+            fim_acerto:  Eatual_str = "fim_acerto";
+            fim_erro:    Eatual_str = "fim_erro";
+            fim_timeout: Eatual_str = "fim_timeout";
+            default:     Eatual_str = "UNKNOWN";
+        endcase
+    end
+
     // Memoria de estado
     always @(posedge clock or posedge reset) begin
         if (reset)
