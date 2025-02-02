@@ -6,7 +6,7 @@ output_dir = "images"
 os.makedirs(output_dir, exist_ok=True)
 
 # Radius of the circles (fixed size for uniform appearance)
-radius = 2.6
+radius = 2.7
 
 # Create state diagram with left-to-right layout
 dot_moore = graphviz.Digraph(engine="dot", graph_attr={"rankdir": "LR", "splines": "true"})
@@ -54,7 +54,7 @@ for src, dst, label in transitions_moore:
     dot_moore.edge(src, dst, label)
 
 # Define output paths
-output_path = os.path.join(output_dir, "diagrama_moore_low_level")
+output_path = os.path.join(output_dir, "diagrama_moore_low")
 
 # Save as DOT file
 dot_moore.save(output_path + ".dot")

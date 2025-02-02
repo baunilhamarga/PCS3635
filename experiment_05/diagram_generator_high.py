@@ -6,7 +6,7 @@ output_dir = "images"
 os.makedirs(output_dir, exist_ok=True)
 
 # Raidus of the circles
-radius = 2.6
+radius = 2.8
 
 # Create state diagram with left-to-right layout
 dot_moore = graphviz.Digraph(engine="dot", graph_attr={"rankdir": "LR", "splines": "true"})
@@ -14,13 +14,13 @@ dot_moore = graphviz.Digraph(engine="dot", graph_attr={"rankdir": "LR", "splines
 # Define states with identifiers and high-level signal descriptions
 states_moore = {
     "inicial": "0: Inicial\nZera contador de endereço\nZera registrador",
-    "preparacao": "1: Preparação\nZera contador de endereço\nZera contador de sequência",
+    "preparacao": "1: Preparação\nZera contador de endereço\nZera contador\nde sequência",
     "nova_seq": "2: Nova Seq\nZera contador de endereço",
     "espera": "3: Espera\nIncrementa temporizador",
     "registra": "4: Registra\nArmazena jogada",
     "comparacao": "5: Comparação",
-    "proximo": "6: Próximo\nIncrementa contador de endereço",
-    "proxima_seq": "7: Próxima Seq\nIncrementa contador de sequência",
+    "proximo": "6: Próximo\nIncrementa contador\nde endereço",
+    "proxima_seq": "7: Próxima Seq\nIncrementa contador\nde sequência",
     "fim_acerto": "A: Fim (Acertou)\nSinaliza jogo concluído\nAtiva saída de sucesso",
     "fim_erro": "E: Fim (Errou)\nSinaliza jogo concluído\nAtiva saída de erro",
     "fim_timeout": "D: Fim (Timeout)\nSinaliza jogo concluído\nAtiva saída de timeout"
