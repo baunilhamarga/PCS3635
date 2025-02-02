@@ -171,7 +171,40 @@ module circuito_exp5_tb2;
       #(10*clockPeriod);
       
       @(negedge clock_in);
-      botoes_in = 4'b0010;
+      botoes_in = 4'b0010; //0100
+      #(10*clockPeriod);
+      botoes_in = 4'b0000;
+      // espera entre jogadas
+      #(10*clockPeriod);
+
+      // Teste 7. jogar=1 por 5 periodos de clock
+      caso = 2;
+      jogar_in = 1;
+      #(5*clockPeriod);
+      jogar_in = 0;
+      // espera
+      #(10*clockPeriod);
+
+      // Teste 8. jogada #1 (ajustar botoes para 0001 por 10 periodos de clock
+      caso = 3;
+      @(negedge clock_in);
+      botoes_in = 4'b0001;
+      #(10*clockPeriod);
+      botoes_in = 4'b0000;
+      // espera entre jogadas
+      #(10*clockPeriod);
+
+      // Teste 9. jogada #2 (ajustar botoes para 0010 por 10 periodos de clock
+      caso = 4;
+      @(negedge clock_in);
+      botoes_in = 4'b0001;
+      #(10*clockPeriod);
+      botoes_in = 4'b0000;
+      // espera entre jogadas
+      #(10*clockPeriod);
+
+      @(negedge clock_in);
+      botoes_in = 4'b0100;
       #(10*clockPeriod);
       botoes_in = 4'b0000;
       // espera entre jogadas
