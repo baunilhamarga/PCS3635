@@ -1,6 +1,0 @@
-# Coloca esse arquivo na pasta ~/.local/share/applications/ e muda o diretório abaixo trocando pelo seu caminho do modelsim
-[Desktop Entry]
-Name=ModelSim
-Exec=/home/baunilha/Programs/Quartus/intelFPGA/20.1/modelsim_ase/bin/vsim
-Type=Application
-Terminal=true
