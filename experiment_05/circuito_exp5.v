@@ -30,12 +30,13 @@ module circuito_exp5 (
     output db_tem_jogada,
     output db_timeout,
     output db_contaL,
-    output db_limite
+    output [6:0] db_limite
 );
     wire [3:0] s_jogada;
     wire [3:0] s_contagem;
     wire [3:0] s_memoria;
     wire [3:0] s_estado;
+    wire [3;0] s_limite;
     wire s_jogada_feita;
     wire s_fimE;
     wire s_fimL;
@@ -73,7 +74,7 @@ module circuito_exp5 (
         .db_tem_jogada             ( db_tem_jogada  ),
         .jogada_feita              ( s_jogada_feita ),
         .controle_timeout          ( s_fim_timeout  ),
-        .db_limite                 ( db_limite      )               
+        .db_limite                 ( s_limite       )               
     );
 
     // Unidade de Controle
@@ -123,6 +124,12 @@ module circuito_exp5 (
     hexa7seg HEX5 (
         .hexa    ( s_estado  ),
         .display ( db_estado )
+    );
+
+    // Display da sequência atual
+    hexa7seg HEX3 (
+        .hexa    ( s_limite  ),
+        .display ( db_limite )
     );
 
     assign db_contaL = s_contaL;
