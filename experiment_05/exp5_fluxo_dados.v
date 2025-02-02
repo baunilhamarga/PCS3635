@@ -108,7 +108,7 @@ module exp5_fluxo_dados (
 
     edge_detector detector (
         .clock (clock),
-        .reset (zeraE),
+        .reset (zeraL),
         .sinal (tem_jogada),
         .pulso (jogada_feita)
     );

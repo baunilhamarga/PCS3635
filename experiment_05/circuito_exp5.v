@@ -36,7 +36,7 @@ module circuito_exp5 (
     wire [3:0] s_contagem;
     wire [3:0] s_memoria;
     wire [3:0] s_estado;
-    wire [3;0] s_limite;
+    wire [3:0] s_limite;
     wire s_jogada_feita;
     wire s_fimE;
     wire s_fimL;
