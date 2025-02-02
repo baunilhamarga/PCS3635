@@ -46,6 +46,7 @@ module exp5_unidade_controle (
     parameter registra    = 4'b0100;  // 4
     parameter comparacao  = 4'b0101;  // 5
     parameter proximo     = 4'b0110;  // 6
+    parameter proxima_seq = 4'b0111;  // 7
     parameter fim_erro    = 4'b1110;  // E
     parameter fim_acerto  = 4'b1010;  // A
     parameter fim_timeout = 4'b1101;  // D
@@ -61,23 +62,6 @@ module exp5_unidade_controle (
             Eatual <= Eprox;
     end
 
-/*     // Logica de proximo estado
-    always @* begin
-        case (Eatual)
-            inicial:     Eprox = jogar ? preparacao : inicial;
-            preparacao:  Eprox = espera;
-            nova_seq:    Eprox = espera;
-            espera:      Eprox = timeout ? fim_timeout : (jogada ? registra : espera);
-            registra:    Eprox = comparacao;
-            comparacao:  Eprox = igualE ? (fimE ? fim_acerto : (igualL ? nova_seq : proximo)) : fim_erro;
-            proximo:     Eprox = espera;
-            fim_acerto:  Eprox = jogar ? preparacao : fim_acerto;
-            fim_erro:    Eprox = jogar ? preparacao : fim_erro;
-            fim_timeout: Eprox = jogar ? preparacao : fim_timeout;
-            default:     Eprox = inicial;
-        endcase
-    end */
-
     // Logica de proximo estado
     always @* begin
         case (Eatual)
@@ -86,8 +70,9 @@ module exp5_unidade_controle (
             nova_seq:    Eprox = espera;
             espera:      Eprox = timeout ? fim_timeout : (jogada ? registra : espera);
             registra:    Eprox = comparacao;
-            comparacao:  Eprox = igualE ? (fimE ? fim_acerto : proximo) : fim_erro;
-            proximo:     Eprox = igualL ? nova_seq : espera;
+            comparacao:  Eprox = igualE ? (fimE ? fim_acerto : (igualL ? proxima_seq : proximo)) : fim_erro;
+            proximo:     Eprox = espera;
+            proxima_seq: Eprox = nova_seq;
             fim_acerto:  Eprox = jogar ? preparacao : fim_acerto;
             fim_erro:    Eprox = jogar ? preparacao : fim_erro;
             fim_timeout: Eprox = jogar ? preparacao : fim_timeout;
@@ -107,7 +92,7 @@ module exp5_unidade_controle (
         deu_timeout = (Eatual == fim_timeout) ? 1'b1 : 1'b0;
         contaT      = (Eatual == espera) ? 1'b1: 1'b0;
         zeraL       = (Eatual == jogar || Eatual == preparacao) ? 1'b1 : 1'b0;
-        contaL      = (Eatual == nova_seq) ? 1'b1 : 1'b0;
+        contaL      = (Eatual == proxima_seq) ? 1'b1 : 1'b0;
 
         // Saida de depuracao (estado)
         case (Eatual)
@@ -118,6 +103,7 @@ module exp5_unidade_controle (
             registra:    db_estado = 4'b0100;  // 4
             comparacao:  db_estado = 4'b0101;  // 5
             proximo:     db_estado = 4'b0110;  // 6
+            proxima_seq: db_estado = 4'b0111;  // 7
             fim_acerto:  db_estado = 4'b1010;  // A
             fim_erro:    db_estado = 4'b1110;  // E
             fim_timeout: db_estado = 4'b1101;  // D (deu ruim)

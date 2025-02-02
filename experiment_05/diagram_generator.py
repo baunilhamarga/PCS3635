@@ -10,16 +10,16 @@ dot_moore = graphviz.Digraph(format='png')
 
 # Definição dos estados com ações dentro das elipses (Moore Machine)
 states_moore = {
-    "inicial": "Inicial\nzeraE=1, zeraR=1",
-    "preparacao": "Preparação\nzeraE=1, zeraL=1",
+    "inicial": "Inicial\nzeraE=1\nzeraR=1",
+    "preparacao": "Preparação\nzeraE=1\nzeraL=1",
     "nova_seq": "Nova Sequência\ncontaL=1",
     "espera": "Espera\ncontaT=1",
     "registra": "Registra\nregistraR=1",
     "comparacao": "Comparação",
     "proximo": "Próximo\ncontaE=1",
-    "fim_acerto": "Fim (Acertou)\npronto=1, acertou=1",
+    "fim_acerto": "Fim (Acertou)\npronto=1\nacertou=1",
     "fim_erro": "Fim (Errou)\npronto=1, errou=1",
-    "fim_timeout": "Fim (Timeout)\npronto=1, deu_timeout=1"
+    "fim_timeout": "Fim (Timeout)\npronto=1\ndeu_timeout=1"
 }
 
 # Adicionando nós ao grafo
@@ -50,6 +50,6 @@ for src, dst, label in transitions_moore:
 
 # Salvar o diagrama como PNG no diretório especificado
 output_path = os.path.join(output_dir, "diagrama_moore")
-dot_moore.render(output_path, format="pdf")
+dot_moore.render(output_path, format="png")
 
 print(f"Diagrama salvo em: {output_path}.png")
