@@ -1,6 +1,6 @@
 //------------------------------------------------------------------
 // Arquivo   : exp4_unidade_controle.v
-// Projeto   : Experiencia 4 - Projeto de uma Unidade de Controle
+// Projeto   : Experiencia 5 - Projeto de uma Unidade de Controle
 //------------------------------------------------------------------
 // Descricao : Unidade de controle
 //
@@ -106,7 +106,7 @@ module exp5_unidade_controle (
         perdeu       = (Eatual == fim_erro || Eatual == fim_timeout) ? 1'b1 : 1'b0;
         deu_timeout = (Eatual == fim_timeout) ? 1'b1 : 1'b0;
         contaT      = (Eatual == espera) ? 1'b1: 1'b0;
-        zeraL       = (Eatual == jogar || Eatual == preparacao) ? 1'b1 : 1'b0;
+        zeraL       = (Eatual == preparacao) ? 1'b1 : 1'b0;
         contaL      = (Eatual == nova_seq) ? 1'b1 : 1'b0;
 
         // Saida de depuracao (estado)
