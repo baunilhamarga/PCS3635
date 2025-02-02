@@ -5,25 +5,25 @@ import os
 output_dir = "images"
 os.makedirs(output_dir, exist_ok=True)
 
-# Raidus of the circles
+# Radius of the circles (fixed size for uniform appearance)
 radius = 2.6
 
 # Create state diagram with left-to-right layout
 dot_moore = graphviz.Digraph(engine="dot", graph_attr={"rankdir": "LR", "splines": "true"})
 
-# Define states with identifiers and high-level signal descriptions
+# Define states with identifiers and low-level signal descriptions
 states_moore = {
-    "inicial": "0: Inicial\nZera contador de endereço\nZera registrador",
-    "preparacao": "1: Preparação\nZera contador de endereço\nZera contador de sequência",
-    "nova_seq": "2: Nova Seq\nZera contador de endereço",
-    "espera": "3: Espera\nIncrementa temporizador",
-    "registra": "4: Registra\nArmazena jogada",
-    "comparacao": "5: Comparação\nVerifica equivalência",
-    "proximo": "6: Próximo\nIncrementa contador de endereço",
-    "proxima_seq": "7: Próxima Seq\nIncrementa contador de sequência",
-    "fim_acerto": "A: Fim (Acertou)\nSinaliza jogo concluído\nAtiva saída de sucesso",
-    "fim_erro": "E: Fim (Errou)\nSinaliza jogo concluído\nAtiva saída de erro",
-    "fim_timeout": "D: Fim (Timeout)\nSinaliza jogo concluído\nAtiva saída de timeout"
+    "inicial": "0: Inicial\nzeraE=1, zeraR=1",
+    "preparacao": "1: Preparação\nzeraE=1, zeraL=1",
+    "nova_seq": "2: Nova Seq\nzeraE=1",
+    "espera": "3: Espera\ncontaT=1",
+    "registra": "4: Registra\nregistraR=1",
+    "comparacao": "5: Comparação",
+    "proximo": "6: Próximo\ncontaE=1",
+    "proxima_seq": "7: Próxima Seq\ncontaL=1",
+    "fim_acerto": "A: Fim (Acertou)\npronto=1, acertou=1",
+    "fim_erro": "E: Fim (Errou)\npronto=1, errou=1",
+    "fim_timeout": "D: Fim (Timeout)\npronto=1, deu_timeout=1"
 }
 
 # Add nodes with fixed-size circles
@@ -54,7 +54,7 @@ for src, dst, label in transitions_moore:
     dot_moore.edge(src, dst, label)
 
 # Define output paths
-output_path = os.path.join(output_dir, "diagrama_moore_low")
+output_path = os.path.join(output_dir, "diagrama_moore_low_level")
 
 # Save as DOT file
 dot_moore.save(output_path + ".dot")
