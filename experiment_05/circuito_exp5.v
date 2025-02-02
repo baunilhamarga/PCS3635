@@ -96,8 +96,8 @@ module circuito_exp5 (
         .registraR   ( s_registraR    ),
         .pronto      ( pronto         ),
         .db_estado   ( s_estado       ),
-        .ganhou     ( ganhou        ),
-        .perdeu       ( perdeu          ),
+        .ganhou      ( ganhou         ),
+        .perdeu      ( perdeu         ),
         .deu_timeout ( db_timeout     ),
         .contaT      ( s_contaT       )
     );
