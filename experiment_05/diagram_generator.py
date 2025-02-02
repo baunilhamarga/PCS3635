@@ -1,33 +1,33 @@
 import graphviz
 import os
 
-# Criar diretório para saída se não existir
+# Create output directory if it doesn't exist
 output_dir = "images"
 os.makedirs(output_dir, exist_ok=True)
 
-# Criando o diagrama de estados (Máquina de Moore)
+# Create state diagram with left-to-right layout
 dot_moore = graphviz.Digraph(engine="dot", graph_attr={"rankdir": "LR", "splines": "true"})
 
-# Definição dos estados com ações dentro das elipses (Máquina de Moore)
+# Define states with identifiers and actions inside the ellipses
 states_moore = {
-    "inicial": "Inicial\nzeraE=1\nzeraR=1",
-    "preparacao": "Preparação\nzeraE=1\nzeraL=1",
-    "nova_seq": "Nova Seq\nzeraE=1",
-    "espera": "Espera\ncontaT=1",
-    "registra": "Registra\nregistraR=1",
-    "comparacao": "Comparação",
-    "proximo": "Próximo\ncontaE=1",
-    "proxima_seq": "Próxima Seq\ncontaL=1",
-    "fim_acerto": "Fim (Acertou)\npronto=1\nacertou=1",
-    "fim_erro": "Fim (Errou)\npronto=1\nerrou=1",
-    "fim_timeout": "Fim (Timeout)\npronto=1\ndeu_timeout=1"
+    "inicial": "0: Inicial\nzeraE=1\nzeraR=1",
+    "preparacao": "1: Preparação\nzeraE=1\nzeraL=1",
+    "nova_seq": "2: Nova Seq\nzeraE=1",
+    "espera": "3: Espera\ncontaT=1",
+    "registra": "4: Registra\nregistraR=1",
+    "comparacao": "5: Comparação",
+    "proximo": "6: Próximo\ncontaE=1",
+    "proxima_seq": "7: Próxima Seq\ncontaL=1",
+    "fim_acerto": "A: Fim (Acertou)\npronto=1\nacertou=1",
+    "fim_erro": "E: Fim (Errou)\npronto=1\nerrou=1",
+    "fim_timeout": "D: Fim (Timeout)\npronto=1\ndeu_timeout=1"
 }
 
-# Adicionando estados ao grafo
+# Add nodes to the graph
 for state, label in states_moore.items():
     dot_moore.node(state, label, shape="ellipse")
 
-# Definição das transições
+# Define transitions
 transitions_moore = [
     ("inicial", "preparacao", "jogar"),
     ("preparacao", "espera", ""),
@@ -46,15 +46,17 @@ transitions_moore = [
     ("fim_timeout", "preparacao", "jogar")
 ]
 
-# Adicionando transições ao grafo
+# Add transitions to the graph
 for src, dst, label in transitions_moore:
     dot_moore.edge(src, dst, label)
 
-# Salvar como DOT
+# Define output paths
 output_path = os.path.join(output_dir, "diagrama_moore")
+
+# Save as DOT file
 dot_moore.save(output_path + ".dot")
 
-# Converter DOT para PNG
-os.system(f"dot -Tpng {output_path}.dot -o {output_path}.png")
+# Convert DOT to PDF
+os.system(f"dot -Tpdf {output_path}.dot -o {output_path}.pdf")
 
-print(f"Diagrama salvo em: {output_path}.png")
+print(f"Diagrama salvo em: {output_path}.pdf")
