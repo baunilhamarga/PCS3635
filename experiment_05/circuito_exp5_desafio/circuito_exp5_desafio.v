@@ -11,7 +11,7 @@
 //     25/01/2025  1.0     Ana Vitória       versao inicial
 //------------------------------------------------------------------
 //
-module circuito_exp5 (
+module circuito_exp5_desafio (
     input clock,
     input reset,
     input jogar,
@@ -52,11 +52,13 @@ module circuito_exp5 (
     wire s_igualL;
     wire s_zeraR;
     wire s_registraR;
+    wire s_nivel;
 
     // Fluxo de Dados
     exp5_fluxo_dados FD (
         .clock                     ( clock          ),
         .botoes                    ( botoes         ),
+        .nivel                     ( s_nivel        ),
         .zeraR                     ( s_zeraR        ), // zera registradores
         .registraR                 ( s_registraR    ), // registra registradores
         .contaE                    ( s_contaE       ),
@@ -83,6 +85,7 @@ module circuito_exp5 (
         .clock       ( clock          ),
         .timeout     ( s_fim_timeout  ),
         .reset       ( reset          ),
+        .nivel       ( nivel          ),
         .jogar       ( jogar          ),
         .fimE        ( s_fimE         ),
         .fimL        ( s_fimL         ),
@@ -100,7 +103,8 @@ module circuito_exp5 (
         .ganhou      ( ganhou         ),
         .perdeu      ( perdeu         ),
         .deu_timeout ( db_timeout     ),
-        .contaT      ( s_contaT       )
+        .contaT      ( s_contaT       ),
+        .nivel_uc    ( s_nivel        )
     );
 
     // Display das botoes

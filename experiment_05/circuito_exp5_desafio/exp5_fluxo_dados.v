@@ -16,6 +16,7 @@ module exp5_fluxo_dados (
     input clock,
     input contaL,
     input zeraL,
+    input nivel,
     input zeraE,
     input contaE,
     input contaT,
@@ -40,7 +41,17 @@ module exp5_fluxo_dados (
     wire [3:0] s_dado;
     wire [3:0] s_botoes;
     wire [3:0] s_limite;
+    wire [3:0] s_limite_fixo;
     wire tem_jogada = |botoes;
+    wire rco;
+
+    // mux
+    mux2x1 mux (
+        .D0 (s_endereco[3]),
+        .D1 (rco),
+        .SEL (nivel),
+        .OUT (fimE)
+    );
 
     // contador endereços
     contador_163 contEnd (
@@ -51,7 +62,7 @@ module exp5_fluxo_dados (
         .enp   (contaE),
         .D     (4'b0),
         .Q     (s_endereco),
-        .rco   (fimE)
+        .rco   (rco)
     );
 
     // contador limites
