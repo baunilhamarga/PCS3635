@@ -125,3 +125,59 @@ Conclusão do Planejamento:  Excelente. Relatam o que foi feito, analisam critic
 Nota e Resumo da Avaliação: 2,05/2,0 (arred. 2,1). Sim, a nota superou o máximo devido ao bônus de excederem as expectativas ao já realizarem o projeto com o timeout (dica: ele será uma parte do desafio da aula e terá um tempo diferente de 3s). Mais uma vez, parabéns à equipe pelo planejamento excepcional! Rever apenas, nos textos e tabelas do plano de testes (simulações e testes físicos) os termos "dado" e "jogada", substituindo-os por "jogada" e "rodada" (mais detalhes na seção 1.1-g desta revisão).
 
 Amanhã conversamos sobre as 15h30min investidas no planejamento para avaliar o conforto e a saúde da equipe com esse tempo.
+
+
+Relato
+
+	
+Prazo de Entrega: OK. Dentro do prazo.
+
+
+
+Ajustes do Planejamento: Notação "jogada" e "rodada" ajustada. OK.
+
+
+
+Relato Experimental do Projeto Base:
+
+- Resultados: Incluídos nas seções 5.4 e 5.5 para os cenários de teste previstos.
+
+- Evidências Probatórias: Inclusão de fotos dos resultados finais dos cenários de teste: acerto do jogo completo, erro por falha de jogada e erro de timeout (já com modificação de 5s). As três fotos possuem anotações.
+
+- Análise: Incluída em coluna correspondente da tabela do plano de testes.
+
+- QAR Projeto Base Final: Entregue. OK.
+
+
+
+Desafio Timeout 5s + Nível de Dificuldade:
+
+- Projeto Lógico: Ambas as modificações foram adequadamente descritas ao longo das seções 6.2 e 6.5:
+
+a) Timeout 5s: Alteração na instanciação de "contador_M" preexistente no projeto com correção de reset na Unidade de Controle para tratar timeout antecipado em situações excepcionais (1ª jogada após novo jogo);
+
+b) Nível de Dificuldade: Alteração do fluxo de dados para multiplexar sinal "fimE" entre AND "0111" (fácil) e RCO de contLmt ("1111"). Alteração da unidade de controle para ler sinal de nível apenas no início do jogo (estado preparacao).
+
+- Plano de Testes: Incluíram três cenários de teste: acerto no modo difícil com transição da chave de nível durante o jogo (começo), acerto no modo fácil e timeout de 5s (modo difícil). Não incluíram simulações de não regressão de erro por jogada incorreta (discutido em classe).
+
+- Simulações: Realizadas no ModelSim com anotações nas figuras e análises textuais. Bom.
+
+- Pinagem: Apresentada em tabela e com print do pin planner.
+
+- Resultados Práticos: Relatados por meio de coluna nas tabelas do plano de testes e por meio de fotos dos resultados finais dos cenários envolvendo nível de dificuldade.
+
+- Evidências Probatórias: Inclusão de fotos dos resultados finais dos cenários de teste. Todas possuem anotações.
+
+- Análise: Incluída em coluna correspondente da tabela do plano de testes. Cenário do timeout possui considerações adicionais sobre relato de atividades e decisões de projeto tomadas durante o experimento.
+
+- QAR Desafio: Entregue. OK.
+
+- ModelSim Desafio: Entregue. OK.
+
+
+
+Conclusão do Relatório: Relata de forma sucinta mas completa o transcurso do experimento, com detalhes sobre as atividades realizadas, problemas enfrentados, correções/modificações realizadas e balanço da atividade.
+
+
+
+Nota: 1,0/1,0. Relato ótimo, como de costume. Com o aumento da complexidade do sistema, percebeu-se que prover evidências documentais exaustivas dentro do tempo disponível para a preparação do relato consome bastante tempo e pode ser inviável. Abordagem do grupo de manter  resultados-chave amparados com fotos, mas mantendo o rigor das anotações nelas, e documentando detalhadamente o projeto lógico e as simulações das modificações, foi uma decisão de organização bem acertada.
