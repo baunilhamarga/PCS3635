@@ -26,6 +26,7 @@ module circuito_exp5_tb1;
     reg        reset_in   = 0;
     reg        jogar_in = 0;
     reg  [3:0] botoes_in  = 4'b0000;
+    reg        nivel_in = 0;
 
     wire       ganhou_out;
     wire       perdeu_out  ;
@@ -43,6 +44,7 @@ module circuito_exp5_tb1;
     wire       db_timeout_out    ;
     wire       db_contaL_out     ;
     wire [6:0] db_limite_out     ;
+    wire       db_nivel_out      ;
 
     // Configuração do clock
     parameter clockPeriod = 1_000_000; // in ns, f=1KHz
@@ -59,8 +61,9 @@ module circuito_exp5_tb1;
       .reset          ( reset_in    ),
       .jogar          ( jogar_in    ),
       .botoes         ( botoes_in   ),
-      .ganhou        ( ganhou_out ),
-      .perdeu          ( perdeu_out   ),
+      .nivel          ( nivel_in    ),
+      .ganhou         ( ganhou_out  ),
+      .perdeu         ( perdeu_out  ),
       .pronto         ( pronto_out  ),
       .leds           ( leds_out    ),
       .db_igualE      ( db_igualE_out      ),
@@ -73,7 +76,8 @@ module circuito_exp5_tb1;
       .db_tem_jogada  ( db_tem_jogada_out  ),
       .db_timeout     ( db_timeout_out     ),
       .db_contaL      ( db_contaL_out      ),
-      .db_limite      ( db_limite_out      )
+      .db_limite      ( db_limite_out      ),
+      .db_nivel       ( db_nivel_out       )
     );
 
     // geracao dos sinais de entrada (estimulos)
@@ -100,6 +104,8 @@ module circuito_exp5_tb1;
 
       // Teste 2. jogar=1 por 5 periodos de clock
       caso = 2;
+      nivel_in = 0;
+      #(2*clockPeriod);
       jogar_in = 1;
       #(5*clockPeriod);
       jogar_in = 0;

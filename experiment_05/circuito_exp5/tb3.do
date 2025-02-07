@@ -20,10 +20,10 @@ add wave -noupdate -color Coral -height 30 /circuito_exp5_tb3/db_igualE_out
 add wave -noupdate -color Coral -height 30 /circuito_exp5_tb3/db_igualL_out
 add wave -noupdate -divider FD
 add wave -noupdate -color Khaki -height 30 /circuito_exp5_tb3/dut/s_memoria
-add wave -noupdate -color Khaki /circuito_exp5_tb3/dut/FD/s_botoes
-add wave -noupdate -color Khaki -radix hexadecimal /circuito_exp5_tb3/dut/s_contagem
+add wave -noupdate -color Khaki -height 30 /circuito_exp5_tb3/dut/FD/s_botoes
+add wave -noupdate -color Khaki -height 30 -radix hexadecimal /circuito_exp5_tb3/dut/s_contagem
 add wave -noupdate -divider UC
-add wave -noupdate -color Magenta -radix hexadecimal /circuito_exp5_tb3/dut/s_limite
+add wave -noupdate -color Magenta -height 30 -radix hexadecimal /circuito_exp5_tb3/dut/s_limite
 add wave -noupdate -color Magenta -height 30 -radix hexadecimal /circuito_exp5_tb3/dut/UC/Eatual
 add wave -noupdate -color Magenta -height 30 /circuito_exp5_tb3/db_contaL_out
 add wave -noupdate -color Magenta -height 30 /circuito_exp5_tb3/db_timeout_out

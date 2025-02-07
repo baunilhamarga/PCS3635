@@ -51,6 +51,7 @@ module circuito_exp5 (
     wire s_igualL;
     wire s_zeraR;
     wire s_registraR;
+    wire s_zeraT;
 
     // Fluxo de Dados
     exp5_fluxo_dados FD (
@@ -74,7 +75,8 @@ module circuito_exp5 (
         .db_tem_jogada             ( db_tem_jogada  ),
         .jogada_feita              ( s_jogada_feita ),
         .controle_timeout          ( s_fim_timeout  ),
-        .db_limite                 ( s_limite       )               
+        .db_limite                 ( s_limite       ),
+        .zeraT                     ( s_zeraT        )               
     );
 
     // Unidade de Controle
@@ -99,7 +101,8 @@ module circuito_exp5 (
         .ganhou      ( ganhou         ),
         .perdeu      ( perdeu         ),
         .deu_timeout ( db_timeout     ),
-        .contaT      ( s_contaT       )
+        .contaT      ( s_contaT       ),
+        .zeraT       ( s_zeraT        )
     );
 
     // Display das botoes

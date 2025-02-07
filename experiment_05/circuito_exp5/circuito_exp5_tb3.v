@@ -1,4 +1,4 @@
-/* --------------------------------------------------------------------
+  /* --------------------------------------------------------------------
  * Arquivo   : circuito_exp4_tb-MODELO.v
  * Projeto   : Experiencia 4 - Desenvolvimento de Projeto de
  *             Circuitos Digitais em FPGA
@@ -59,8 +59,8 @@ module circuito_exp5_tb3;
       .reset          ( reset_in    ),
       .jogar          ( jogar_in    ),
       .botoes         ( botoes_in   ),
-      .ganhou        ( ganhou_out ),
-      .perdeu          ( perdeu_out   ),
+      .ganhou         ( ganhou_out  ),
+      .perdeu         ( perdeu_out  ),
       .pronto         ( pronto_out  ),
       .leds           ( leds_out    ),
       .db_igualE      ( db_igualE_out      ),
@@ -185,3 +185,4 @@ module circuito_exp5_tb3;
     end
 
   endmodule
+

@@ -37,7 +37,8 @@ module exp5_unidade_controle (
     output reg [3:0] db_estado,
     output reg deu_timeout,
     output reg contaT,
-    output reg nivel_uc
+    output reg nivel_uc,
+	output reg zeraT
 );
 
     // Define estados
@@ -111,6 +112,7 @@ module exp5_unidade_controle (
         zeraL       = (Eatual == preparacao) ? 1'b1 : 1'b0;
         contaL      = (Eatual == nova_seq) ? 1'b1 : 1'b0;
         nivel_uc    = (Eatual == preparacao) ? nivel : nivel_uc;
+		zeraT      = (Eatual == proximo || Eatual == nova_seq) ? 1'b1 : 1'b0;
 
         // Saida de depuracao (estado)
         case (Eatual)

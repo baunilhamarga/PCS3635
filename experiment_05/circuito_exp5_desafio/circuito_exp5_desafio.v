@@ -31,7 +31,8 @@ module circuito_exp5_desafio (
     output db_tem_jogada,
     output db_timeout,
     output db_contaL,
-    output [6:0] db_limite
+    output [6:0] db_limite,
+    output db_nivel
 );
     wire [3:0] s_jogada;
     wire [3:0] s_contagem;
@@ -53,12 +54,14 @@ module circuito_exp5_desafio (
     wire s_zeraR;
     wire s_registraR;
     wire s_nivel;
+	 wire s_zeraT;
 
     // Fluxo de Dados
     exp5_fluxo_dados FD (
         .clock                     ( clock          ),
         .botoes                    ( botoes         ),
         .nivel                     ( s_nivel        ),
+		  .zeraT                    ( s_zeraT       ),
         .zeraR                     ( s_zeraR        ), // zera registradores
         .registraR                 ( s_registraR    ), // registra registradores
         .contaE                    ( s_contaE       ),
@@ -104,7 +107,8 @@ module circuito_exp5_desafio (
         .perdeu      ( perdeu         ),
         .deu_timeout ( db_timeout     ),
         .contaT      ( s_contaT       ),
-        .nivel_uc    ( s_nivel        )
+        .nivel_uc    ( s_nivel        ),
+		  .zeraT      ( s_zeraT       )
     );
 
     // Display das botoes
@@ -142,4 +146,5 @@ module circuito_exp5_desafio (
     assign db_igualL = s_igualL;
     assign leds = s_jogada;
     assign db_clock = clock;
+    assign db_nivel = s_nivel;
 endmodule

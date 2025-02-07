@@ -18,6 +18,7 @@ module exp5_fluxo_dados (
     input zeraL,
     input nivel,
     input zeraE,
+	input zeraT,
     input contaE,
     input contaT,
     input zeraR,
@@ -47,7 +48,7 @@ module exp5_fluxo_dados (
 
     // mux
     mux2x1 mux (
-        .D0 (s_endereco[3]),
+        .D0 (&s_endereco[2:0]),
         .D1 (rco),
         .SEL (nivel),
         .OUT (fimE)
@@ -124,10 +125,10 @@ module exp5_fluxo_dados (
         .pulso (jogada_feita)
     );
 
-    contador_m #(.M(3000), .N(12)) contador_timeout (
+    contador_m #(.M(5000), .N(13)) contador_timeout (
         .clock   (clock),
-        .zera_as (zeraR | zeraL),
-        .zera_s  (contaE),
+        .zera_as (zeraC || zeraR),
+        .zera_s  (zeraT),
         .conta   (contaT),
         .Q       (),
         .fim     (controle_timeout), 

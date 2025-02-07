@@ -23,9 +23,11 @@ module circuito_exp5_tb3;
     // Sinais para conectar com o DUT
     // valores iniciais para fins de simulacao (ModelSim)
     reg        clock_in   = 1;
+    reg        clock_in   = 1;
     reg        reset_in   = 0;
     reg        jogar_in = 0;
     reg  [3:0] botoes_in  = 4'b0000;
+    reg        nivel_in = 0;
 
     wire       ganhou_out;
     wire       perdeu_out  ;
@@ -43,6 +45,7 @@ module circuito_exp5_tb3;
     wire       db_timeout_out    ;
     wire       db_contaL_out     ;
     wire [6:0] db_limite_out     ;
+    wire       db_nivel_out      ;
 
     // Configuração do clock
     parameter clockPeriod = 1_000_000; // in ns, f=1KHz
@@ -59,8 +62,9 @@ module circuito_exp5_tb3;
       .reset          ( reset_in    ),
       .jogar          ( jogar_in    ),
       .botoes         ( botoes_in   ),
-      .ganhou         ( ganhou_out ),
-      .perdeu         ( perdeu_out   ),
+      .nivel          ( nivel_in    ),
+      .ganhou         ( ganhou_out  ),
+      .perdeu         ( perdeu_out  ),
       .pronto         ( pronto_out  ),
       .leds           ( leds_out    ),
       .db_igualE      ( db_igualE_out      ),
@@ -73,7 +77,8 @@ module circuito_exp5_tb3;
       .db_tem_jogada  ( db_tem_jogada_out  ),
       .db_timeout     ( db_timeout_out     ),
       .db_contaL      ( db_contaL_out      ),
-      .db_limite      ( db_limite_out      )
+      .db_limite      ( db_limite_out      ),
+      .db_nivel       ( db_nivel_out       )
     );
 
     // geracao dos sinais de entrada (estimulos)
@@ -100,6 +105,7 @@ module circuito_exp5_tb3;
 
       // Teste 2. jogar=1 por 5 periodos de clock
       caso = 2;
+      nivel_in = 0;
       jogar_in = 1;
       #(5*clockPeriod);
       jogar_in = 0;
@@ -175,7 +181,7 @@ module circuito_exp5_tb3;
       #(10*clockPeriod);
       botoes_in = 4'b0000;
       // espera entre jogadas
-      #(4000*clockPeriod);
+      #(6000*clockPeriod);
 
       // final dos casos de teste da simulacao
       caso = 99;

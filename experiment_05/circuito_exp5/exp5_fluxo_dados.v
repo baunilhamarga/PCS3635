@@ -20,6 +20,7 @@ module exp5_fluxo_dados (
     input contaE,
     input contaT,
     input zeraR,
+    input zeraT,
     input registraR,
     input [3:0] botoes,
     output enderecoMenorOuIguaLimite,
@@ -113,10 +114,10 @@ module exp5_fluxo_dados (
         .pulso (jogada_feita)
     );
 
-    contador_m #(.M(3000), .N(12)) contador_timeout (
+    contador_m #(.M(5000), .N(13)) contador_timeout (
         .clock   (clock),
-        .zera_as (zeraR | zeraL),
-        .zera_s  (contaE),
+        .zera_as (zeraC || zeraR),
+        .zera_s  (zeraT),
         .conta   (contaT),
         .Q       (),
         .fim     (controle_timeout), 

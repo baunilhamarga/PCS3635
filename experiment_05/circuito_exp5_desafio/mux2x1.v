@@ -26,7 +26,7 @@ always @(*) begin
     case (SEL)
         1'b0:    OUT = D0;
         1'b1:    OUT = D1;
-        default: OUT = 4'b0000; // saida em 0
+        default: OUT = 0; // saida em 0
     endcase
 end
 
