@@ -1,0 +1,145 @@
+//------------------------------------------------------------------
+// Arquivo   : circuito_exp6.v
+// Projeto   : Experiencia 6 - Jogo da Memória
+//------------------------------------------------------------------
+// Descricao : Circuito da Experiência 6
+//             
+//------------------------------------------------------------------
+// Revisoes  :
+//     Data        Versao  Autor             Descricao
+//     25/01/2025  1.0     Ana Vitória       versao inicial
+//------------------------------------------------------------------
+//
+module circuito_exp6 (
+    input clock,
+    input reset,
+    input jogar,
+    input nivel,
+    input [3:0] botoes,
+    output ganhou,
+    output perdeu,
+    output timeout,
+    output pronto,
+    output [3:0] leds,
+    output [6:0] db_contagem,
+    output [6:0] db_memoria,
+    output [6:0] db_sequencia,
+    output [6:0] db_estado,
+    output [6:0] db_jogada_feita,
+    output db_enderecoIgualSequencia,
+    output db_chavesIgualMemoria
+);
+    // quaisquer sinais terminados em L, referem-se ao sequencia/sequência, terminados em E, referem-se aos endereços, 
+    // terminados em T, referem-se ao timeout
+
+    wire [3:0] s_jogada_feita;
+    wire [3:0] s_contagem;
+    wire [3:0] s_memoria;
+    wire [3:0] s_estado;
+    wire [3:0] s_sequencia;
+    wire s_tem_jogada;
+    wire s_fimE;
+    wire s_fimS;
+    wire s_igualE;
+    wire s_fim_timeout;
+    wire s_contaT;
+    wire s_contaS;
+    wire s_zeraS;
+    wire s_contaE;
+    wire s_zeraE;
+    wire s_igualS;
+    wire s_zeraR;
+    wire s_registraR;
+    wire s_nivel;
+	wire s_zeraT;
+    wire s_timeoutL;
+    wire s_maiorS;
+
+    // Fluxo de Dados
+    exp6_fluxo_dados FD (
+        .clock                     ( clock          ),
+        .botoes                    ( botoes         ),
+        .nivel                     ( s_nivel        ),
+        .zeraT                     ( s_zeraT        ),
+        .zeraR                     ( s_zeraR        ),
+        .registraR                 ( s_registraR    ),
+        .contaE                    ( s_contaE       ),
+        .contaS                    ( s_contaS       ),
+        .contaT                    ( s_contaT       ),
+        .zeraE                     ( s_zeraE        ),
+        .zeraS                     ( s_zeraS        ),
+        .igual                     ( s_igualE       ),
+        .enderecoIgualSequencia    ( s_igualS       ),
+        .fimE                      ( s_fimE         ),
+        .fimS                      ( s_fimS         ),
+        .db_contagem               ( s_contagem     ),
+        .db_jogada_feita           ( s_jogada_feita ),
+        .db_memoria                ( s_memoria      ),
+        .tem_jogada                ( s_tem_jogada   ),
+        .controle_timeout          ( s_fim_timeout  ),
+        .db_sequencia              ( s_sequencia    ),
+        .controle_timeout_led      ( s_timeoutL     ),
+        .enderecoMaiorQueSequencia ( s_maiorS       )
+    );
+
+    // Unidade de Controle
+    exp6_unidade_controle UC (
+        .clock       ( clock          ),
+        .reset       ( reset          ),
+        .jogar       ( jogar          ),
+        .nivel       ( nivel          ),
+        .fimE        ( s_fimE         ),
+        .igualE      ( s_igualE       ),
+        .igualS      ( s_igualS       ),
+        .tem_jogada  ( s_tem_jogada   ),
+        .timeout     ( s_fim_timeout  ),
+        .timeoutL    ( s_timeoutL     ),
+        .maiorS      ( s_maiorS       ),
+        .zeraE       ( s_zeraE        ),
+        .contaE      ( s_contaE       ),
+        .zeraS       ( s_zeraS        ),
+        .contaS      ( s_contaS       ),
+        .zeraR       ( s_zeraR        ),
+        .registraR   ( s_registraR    ),
+        .ganhou      ( ganhou         ),
+        .perdeu      ( perdeu         ),
+        .pronto      ( pronto         ),
+        .db_estado   ( s_estado       ),
+        .deu_timeout ( timeout        ),
+        .contaT      ( s_contaT       ),
+        .nivel_uc    ( s_nivel        ),
+        .zeraT       ( s_zeraT        )
+    );
+
+    // Display das botoes
+    hexa7seg HEX2 (
+        .hexa    ( s_jogada_feita  ),
+        .display ( db_jogada_feita )
+    );
+
+    // Display dos endereços codificados
+    hexa7seg HEX0 (
+        .hexa    ( s_contagem  ),
+        .display ( db_contagem )
+    );
+
+    // Display do conteúdo em uma posição de memória
+    hexa7seg HEX1 (
+        .hexa    ( s_memoria  ),
+        .display ( db_memoria )
+    );
+
+    // Display do estado atual
+    hexa7seg HEX5 (
+        .hexa    ( s_estado  ),
+        .display ( db_estado )
+    );
+
+    // Display da sequência atual
+    hexa7seg HEX3 (
+        .hexa    ( s_sequencia  ),
+        .display ( db_sequencia )
+    );
+
+    assign leds = s_jogada_feita;
+endmodule
