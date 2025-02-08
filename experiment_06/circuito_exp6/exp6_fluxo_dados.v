@@ -27,14 +27,14 @@ module exp6_fluxo_dados (
     output enderecoIgualSequencia,
     output fimE,
     output fimS,
+    output jogada_feita,
     output [3:0] db_contagem,
     output [3:0] db_jogada_feita,
     output [3:0] db_memoria,
-    output tem_jogada,
     output controle_timeout,
     output [3:0] db_sequencia,
     output controle_timeout_led,
-    output enderecoMaiorQueSequencia
+    output sequenciaMenorQueEndereco
 );
 
     wire [3:0] s_endereco;
@@ -96,8 +96,8 @@ module exp6_fluxo_dados (
         .ALBi (1'b0),
         .AGBi (1'b0),
         .AEBi (1'b1),
-        .ALBo (),
-        .AGBo (enderecoMaiorQueSequencia),
+        .ALBo (sequenciaMenorQueEndereco),
+        .AGBo (),
         .AEBo (enderecoIgualSequencia)
     );
 
@@ -136,6 +136,6 @@ module exp6_fluxo_dados (
 
     assign db_memoria  = s_dado;
     assign db_contagem = s_endereco;
-    assign tem_jogada = s_tem_jogada;
     assign db_sequencia = s_sequencia;
+    assign db_jogada_feita = s_botoes;
 endmodule

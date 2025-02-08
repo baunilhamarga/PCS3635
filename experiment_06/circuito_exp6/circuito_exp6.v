@@ -29,8 +29,6 @@ module circuito_exp6 (
     output db_enderecoIgualSequencia,
     output db_chavesIgualMemoria
 );
-    // quaisquer sinais terminados em L, referem-se ao sequencia/sequência, terminados em E, referem-se aos endereços, 
-    // terminados em T, referem-se ao timeout
 
     wire [3:0] s_jogada_feita;
     wire [3:0] s_contagem;
@@ -53,7 +51,7 @@ module circuito_exp6 (
     wire s_nivel;
 	wire s_zeraT;
     wire s_timeoutL;
-    wire s_maiorS;
+    wire s_menorS;
 
     // Fluxo de Dados
     exp6_fluxo_dados FD (
@@ -75,11 +73,11 @@ module circuito_exp6 (
         .db_contagem               ( s_contagem     ),
         .db_jogada_feita           ( s_jogada_feita ),
         .db_memoria                ( s_memoria      ),
-        .tem_jogada                ( s_tem_jogada   ),
+        .jogada_feita              ( s_tem_jogada   ),
         .controle_timeout          ( s_fim_timeout  ),
         .db_sequencia              ( s_sequencia    ),
         .controle_timeout_led      ( s_timeoutL     ),
-        .enderecoMaiorQueSequencia ( s_maiorS       )
+        .sequenciaMenorQueEndereco ( s_menorS       )
     );
 
     // Unidade de Controle
@@ -94,7 +92,8 @@ module circuito_exp6 (
         .tem_jogada  ( s_tem_jogada   ),
         .timeout     ( s_fim_timeout  ),
         .timeoutL    ( s_timeoutL     ),
-        .maiorS      ( s_maiorS       ),
+        .menorS      ( s_menorS       ),
+        .memoria     ( s_memoria      ),
         .zeraE       ( s_zeraE        ),
         .contaE      ( s_contaE       ),
         .zeraS       ( s_zeraS        ),
@@ -108,7 +107,8 @@ module circuito_exp6 (
         .deu_timeout ( timeout        ),
         .contaT      ( s_contaT       ),
         .nivel_uc    ( s_nivel        ),
-        .zeraT       ( s_zeraT        )
+        .zeraT       ( s_zeraT        ),
+        .leds        ( leds           )
     );
 
     // Display das botoes
@@ -141,5 +141,4 @@ module circuito_exp6 (
         .display ( db_sequencia )
     );
 
-    assign leds = s_jogada_feita;
 endmodule
