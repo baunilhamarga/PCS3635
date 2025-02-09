@@ -29,7 +29,10 @@ module jogo_desafio_memoria (
     output [6:0] db_memoria,
     output [6:0] db_jogadafeita,
     output [6:0] db_sequencia,
-    output [6:0] db_estado
+    output [6:0] db_estado,
+    // Nossos debugs
+    output db_timeout,
+    output db_timeoutL
 );
 
     wire [3:0] s_jogadafeita;
