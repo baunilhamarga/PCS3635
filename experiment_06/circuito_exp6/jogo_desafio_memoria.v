@@ -79,7 +79,8 @@ module jogo_desafio_memoria (
         .controle_timeout          ( s_fim_timeout  ),
         .db_sequencia              ( s_sequencia    ),
         .controle_timeout_led      ( s_timeoutL     ),
-        .sequenciaMenorQueEndereco ( s_menorS       )
+        .sequenciaMenorQueEndereco ( s_menorS       ),
+        .leds                      ( leds           )
     );
 
     // Unidade de Controle
