@@ -85,22 +85,11 @@ module jogo_desafio_memoria_tb1;
 
         // Condições iniciais
         caso = 0;
-                $display("case");
-
         clock_in = 1;
-                $display("clock_in");
-
         reset_in = 0;
-                $display("reset");
-
         jogar_in = 0;
-                $display("jogar");
-
-
         botoes_in = 4'b0000;
         #(clockPeriod);
-                $display("clock");
-
 
         // Teste 1: Reset do circuito
         caso = 1;
