@@ -7,7 +7,7 @@
  * Descricao : contador binario, modulo m, com parametros 
  *             M (modulo do contador) e N (numero de bits),
  *             sinais para clear assincrono (zera_as) e sincrono (zera_s)
- *             e saidas de fim e decimo de contagem
+ *             e saidas de fim e meio de contagem
  *             
  *-----------------------------------------------------------------------
  * Revisoes  :
@@ -25,7 +25,7 @@ module contador_m #(parameter M=100, N=7)
    input  wire          conta,
    output reg  [N-1:0]  Q,
    output reg           fim,
-   output reg           decimo
+   output reg           meio
   );
 
   always @(posedge clock or posedge zera_as) begin
@@ -50,7 +50,7 @@ module contador_m #(parameter M=100, N=7)
       else            fim = 0;
 
   always @ (Q)
-      if (Q == M/10-1) decimo = 1;
-      else             decimo = 0;
+      if (Q == M/2-1) meio = 1;
+      else             meio = 0;
 
 endmodule
