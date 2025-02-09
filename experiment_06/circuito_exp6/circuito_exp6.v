@@ -141,4 +141,7 @@ module circuito_exp6 (
         .display ( db_sequencia )
     );
 
+assign db_chavesIgualMemoria = s_igualE;
+assign db_enderecoIgualSequencia = s_igualS;
+
 endmodule
