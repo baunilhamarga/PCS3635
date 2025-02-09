@@ -10,7 +10,7 @@ add wave -noupdate -color Red -height 30 /jogo_desafio_memoria_tb1/botoes_in
 add wave -noupdate -color Red -height 30 /jogo_desafio_memoria_tb1/nivel_in
 add wave -noupdate -divider {Deteccao de jogada}
 add wave -noupdate -color Gold -height 30 /jogo_desafio_memoria_tb1/db_tem_jogada_out
-add wave -noupdate -color Magenta -height 30 /jogo_desafio_memoria_tb1/dut/FD/jogada_feita
+add wave -noupdate -color Magenta -height 30 /jogo_desafio_memoria_tb1/dut/FD/tem_jogada
 add wave -noupdate -divider Resultado
 add wave -noupdate -color Cyan -height 30 /jogo_desafio_memoria_tb1/ganhou_out
 add wave -noupdate -color Cyan -height 30 /jogo_desafio_memoria_tb1/perdeu_out
