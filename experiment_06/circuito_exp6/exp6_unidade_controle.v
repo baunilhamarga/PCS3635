@@ -61,7 +61,7 @@ module exp6_unidade_controle (
     // Variaveis de estado
     reg [3:0] Eatual, Eprox;
 
-    reg [10*8-1:0] Eatual_str;
+    reg [14*8-1:0] Eatual_str;
     always@(Eatual) begin
         case(Eatual)
             inicial:        Eatual_str = "inicial";
