@@ -155,4 +155,6 @@ assign db_fimS = s_fimS;
 assign db_tem_jogada = s_tem_jogada;
 assign db_clock = clock;
 assign nivel = 1'b1;
+assign db_timeout = s_fim_timeout;
+assign db_timeoutL = s_timeoutL;
 endmodule
