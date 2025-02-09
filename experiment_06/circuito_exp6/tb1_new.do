@@ -29,7 +29,7 @@ add wave -noupdate -color Blue /jogo_desafio_memoria_tb1/db_chavesIgualMemoria_o
 add wave -noupdate -color Blue /jogo_desafio_memoria_tb1/db_enderecoIgualSequencia_out
 add wave -noupdate -color Blue /jogo_desafio_memoria_tb1/db_fimS_out
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {6161000000 ns} 0} {{Cursor 2} {59008890712 ns} 0}
+WaveRestoreCursors {{Cursor 1} {129914000000 ns} 0} {{Cursor 2} {145914000000 ns} 0}
 quietly wave cursor active 2
 configure wave -namecolwidth 166
 configure wave -valuecolwidth 98
@@ -45,4 +45,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ms
 update
-WaveRestoreZoom {0 ns} {21320183779 ns}
+WaveRestoreZoom {128078110341 ns} {147732205772 ns}
