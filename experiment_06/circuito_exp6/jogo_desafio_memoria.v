@@ -55,6 +55,7 @@ module jogo_desafio_memoria (
     wire s_timeoutL;
     wire s_menorS;
     wire nivel;
+    wire s_controla_leds;
 
     // Fluxo de Dados
     exp6_fluxo_dados FD (
@@ -69,6 +70,7 @@ module jogo_desafio_memoria (
         .contaT                    ( s_contaT       ),
         .zeraE                     ( s_zeraE        ),
         .zeraS                     ( s_zeraS        ),
+        .controla_leds             ( s_controla_leds),
         .igual                     ( s_igualE       ),
         .enderecoIgualSequencia    ( s_igualS       ),
         .fimE                      ( s_fimE         ),
@@ -85,33 +87,32 @@ module jogo_desafio_memoria (
 
     // Unidade de Controle
     exp6_unidade_controle UC (
-        .clock       ( clock          ),
-        .reset       ( reset          ),
-        .jogar       ( jogar          ),
-        .nivel       ( nivel          ),
-        .fimE        ( s_fimE         ),
-        .igualE      ( s_igualE       ),
-        .igualS      ( s_igualS       ),
-        .tem_jogada  ( s_tem_jogada   ),
-        .timeout     ( s_fim_timeout  ),
-        .timeoutL    ( s_timeoutL     ),
-        .menorS      ( s_menorS       ),
-        .memoria     ( s_memoria      ),
-        .zeraE       ( s_zeraE        ),
-        .contaE      ( s_contaE       ),
-        .zeraS       ( s_zeraS        ),
-        .contaS      ( s_contaS       ),
-        .zeraR       ( s_zeraR        ),
-        .registraR   ( s_registraR    ),
-        .ganhou      ( ganhou         ),
-        .perdeu      ( perdeu         ),
-        .pronto      ( pronto         ),
-        .db_estado   ( s_estado       ),
-        .deu_timeout ( timeout        ),
-        .contaT      ( s_contaT       ),
-        .nivel_uc    ( s_nivel        ),
-        .zeraT       ( s_zeraT        ),
-        .leds        ( leds           )
+        .clock         ( clock          ),
+        .reset         ( reset          ),
+        .jogar         ( jogar          ),
+        .nivel         ( nivel          ),
+        .fimE          ( s_fimE         ),
+        .igualE        ( s_igualE       ),
+        .igualS        ( s_igualS       ),
+        .tem_jogada    ( s_tem_jogada   ),
+        .timeout       ( s_fim_timeout  ),
+        .timeoutL      ( s_timeoutL     ),
+        .menorS        ( s_menorS       ),
+        .zeraE         ( s_zeraE        ),
+        .contaE        ( s_contaE       ),
+        .zeraS         ( s_zeraS        ),
+        .contaS        ( s_contaS       ),
+        .zeraR         ( s_zeraR        ),
+        .registraR     ( s_registraR    ),
+        .ganhou        ( ganhou         ),
+        .perdeu        ( perdeu         ),
+        .pronto        ( pronto         ),
+        .db_estado     ( s_estado       ),
+        .deu_timeout   ( timeout        ),
+        .contaT        ( s_contaT       ),
+        .nivel_uc      ( s_nivel        ),
+        .zeraT         ( s_zeraT        ),
+        .controla_leds ( s_controla_leds)
     );
 
     // Display das botoes
@@ -150,5 +151,4 @@ assign db_fimS = s_fimS;
 assign db_tem_jogada = s_tem_jogada;
 assign db_clock = clock;
 assign nivel = 1'b1;
-
 endmodule
