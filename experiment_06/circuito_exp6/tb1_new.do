@@ -23,15 +23,16 @@ add wave -noupdate -color Khaki -height 30 -radix hexadecimal /jogo_desafio_memo
 add wave -noupdate -color Khaki /jogo_desafio_memoria_tb1/dut/FD/s_sequencia
 add wave -noupdate -divider UC
 add wave -noupdate -radix ascii /jogo_desafio_memoria_tb1/dut/UC/Eatual_str
+add wave -noupdate -color {Pale Green} /jogo_desafio_memoria_tb1/dut/UC/controla_leds
 add wave -noupdate -divider Depuracao
 add wave -noupdate -color Blue /jogo_desafio_memoria_tb1/db_chavesIgualMemoria_out
 add wave -noupdate -color Blue /jogo_desafio_memoria_tb1/db_enderecoIgualSequencia_out
 add wave -noupdate -color Blue /jogo_desafio_memoria_tb1/db_fimS_out
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {36607270678 ns} 0} {{Cursor 2} {3185234017 ns} 0}
-quietly wave cursor active 1
-configure wave -namecolwidth 164
-configure wave -valuecolwidth 100
+WaveRestoreCursors {{Cursor 1} {129914000000 ns} 0} {{Cursor 2} {145914000000 ns} 0}
+quietly wave cursor active 2
+configure wave -namecolwidth 166
+configure wave -valuecolwidth 98
 configure wave -justifyvalue left
 configure wave -signalnamewidth 1
 configure wave -snapdistance 10
@@ -44,4 +45,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ms
 update
-WaveRestoreZoom {138448977590 ns} {138765318022 ns}
+WaveRestoreZoom {128078110341 ns} {147732205772 ns}

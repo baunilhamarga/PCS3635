@@ -38,7 +38,7 @@ module exp6_fluxo_dados (
     output [3:0] db_sequencia,
     output controle_timeout_led,
     output sequenciaMenorQueEndereco,
-    output leds
+    output [3:0] leds
 );
 
     wire [3:0] s_endereco;
