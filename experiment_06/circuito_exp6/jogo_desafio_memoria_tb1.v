@@ -22,6 +22,8 @@ module jogo_desafio_memoria_tb1;
     wire [6:0] db_jogadafeita_out;
     wire [6:0] db_sequencia_out;
     wire [6:0] db_estado_out;
+    wire       db_timeout_out;
+    wire       db_timeoutL_out;
 
     // Configuração do clock
     parameter clockPeriod = 1000; // in us, f=1KHz
@@ -52,7 +54,9 @@ module jogo_desafio_memoria_tb1;
         .db_memoria(db_memoria_out),
         .db_jogadafeita(db_jogadafeita_out),
         .db_sequencia(db_sequencia_out),
-        .db_estado(db_estado_out)
+        .db_estado(db_estado_out),
+        .db_timeout(db_timeout_out),
+        .db_timeoutL(db_timeoutL_out)
     );
 
     // Gabarito
@@ -113,7 +117,7 @@ module jogo_desafio_memoria_tb1;
             caso = i;
             @(negedge clock_in);
 
-            for (j = 0; j < 16; j = j + 1) begin
+            for (j = 0; j < i-2; j = j + 1) begin
                 botoes_in = jogadas[j];
                 #(10 * clockPeriod);
                 botoes_in = 4'b0000;
