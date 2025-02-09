@@ -1,4 +1,4 @@
-`timescale 1ms/1ns
+`timescale 1us/1ns
 
 module jogo_desafio_memoria_tb1;
 
@@ -24,7 +24,7 @@ module jogo_desafio_memoria_tb1;
     wire [6:0] db_estado_out;
 
     // Configuração do clock
-    parameter clockPeriod = 1; // in ms, f=1KHz
+    parameter clockPeriod = 1000; // in us, f=1KHz
 
     // Identificação do caso de teste
     reg [31:0] caso = 0;
@@ -85,11 +85,22 @@ module jogo_desafio_memoria_tb1;
 
         // Condições iniciais
         caso = 0;
+                $display("case");
+
         clock_in = 1;
+                $display("clock_in");
+
         reset_in = 0;
+                $display("reset");
+
         jogar_in = 0;
+                $display("jogar");
+
+
         botoes_in = 4'b0000;
         #(clockPeriod);
+                $display("clock");
+
 
         // Teste 1: Reset do circuito
         caso = 1;
@@ -109,7 +120,7 @@ module jogo_desafio_memoria_tb1;
 
         // Testes de jogadas
         for (i = 3; i <= 18; i = i + 1) begin
-            #(1000 * (i - 2));
+            #(1_000_000 * (i - 2));
             caso = i;
             @(negedge clock_in);
 
