@@ -46,12 +46,12 @@
         </entry>
         <entry>
           <string>externalOutputs</string>
-          <string>ganhou,perdeu,timeout,pronto,leds:4,db_contagem:7,db_memoria:7,db_sequencia:7,db_estado:7,db_jogadafeita:7,db_enderecoIgualSequencia,db_chavesIgualMemoria</string>
+          <string>ganhou,perdeu,timeout,pronto,leds:4,db_contagem:7,db_memoria:7,db_sequencia:7,db_estado:7,db_jogadafeita:7,db_chavesIgualMemoria,db_enderecoIgualSequencia</string>
         </entry>
         <entry>
           <string>Code</string>
           <string>//------------------------------------------------------------------
-// Arquivo   : circuito_exp6.v
+// Arquivo   : jogo_desafio_memoria.v
 // Projeto   : Experiencia 6 - Jogo da Memória
 //------------------------------------------------------------------
 // Descricao : Circuito da Experiência 6
@@ -77,11 +77,10 @@ module jogo_desafio_memoria (
     output [6:0] db_sequencia,
     output [6:0] db_estado,
     output [6:0] db_jogadafeita,
-    output db_enderecoIgualSequencia,
-    output db_chavesIgualMemoria
+    output db_chavesIgualMemoria,
+    output db_enderecoIgualSequencia
 );
 
-    wire nivel; 
     wire [3:0] s_jogadafeita;
     wire [3:0] s_contagem;
     wire [3:0] s_memoria;
@@ -104,6 +103,8 @@ module jogo_desafio_memoria (
     wire s_zeraT;
     wire s_timeoutL;
     wire s_menorS;
+    wire nivel;
+    wire s_controla_leds;
 
     // Fluxo de Dados
     exp6_fluxo_dados FD (
@@ -118,49 +119,50 @@ module jogo_desafio_memoria (
         .contaT                    ( s_contaT       ),
         .zeraE                     ( s_zeraE        ),
         .zeraS                     ( s_zeraS        ),
+        .controla_leds             ( s_controla_leds),
         .igual                     ( s_igualE       ),
         .enderecoIgualSequencia    ( s_igualS       ),
         .fimE                      ( s_fimE         ),
         .fimS                      ( s_fimS         ),
         .db_contagem               ( s_contagem     ),
-        .db_jogadafeita           ( s_jogadafeita ),
+        .db_jogadafeita            ( s_jogadafeita  ),
         .db_memoria                ( s_memoria      ),
-        .tem_jogada              ( s_tem_jogada   ),
+        .tem_jogada                ( s_tem_jogada   ),
         .controle_timeout          ( s_fim_timeout  ),
         .db_sequencia              ( s_sequencia    ),
         .controle_timeout_led      ( s_timeoutL     ),
-        .sequenciaMenorQueEndereco ( s_menorS       )
+        .sequenciaMenorQueEndereco ( s_menorS       ),
+        .leds                      ( leds           )
     );
 
     // Unidade de Controle
     exp6_unidade_controle UC (
-        .clock       ( clock          ),
-        .reset       ( reset          ),
-        .jogar       ( jogar          ),
-        .nivel       ( nivel          ),
-        .fimE        ( s_fimE         ),
-        .igualE      ( s_igualE       ),
-        .igualS      ( s_igualS       ),
-        .tem_jogada  ( s_tem_jogada   ),
-        .timeout     ( s_fim_timeout  ),
-        .timeoutL    ( s_timeoutL     ),
-        .menorS      ( s_menorS       ),
-        .memoria     ( s_memoria      ),
-        .zeraE       ( s_zeraE        ),
-        .contaE      ( s_contaE       ),
-        .zeraS       ( s_zeraS        ),
-        .contaS      ( s_contaS       ),
-        .zeraR       ( s_zeraR        ),
-        .registraR   ( s_registraR    ),
-        .ganhou      ( ganhou         ),
-        .perdeu      ( perdeu         ),
-        .pronto      ( pronto         ),
-        .db_estado   ( s_estado       ),
-        .deu_timeout ( timeout        ),
-        .contaT      ( s_contaT       ),
-        .nivel_uc    ( s_nivel        ),
-        .zeraT       ( s_zeraT        ),
-        .leds        ( leds           )
+        .clock         ( clock          ),
+        .reset         ( reset          ),
+        .jogar         ( jogar          ),
+        .nivel         ( nivel          ),
+        .fimE          ( s_fimE         ),
+        .igualE        ( s_igualE       ),
+        .igualS        ( s_igualS       ),
+        .tem_jogada    ( s_tem_jogada   ),
+        .timeout       ( s_fim_timeout  ),
+        .timeoutL      ( s_timeoutL     ),
+        .menorS        ( s_menorS       ),
+        .zeraE         ( s_zeraE        ),
+        .contaE        ( s_contaE       ),
+        .zeraS         ( s_zeraS        ),
+        .contaS        ( s_contaS       ),
+        .zeraR         ( s_zeraR        ),
+        .registraR     ( s_registraR    ),
+        .ganhou        ( ganhou         ),
+        .perdeu        ( perdeu         ),
+        .pronto        ( pronto         ),
+        .db_estado     ( s_estado       ),
+        .deu_timeout   ( timeout        ),
+        .contaT        ( s_contaT       ),
+        .nivel_uc      ( s_nivel        ),
+        .zeraT         ( s_zeraT        ),
+        .controla_leds ( s_controla_leds)
     );
 
     // Display das botoes
@@ -196,8 +198,20 @@ module jogo_desafio_memoria (
 assign db_chavesIgualMemoria = s_igualE;
 assign db_enderecoIgualSequencia = s_igualS;
 assign nivel = 1&apos;b1;
-
 endmodule
+
+//------------------------------------------------------------------
+// Arquivo   : exp4_fluxo_dados.v
+// Projeto   : Experiencia 6 - Jogo da Memória
+//------------------------------------------------------------------
+// Descricao : Fluxo de Dados da Experiência 6
+//             
+//------------------------------------------------------------------
+// Revisoes  :
+//     Data        Versao  Autor             Descricao
+//     25/01/2025  1.0     Ana Vitória       versao inicial
+//------------------------------------------------------------------
+//
 //------------------------------------------------------------------
 // Arquivo   : exp4_fluxo_dados.v
 // Projeto   : Experiencia 6 - Jogo da Memória
@@ -223,6 +237,7 @@ module exp6_fluxo_dados (
     input contaT,
     input zeraE,
     input zeraS,
+    input controla_leds,
     output igual,
     output enderecoIgualSequencia,
     output fimE,
@@ -234,7 +249,8 @@ module exp6_fluxo_dados (
     output controle_timeout,
     output [3:0] db_sequencia,
     output controle_timeout_led,
-    output sequenciaMenorQueEndereco
+    output sequenciaMenorQueEndereco,
+    output [3:0] leds
 );
 
     wire [3:0] s_endereco;
@@ -338,7 +354,9 @@ module exp6_fluxo_dados (
     assign db_contagem = s_endereco;
     assign db_sequencia = s_sequencia;
     assign db_jogadafeita = s_botoes;
+    assign leds = controla_leds ? s_dado : 4&apos;b0000;
 endmodule
+
 //------------------------------------------------------------------
 // Arquivo   : exp6_unidade_controle.v
 // Projeto   : Experiencia 6 - Jogo da Memória
@@ -365,7 +383,6 @@ module exp6_unidade_controle (
     input timeout,
     input timeoutL,
     input menorS,
-    input [3:0] memoria,
     output reg zeraE,
     output reg contaE,
     output reg zeraS,
@@ -380,7 +397,7 @@ module exp6_unidade_controle (
     output reg contaT,
     output reg nivel_uc,
     output reg zeraT,
-    output reg [3:0] leds
+    output reg controla_leds
 );
 
     // Define estados
@@ -403,7 +420,7 @@ module exp6_unidade_controle (
     // Variaveis de estado
     reg [3:0] Eatual, Eprox;
 
-    reg [10*8-1:0] Eatual_str;
+    reg [14*8-1:0] Eatual_str;
     always@(Eatual) begin
         case(Eatual)
             inicial:        Eatual_str = &quot;inicial&quot;;
@@ -457,20 +474,20 @@ module exp6_unidade_controle (
 
     // Logica de saida (maquina Moore)
     always @* begin
-        zeraE       = (Eatual == inicial || Eatual == preparacao || Eatual == nova_seq || Eatual == comecar_rodada) ? 1&apos;b1 : 1&apos;b0;
-        zeraR       = (Eatual == inicial) ? 1&apos;b1 : 1&apos;b0;
-        registraR   = (Eatual == registra) ? 1&apos;b1 : 1&apos;b0;
-        contaE      = (Eatual == proximo || Eatual == mostrou_led) ? 1&apos;b1 : 1&apos;b0;
-        pronto      = (Eatual == fim_acerto || Eatual == fim_erro || Eatual == fim_timeout) ? 1&apos;b1 : 1&apos;b0;
-        ganhou      = (Eatual == fim_acerto) ? 1&apos;b1 : 1&apos;b0;
-        perdeu      = (Eatual == fim_erro || Eatual == fim_timeout) ? 1&apos;b1 : 1&apos;b0;
-        deu_timeout = (Eatual == fim_timeout) ? 1&apos;b1 : 1&apos;b0;
-        contaT      = (Eatual == espera || Eatual == mostra_leds || Eatual == espera_led) ? 1&apos;b1: 1&apos;b0;
-        zeraS       = (Eatual == preparacao) ? 1&apos;b1 : 1&apos;b0;
-        contaS      = (Eatual == nova_seq) ? 1&apos;b1 : 1&apos;b0;
-        nivel_uc    = (Eatual == preparacao) ? nivel : nivel_uc;
-	zeraT       = (Eatual == proximo || Eatual == nova_seq || Eatual == mostrou_led || Eatual == comecar_rodada || Eatual == zera_timeout || Eatual == fim_acerto || Eatual == fim_erro || Eatual == fim_timeout) ? 1&apos;b1 : 1&apos;b0;
-        leds        = (Eatual == mostra_leds) ? memoria : 4&apos;b0000;
+        zeraE         = (Eatual == inicial || Eatual == preparacao || Eatual == nova_seq || Eatual == comecar_rodada) ? 1&apos;b1 : 1&apos;b0;
+        zeraR         = (Eatual == inicial) ? 1&apos;b1 : 1&apos;b0;
+        registraR     = (Eatual == registra) ? 1&apos;b1 : 1&apos;b0;
+        contaE        = (Eatual == proximo || Eatual == mostrou_led) ? 1&apos;b1 : 1&apos;b0;
+        pronto        = (Eatual == fim_acerto || Eatual == fim_erro || Eatual == fim_timeout) ? 1&apos;b1 : 1&apos;b0;
+        ganhou        = (Eatual == fim_acerto) ? 1&apos;b1 : 1&apos;b0;
+        perdeu        = (Eatual == fim_erro || Eatual == fim_timeout) ? 1&apos;b1 : 1&apos;b0;
+        deu_timeout   = (Eatual == fim_timeout) ? 1&apos;b1 : 1&apos;b0;
+        contaT        = (Eatual == espera || Eatual == mostra_leds || Eatual == espera_led) ? 1&apos;b1: 1&apos;b0;
+        zeraS         = (Eatual == preparacao) ? 1&apos;b1 : 1&apos;b0;
+        contaS        = (Eatual == nova_seq) ? 1&apos;b1 : 1&apos;b0;
+        nivel_uc      = (Eatual == preparacao) ? nivel : nivel_uc;
+		zeraT         = (Eatual == proximo || Eatual == nova_seq || Eatual == mostrou_led || Eatual == comecar_rodada || Eatual == zera_timeout || Eatual == fim_acerto || Eatual == fim_erro || Eatual == fim_timeout) ? 1&apos;b1 : 1&apos;b0;
+        controla_leds = (Eatual == mostra_leds) ? 1&apos;b1 : 1&apos;b0;
 
         // Saida de depuracao (estado)
         case (Eatual)
