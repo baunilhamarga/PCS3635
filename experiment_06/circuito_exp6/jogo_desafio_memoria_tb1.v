@@ -114,6 +114,7 @@ module jogo_desafio_memoria_tb1;
         // Testes de jogadas
         for (i = 3; i <= 18; i = i + 1) begin
             #(1_000_000 * (i - 2));
+            #(500_000);
             caso = i;
             @(negedge clock_in);
 
