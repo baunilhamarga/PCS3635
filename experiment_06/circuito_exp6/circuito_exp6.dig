@@ -46,7 +46,7 @@
         </entry>
         <entry>
           <string>externalOutputs</string>
-          <string>ganhou,perdeu,timeout,pronto,leds:4,db_contagem:7,db_memoria:7,db_sequencia:7,db_estado:7,db_jogada_feita:7,db_enderecoIgualSequencia,db_chavesIgualMemoria</string>
+          <string>ganhou,perdeu,timeout,pronto,leds:4,db_contagem:7,db_memoria:7,db_sequencia:7,db_estado:7,db_jogadafeita:7,db_enderecoIgualSequencia,db_chavesIgualMemoria</string>
         </entry>
         <entry>
           <string>Code</string>
@@ -76,13 +76,13 @@ module jogo_desafio_memoria (
     output [6:0] db_memoria,
     output [6:0] db_sequencia,
     output [6:0] db_estado,
-    output [6:0] db_jogada_feita,
+    output [6:0] db_jogadafeita,
     output db_enderecoIgualSequencia,
     output db_chavesIgualMemoria
 );
 
     wire nivel; 
-    wire [3:0] s_jogada_feita;
+    wire [3:0] s_jogadafeita;
     wire [3:0] s_contagem;
     wire [3:0] s_memoria;
     wire [3:0] s_estado;
@@ -123,9 +123,9 @@ module jogo_desafio_memoria (
         .fimE                      ( s_fimE         ),
         .fimS                      ( s_fimS         ),
         .db_contagem               ( s_contagem     ),
-        .db_jogada_feita           ( s_jogada_feita ),
+        .db_jogadafeita           ( s_jogadafeita ),
         .db_memoria                ( s_memoria      ),
-        .jogada_feita              ( s_tem_jogada   ),
+        .tem_jogada              ( s_tem_jogada   ),
         .controle_timeout          ( s_fim_timeout  ),
         .db_sequencia              ( s_sequencia    ),
         .controle_timeout_led      ( s_timeoutL     ),
@@ -165,8 +165,8 @@ module jogo_desafio_memoria (
 
     // Display das botoes
     hexa7seg HEX2 (
-        .hexa    ( s_jogada_feita  ),
-        .display ( db_jogada_feita )
+        .hexa    ( s_jogadafeita  ),
+        .display ( db_jogadafeita )
     );
 
     // Display dos endereços codificados
@@ -227,9 +227,9 @@ module exp6_fluxo_dados (
     output enderecoIgualSequencia,
     output fimE,
     output fimS,
-    output jogada_feita,
+    output tem_jogada,
     output [3:0] db_contagem,
-    output [3:0] db_jogada_feita,
+    output [3:0] db_jogadafeita,
     output [3:0] db_memoria,
     output controle_timeout,
     output [3:0] db_sequencia,
@@ -321,7 +321,7 @@ module exp6_fluxo_dados (
         .clock (clock),
         .reset (zeraS),
         .sinal (s_tem_jogada),
-        .pulso (jogada_feita)
+        .pulso (tem_jogada)
     );
 
     contador_m #(.M(5000), .N(13)) contador_timeout (
@@ -337,7 +337,7 @@ module exp6_fluxo_dados (
     assign db_memoria  = s_dado;
     assign db_contagem = s_endereco;
     assign db_sequencia = s_sequencia;
-    assign db_jogada_feita = s_botoes;
+    assign db_jogadafeita = s_botoes;
 endmodule
 //------------------------------------------------------------------
 // Arquivo   : exp6_unidade_controle.v

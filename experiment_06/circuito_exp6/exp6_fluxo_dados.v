@@ -28,9 +28,9 @@ module exp6_fluxo_dados (
     output enderecoIgualSequencia,
     output fimE,
     output fimS,
-    output jogada_feita,
+    output tem_jogada,
     output [3:0] db_contagem,
-    output [3:0] db_jogada_feita,
+    output [3:0] db_jogadafeita,
     output [3:0] db_memoria,
     output controle_timeout,
     output [3:0] db_sequencia,
@@ -123,7 +123,7 @@ module exp6_fluxo_dados (
         .clock (clock),
         .reset (zeraS),
         .sinal (s_tem_jogada),
-        .pulso (jogada_feita)
+        .pulso (tem_jogada)
     );
 
     contador_m #(.M(5000), .N(13)) contador_timeout (
@@ -139,6 +139,6 @@ module exp6_fluxo_dados (
     assign db_memoria  = s_dado;
     assign db_contagem = s_endereco;
     assign db_sequencia = s_sequencia;
-    assign db_jogada_feita = s_botoes;
+    assign db_jogadafeita = s_botoes;
     assign leds = controla_leds ? s_dado : 4'b0000;
 endmodule

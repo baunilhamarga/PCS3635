@@ -20,16 +20,22 @@ module jogo_desafio_memoria (
     output timeout,
     output pronto,
     output [3:0] leds,
+    output db_clock,
+    output db_tem_jogada,
+    output db_chavesIgualMemoria,
+    output db_enderecoIgualSequencia,
+    output db_fimS,
     output [6:0] db_contagem,
     output [6:0] db_memoria,
+    output [6:0] db_jogadafeita,
     output [6:0] db_sequencia,
     output [6:0] db_estado,
-    output [6:0] db_jogada_feita,
-    output db_enderecoIgualSequencia,
-    output db_chavesIgualMemoria
+    // Nossos debugs
+    output db_timeout,
+    output db_timeoutL
 );
 
-    wire [3:0] s_jogada_feita;
+    wire [3:0] s_jogadafeita;
     wire [3:0] s_contagem;
     wire [3:0] s_memoria;
     wire [3:0] s_estado;
@@ -48,7 +54,7 @@ module jogo_desafio_memoria (
     wire s_zeraR;
     wire s_registraR;
     wire s_nivel;
-	wire s_zeraT;
+    wire s_zeraT;
     wire s_timeoutL;
     wire s_menorS;
     wire nivel;
@@ -73,9 +79,9 @@ module jogo_desafio_memoria (
         .fimE                      ( s_fimE         ),
         .fimS                      ( s_fimS         ),
         .db_contagem               ( s_contagem     ),
-        .db_jogada_feita           ( s_jogada_feita ),
+        .db_jogadafeita           ( s_jogadafeita ),
         .db_memoria                ( s_memoria      ),
-        .jogada_feita              ( s_tem_jogada   ),
+        .tem_jogada              ( s_tem_jogada   ),
         .controle_timeout          ( s_fim_timeout  ),
         .db_sequencia              ( s_sequencia    ),
         .controle_timeout_led      ( s_timeoutL     ),
@@ -115,8 +121,8 @@ module jogo_desafio_memoria (
 
     // Display das botoes
     hexa7seg HEX2 (
-        .hexa    ( s_jogada_feita  ),
-        .display ( db_jogada_feita )
+        .hexa    ( s_jogadafeita  ),
+        .display ( db_jogadafeita )
     );
 
     // Display dos endereços codificados
@@ -145,5 +151,8 @@ module jogo_desafio_memoria (
 
 assign db_chavesIgualMemoria = s_igualE;
 assign db_enderecoIgualSequencia = s_igualS;
+assign db_fimS = s_fimS;
+assign db_tem_jogada = s_tem_jogada;
+assign db_clock = clock;
 assign nivel = 1'b1;
 endmodule

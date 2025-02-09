@@ -56,7 +56,7 @@
 //     always #((clockPeriod / 2)) clock_in = ~clock_in;
 
 //     // instanciacao do DUT (Device Under Test)
-//     jogo_desafio_memoria_desafio dut (
+//     jogo_desafio_memoria dut (
 //       .clock          ( clock_in    ),
 //       .reset          ( reset_in    ),
 //       .jogar          ( jogar_in    ),
