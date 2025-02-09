@@ -20,11 +20,11 @@ module jogo_desafio_memoria (
     output timeout,
     output pronto,
     output [3:0] leds,
-    output db_clock, //
+    output db_clock,
     output db_tem_jogada,
     output db_chavesIgualMemoria,
     output db_enderecoIgualSequencia,
-    output db_fimS, //
+    output db_fimS,
     output [6:0] db_contagem,
     output [6:0] db_memoria,
     output [6:0] db_jogadafeita,
@@ -51,7 +51,7 @@ module jogo_desafio_memoria (
     wire s_zeraR;
     wire s_registraR;
     wire s_nivel;
-	wire s_zeraT;
+    wire s_zeraT;
     wire s_timeoutL;
     wire s_menorS;
     wire nivel;
