@@ -98,9 +98,9 @@ module exp6_unidade_controle (
             inicial:        Eprox = jogar ? preparacao : inicial;
             preparacao:     Eprox = mostra_leds;
             nova_seq:       Eprox = mostra_leds;
-            mostra_leds:    Eprox = timeoutL ? mostrou_led : mostra_leds;
+            mostra_leds:    Eprox = menorS ? comecar_rodada : (timeoutL ? (fimE ? comecar_rodada : mostrou_led) : mostra_leds);
             mostrou_led:    Eprox = espera_led;
-            espera_led:     Eprox = menorS ? comecar_rodada : (timeoutL ? zera_timeout : espera_led);
+            espera_led:     Eprox = timeoutL ? zera_timeout : espera_led;
             zera_timeout:   Eprox = mostra_leds;
             comecar_rodada: Eprox = espera;
             espera:         Eprox = timeout ? fim_timeout : (tem_jogada ? registra : espera);
@@ -128,7 +128,7 @@ module exp6_unidade_controle (
         zeraS       = (Eatual == preparacao) ? 1'b1 : 1'b0;
         contaS      = (Eatual == nova_seq) ? 1'b1 : 1'b0;
         nivel_uc    = (Eatual == preparacao) ? nivel : nivel_uc;
-		zeraT       = (Eatual == proximo || Eatual == nova_seq || Eatual == mostrou_led || Eatual == comecar_rodada || Eatual == zera_timeout) ? 1'b1 : 1'b0;
+		zeraT       = (Eatual == proximo || Eatual == nova_seq || Eatual == mostrou_led || Eatual == comecar_rodada || Eatual == zera_timeout || Eatual == fim_acerto || Eatual == fim_erro || Eatual == fim_timeout) ? 1'b1 : 1'b0;
         leds        = (Eatual == mostra_leds) ? memoria : 4'b0000;
 
         // Saida de depuracao (estado)

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------
-// Arquivo   : circuito_exp6.v
+// Arquivo   : jogo_desafio_memoria.v
 // Projeto   : Experiencia 6 - Jogo da Memória
 //------------------------------------------------------------------
 // Descricao : Circuito da Experiência 6
@@ -10,11 +10,10 @@
 //     25/01/2025  1.0     Ana Vitória       versao inicial
 //------------------------------------------------------------------
 //
-module circuito_exp6 (
+module jogo_desafio_memoria (
     input clock,
     input reset,
     input jogar,
-    input nivel,
     input [3:0] botoes,
     output ganhou,
     output perdeu,
@@ -52,6 +51,7 @@ module circuito_exp6 (
 	wire s_zeraT;
     wire s_timeoutL;
     wire s_menorS;
+    wire nivel;
 
     // Fluxo de Dados
     exp6_fluxo_dados FD (
@@ -143,5 +143,6 @@ module circuito_exp6 (
 
 assign db_chavesIgualMemoria = s_igualE;
 assign db_enderecoIgualSequencia = s_igualS;
+assign nivel = 1'b1;
 
 endmodule

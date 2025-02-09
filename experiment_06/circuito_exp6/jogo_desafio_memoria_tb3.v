@@ -18,7 +18,7 @@
 
 // `timescale 1ns/1ns
 
-// module circuito_exp6_tb3;
+// module jogo_desafio_memoria_tb3;
 
 //     // Sinais para conectar com o DUT
 //     // valores iniciais para fins de simulacao (ModelSim)
@@ -57,7 +57,7 @@
 //     always #((clockPeriod / 2)) clock_in = ~clock_in;
 
 //     // instanciacao do DUT (Device Under Test)
-//     circuito_exp5_desafio dut (
+//     jogo_desafio_memoria_desafio dut (
 //       .clock          ( clock_in    ),
 //       .reset          ( reset_in    ),
 //       .jogar          ( jogar_in    ),
