@@ -24,7 +24,6 @@ module exp6_unidade_controle (
     input timeout,
     input timeoutL,
     input menorS,
-    input [3:0] memoria,
     output reg zeraE,
     output reg contaE,
     output reg zeraS,
@@ -39,7 +38,7 @@ module exp6_unidade_controle (
     output reg contaT,
     output reg nivel_uc,
     output reg zeraT,
-    output reg [3:0] leds
+    output reg controla_leds
 );
 
     // Define estados
@@ -116,20 +115,20 @@ module exp6_unidade_controle (
 
     // Logica de saida (maquina Moore)
     always @* begin
-        zeraE       = (Eatual == inicial || Eatual == preparacao || Eatual == nova_seq || Eatual == comecar_rodada) ? 1'b1 : 1'b0;
-        zeraR       = (Eatual == inicial) ? 1'b1 : 1'b0;
-        registraR   = (Eatual == registra) ? 1'b1 : 1'b0;
-        contaE      = (Eatual == proximo || Eatual == mostrou_led) ? 1'b1 : 1'b0;
-        pronto      = (Eatual == fim_acerto || Eatual == fim_erro || Eatual == fim_timeout) ? 1'b1 : 1'b0;
-        ganhou      = (Eatual == fim_acerto) ? 1'b1 : 1'b0;
-        perdeu      = (Eatual == fim_erro || Eatual == fim_timeout) ? 1'b1 : 1'b0;
-        deu_timeout = (Eatual == fim_timeout) ? 1'b1 : 1'b0;
-        contaT      = (Eatual == espera || Eatual == mostra_leds || Eatual == espera_led) ? 1'b1: 1'b0;
-        zeraS       = (Eatual == preparacao) ? 1'b1 : 1'b0;
-        contaS      = (Eatual == nova_seq) ? 1'b1 : 1'b0;
-        nivel_uc    = (Eatual == preparacao) ? nivel : nivel_uc;
-		zeraT       = (Eatual == proximo || Eatual == nova_seq || Eatual == mostrou_led || Eatual == comecar_rodada || Eatual == zera_timeout || Eatual == fim_acerto || Eatual == fim_erro || Eatual == fim_timeout) ? 1'b1 : 1'b0;
-        leds        = (Eatual == mostra_leds) ? memoria : 4'b0000;
+        zeraE         = (Eatual == inicial || Eatual == preparacao || Eatual == nova_seq || Eatual == comecar_rodada) ? 1'b1 : 1'b0;
+        zeraR         = (Eatual == inicial) ? 1'b1 : 1'b0;
+        registraR     = (Eatual == registra) ? 1'b1 : 1'b0;
+        contaE        = (Eatual == proximo || Eatual == mostrou_led) ? 1'b1 : 1'b0;
+        pronto        = (Eatual == fim_acerto || Eatual == fim_erro || Eatual == fim_timeout) ? 1'b1 : 1'b0;
+        ganhou        = (Eatual == fim_acerto) ? 1'b1 : 1'b0;
+        perdeu        = (Eatual == fim_erro || Eatual == fim_timeout) ? 1'b1 : 1'b0;
+        deu_timeout   = (Eatual == fim_timeout) ? 1'b1 : 1'b0;
+        contaT        = (Eatual == espera || Eatual == mostra_leds || Eatual == espera_led) ? 1'b1: 1'b0;
+        zeraS         = (Eatual == preparacao) ? 1'b1 : 1'b0;
+        contaS        = (Eatual == nova_seq) ? 1'b1 : 1'b0;
+        nivel_uc      = (Eatual == preparacao) ? nivel : nivel_uc;
+		zeraT         = (Eatual == proximo || Eatual == nova_seq || Eatual == mostrou_led || Eatual == comecar_rodada || Eatual == zera_timeout || Eatual == fim_acerto || Eatual == fim_erro || Eatual == fim_timeout) ? 1'b1 : 1'b0;
+        controla_leds = (Eatual == mostra_leds) ? 1'b1 : 1'b0;
 
         // Saida de depuracao (estado)
         case (Eatual)

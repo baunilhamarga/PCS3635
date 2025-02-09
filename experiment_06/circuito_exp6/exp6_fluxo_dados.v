@@ -23,6 +23,7 @@ module exp6_fluxo_dados (
     input contaT,
     input zeraE,
     input zeraS,
+    input controla_leds,
     output igual,
     output enderecoIgualSequencia,
     output fimE,
@@ -138,4 +139,5 @@ module exp6_fluxo_dados (
     assign db_contagem = s_endereco;
     assign db_sequencia = s_sequencia;
     assign db_jogada_feita = s_botoes;
+    assign leds = controla_leds ? s_dado : 4'b0000;
 endmodule
