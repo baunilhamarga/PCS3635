@@ -1,0 +1,171 @@
+Planejamento	
+
+Prazo de Entrega: OK. Dentro do limite.
+
+
+
+1.1 Atividade 1 - Projeto Lógico do Jogo Base do Desafio da Memória
+
+
+
+a) Sinais de Depuração: Ver bloco "Atividades Experimentais";
+
+
+
+b) Descrição Funcional do Sistema (Valor 0,07) ==> Nota 0,07:
+
+Descrição textual apresentada de forma sucinta no Capítulo 1 e de forma mais detalhada no Capítulo 2. Ambos os textos foram redigidos nas próprias palavras dos integrantes do grupo.  Mantiveram nível de dificuldade (em tese, não utilizado na Exp. 6) e timeout de 5s.
+
+
+
+-- Itens "c" até "f" (Projeto Lógico)
+
+Solução do Grupo para Controle de LEDs na Leitura da Memória: alterar contador_m para que o intervalo de 500ms dos LEDs seja lido de uma entrada que indica 10% do tempo de contagem do timeout. OK, aceitável. Porém, se alterar tempo de timeout, o tempo de exibição também será alterado. Dá para ter uma solução mais robusta em que ambos os parâmetros estão desvinculados (por exemplo, dois contadores distintos).
+
+Comentário Geral: A lógica de projeto que foi implementada está adequada para a exibição da memória de jogadas nos LEDs, mas tem uma falha ao impedir que as jogadas dos usuários também sejam exibidas nos LEDs quando os botões correspondentes são pressionados. Tal como consta tanto no manual de usuário dos jogos Genius e Simon quanto no vídeo de demonstração preliminar divulgado no e-Disciplinas, essa funcionalidade faz parte do jogo. Ela é importante para garantir que o usuário "monitore" a entrada pressionada, servindo como realimentação ao vivo do progresso do jogo, tal como nos produtos comerciais. Ter essa realimentação será potencialmente importante para o projeto da disciplina e é algo que deve ser corrigido antes da demonstração do que foi feito em laboratório.
+
+Devido à ausência dessa funcionalidade, os itens "c" até "f" terão desconto de 20% do valor máximo alocado a eles. Foi uma funcionalidade que "regrediu" em comparação ao projeto original.
+
+
+
+c) Diagrama de Transição de Estados de Alto Nível com Linguagem Natural (Valor 0,15) ==> Nota 0,12: Descrição realizada na Figura 2 e replicada em versão mais legível como apêndice ao final do relatório. Com exceção do problema do "Comentário Geral", a lógica foi bem construída, elaborada e descrita no relatório.
+
+
+
+d) Descrição e Projeto Lógico do Fluxo de Dados (Valor 0,25) ==> Nota 0,16: Houve apresentação de diagrama RTL do Fluxo de Dados, detalhamento dos componentes utilizados e da modificação feita no projeto lógico do componente "contador_M" para que devolva uma saída quando 10% da contagem tiver expirado. Tal como comentado, a solução funciona, mas não é a ideal porque, se o tempo de timeout for alterado, a exibição dos LEDs também será afetada (-0,03).
+
+Além dese aspecto e do problema do comentário geral (-0,05), a lógica empregada para gerar a saída LEDs via ternário "mistura" um item comportamental dentro de um projeto totalmente estrutural. Se o RTL do Fluxo de Dados for analisado, nota-se que a lógica ternária para a saída dos LEDs corresponde exatamente a um multiplexador 2 x 1, que foi fornecido como componente da experiência. Recomendado trocar essa lógica pelo componente "mux2x1" fornecido (-0,01). 
+
+
+
+e) Descrição e Projeto Lógico da Unidade de Controle (Valor 0,25) ==> Nota 0,2: A Unidade de Controle foi descrita, depois do diagrama de alto nível, por meio de um diagrama de transição de 15 estados detalhado (incluindo sinais de condição e controle) e por uma tabela correspondente que representa o diagrama. Descrição boa. Rever impacto do "Comentário Geral" sobre o projeto da UC (-0,05).
+
+
+
+f) Descrição e Projeto Lógico do Sistema Completo e Nomes das Interfaces (Valor 0,1) ==> Nota 0,08: Interligação do circuito geral representada por meio de diagrama RTL e de uma descrição estrutural que inclui sinais de depuração (além dos sugeridos na apostila, acrescentaram dois sinais de timeout: um para o timeout do jogo (db_timeout) e outro para os intervalos de 500ms dos LEDs (db_timeoutL)). Rever impacto do "Comentário Geral" sobre o projeto da UC (-0,02).
+
+
+
+g) Plano de Testes (Valor 0,27) ==> Nota 0,27:
+
+- Definição dos Cenários de Teste (0,06): Mantiveram os mesmos cenários de teste da Experiência 5:  (i.) vitória do jogo completo, (ii.) derrota do jogo por jogada errada (3ª jogada da 4ª rodada), incluindo reinício e segundo erro (2ª jogada da 2ª rodada), e (iii.) derrota por timeout (3ª jogada da 4ª rodada).
+
+
+
+- Especificação dos Casos de Teste dos Cenários (0,21): 
+
+Cenário i - Especificação com tabela e texto. Compreensão boa; 
+
+Cenário ii - Especificação com tabela e texto. Compreensão boa;
+
+Cenário iii - Especificação com tabela e texto. Compreensão boa.
+
+
+
+h) Simulação e Análise de Resultados dos Cenários com ModelSim (Valor 0,27) ==> Nota 0,29:
+
+- Anotações dos Casos de Teste dos Cenários (0,09): 
+
+Cenário i - Mostraram três casos de teste completos: 3ª jogada para evidenciar LEDs acendendo e apagando durante a leitura da memória (incluindo cursor para contar 500ms em um dos exemplos), 16ª jogada para evidenciar acerto do jogo completo e fim de jogo (com sinais pronto e ganhou ligados). Anotações boas. 
+
+Cenário ii - Mostraram cenário de teste completo. Mostraram aumento do tempo com a leitura da memória e acionamento dos sinais pronto e errou ao final de cada jogo errado. Anotações boas.
+
+Cenário iii - Mostraram cenário de teste completo. Mostraram tempo com a leitura da memória,  acionamento dos sinais pronto e errou e tempo de timeout medido por cursores. Anotações boas.
+
+
+
+- Análise dos Resultados dos Cenários (0,15):
+
+Cenário i - Análise dos resultados realizada em tabela como conclusão da comparação entre simulações ModelSim/Digital e cenários de teste. Acrescentaram observações adicionais para explicar a adequação das jogadas acionadas nos LEDs em função do projeto realizado. Bom! 
+
+Cenário ii - Análise dos resultados realizada em tabela como conclusão da comparação entre simulações ModelSim/Digital e cenários de teste.
+
+Cenário iii - Análise dos resultados realizada em tabela como conclusão da comparação entre simulações ModelSim/Digital e cenários de teste.
+
+
+
+==> Comentário Geral: Devido às alterações de projeto necessárias para o acionamento dos LEDs com o pressionamento dos botões de jogada, será necessário revisar as simulações.
+
+
+
+- Arquivos ZIP/Verilog do ModelSim (0,03): Entregue. OK.
+
+
+
+i-j) Diagramas do Projeto (Valor 0,09) ==> Nota 0,08:
+
+- Fluxo de Dados (RTL Viewer - 0,03): OK. Incluído na seção 3.1.
+
+- Unidade de Controle (State Machine Viewer - 0,03): OK. Incluído na seção 5. Interessante também incluir a tabela de transição de estados gerada para confrontar com o projeto documentado na seção 3.2 (-0,01).
+
+- Sistema Completo (RTL Viewer - 0,03): OK. Incluído na seção 3.3. 
+
+
+
+k) Simulação e Análise de Resultados com Digital (Valor 0,20) ==> Nota 0,18
+
+- Anotações dos Casos de Teste dos Cenários (0,06): Incluíram prints para os resultados finais de cada simulação e entregaram vídeo (carregado pelo Heitor) com a simulação completa comentada em áudio. Excelente.
+
+
+
+- Análise dos Resultados dos Cenários (0,12):
+
+Cenário i - Idem item "h": 
+
+Cenário ii - Idem item "h";
+
+Cenário iii - Idem item "h".
+
+
+
+==> Comentário Geral: Devido às alterações de projeto necessárias para o acionamento dos LEDs com o pressionamento dos botões de jogada, será necessário revisar as simulações.
+
+
+
+- Arquivo do Digital (0,02): Entregue. OK.
+
+
+
+1.2 - Implementação e Síntese do Sistema (Valor 0,35) ==> Nota 0,33
+
+l) Pinagem - Tabela e Pin Planner (0,1): Realizada com tabela completa e prints do Pin Planner. Inclui todos os sinais de depuração especificados conforme analisado na seção 1.1-f.
+
+m) QAR Quartus (0,05): Entregue. OK.
+
+n-p) Roteiro Experimental, Método de Depuração, Configuração AnalogDiscover/WaveForms, Sinais de Depuração, Planejamento dos Testes: 
+
+- Roteiro Experimental com Configuração AnalogDiscovery/WaveForms (0,08): Roteiro bem detalhado e coerente com a prática da Experiência 6. Faltou explicitar a configuração solicitada, na apostila, para o WaveForms (-0,02).
+
+- Sinais e Método de Depuração (0,08): Tudo detalhado de acordo com os sinais de depuração especificados pelo grupo.
+
+- Planejamento dos Testes Práticos (0,04): Tabelas dos planos de teste incluídas, populadas com dados dos mesmos cenários simulados e prontas para preenchimento
+
+q) Execução do Experimento, Coleta de Dados e Análise de Resultados - Fora do escopo do planejamento.
+
+o) QAR Experimental - Fora do escopo do planejamento.
+
+
+
+1.3 - Desafio (Valor 0,0) ==> Nota 0,0 (Apenas lembrete para criar capítulo para o desafio).
+
+Planejamento: Estrutura de seções do relatório criada para o desafio?: Sim. Capítulo 6 reservado para a documentação do desafio. OK.
+
+s-t) Projeto Lógico: Fora do escopo do planejamento.
+
+u) Plano de Testes: Fora do escopo do planejamento.
+
+v) Simulações: Fora do escopo do planejamento.
+
+w-x) Pinagem, Síntese e Programação: Fora do escopo do planejamento.
+
+y) Resultados Experimentais: Fora do escopo do planejamento.
+
+z) QAR Quartus: Fora do escopo do planejamento.
+
+
+
+Conclusão do Planejamento: Excelente. Bem redigida e inclui processo de projeto, resultados alcançados e próximos passos.
+
+
+
+Nota e Resumo da Avaliação: 1,78/2,0 (arred. 1,8). Planejamento muito bom. Contudo, é necessário considerar que há uma falha no projeto que impede o acionamento dos LEDs quando o jogador pressiona os botões das jogadas e levar em conta que o projeto vincula os tempos de timeout e exibição de jogadas por usar um único contador para ambos. Recomendo revisar o projeto conforme considerações do "Comentário Geral" apresentado nesta revisão antes de iniciar as atividades práticas do projeto.
