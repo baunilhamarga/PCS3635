@@ -1,0 +1,120 @@
+`timescale 1us/1ns
+
+module jogo_desafio_memoria_tb3;
+
+    // Sinais para conectar com o DUT
+    reg        clock_in   = 1;
+    reg        reset_in   = 0;
+    reg        jogar_in = 0;
+    reg  [3:0] botoes_in  = 4'b0000;
+
+    wire       ganhou_out;
+    wire       perdeu_out;
+    wire       pronto_out;
+    wire [3:0] leds_out;
+    wire       db_clock_out;
+    wire       db_tem_jogada_out;
+    wire       db_chavesIgualMemoria_out;
+    wire       db_enderecoIgualSequencia_out;
+    wire       db_fimS_out;
+    wire [6:0] db_contagem_out;
+    wire [6:0] db_memoria_out;
+    wire [6:0] db_jogadafeita_out;
+    wire [6:0] db_sequencia_out;
+    wire [6:0] db_estado_out;
+    wire       db_timeout_out;
+    wire       db_timeoutL_out;
+
+    // Configuração do clock
+    parameter clockPeriod = 1000; // in us, f=1KHz
+
+    // Identificação do caso de teste
+    reg [31:0] caso = 0;
+
+    // Gerador de clock
+    always #((clockPeriod / 2)) clock_in = ~clock_in;
+
+    // Instanciação do DUT
+    jogo_desafio_memoria dut (
+        .clock(clock_in),
+        .reset(reset_in),
+        .jogar(jogar_in),
+        .botoes(botoes_in),
+        .ganhou(ganhou_out),
+        .perdeu(perdeu_out),
+        .timeout(timeout_out),
+        .pronto(pronto_out),
+        .leds(leds_out),
+        .db_clock(db_clock_out),
+        .db_tem_jogada(db_tem_jogada_out),
+        .db_chavesIgualMemoria(db_chavesIgualMemoria_out),
+        .db_enderecoIgualSequencia(db_enderecoIgualSequencia_out),
+        .db_fimS(db_fimS_out),
+        .db_contagem(db_contagem_out),
+        .db_memoria(db_memoria_out),
+        .db_jogadafeita(db_jogadafeita_out),
+        .db_sequencia(db_sequencia_out),
+        .db_estado(db_estado_out),
+        .db_timeout(db_timeout_out),
+        .db_timeoutL(db_timeoutL_out)
+    );
+
+    // Geração dos estímulos de entrada
+    initial begin
+        $display("Inicio da simulacao");
+
+        // Condições iniciais
+        caso = 0;
+        clock_in = 1;
+        reset_in = 0;
+        jogar_in = 0;
+        botoes_in = 4'b0000;
+        #(clockPeriod);
+
+        // Teste 1: Reset do circuito
+        caso = 1;
+        @(negedge clock_in);
+        reset_in = 1;
+        #(clockPeriod);
+        reset_in = 0;
+        #(10 * clockPeriod);
+
+        // Teste 2: Jogar por 5 períodos de clock
+        caso = 2;
+        #(2 * clockPeriod);
+        jogar_in = 1;
+        #(5 * clockPeriod);
+        jogar_in = 0;
+        #(10 * clockPeriod);
+
+        // Jogar a primeira rodada
+        #(1_000_000);
+        #(500_000);
+        botoes_in = 4'b0001;
+        #(10 * clockPeriod);
+        botoes_in = 4'b0000;
+        #(10 * clockPeriod);
+
+        // Jogar a segunda rodada e aguardar mais de 5s
+        #(2_000_000);
+        #(500_000);
+        botoes_in = 4'b0001;
+        #(10 * clockPeriod);
+        botoes_in = 4'b0000;
+        #(10 * clockPeriod);
+        botoes_in = 4'b0010;
+        #(10 * clockPeriod);
+        botoes_in = 4'b0000;
+        #(10 * clockPeriod);
+
+        // Testes de jogadas
+        #(8_000_000);
+        #(500_000);
+
+        // Final da simulação
+        caso = 99;
+        #1;
+        $display("Fim da simulacao");
+        $stop;
+    end
+endmodule
