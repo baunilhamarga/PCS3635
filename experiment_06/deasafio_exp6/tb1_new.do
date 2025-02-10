@@ -6,6 +6,7 @@ add wave -noupdate -height 30 /jogo_desafio_memoria_tb1/clock_in
 add wave -noupdate -color Red -height 30 /jogo_desafio_memoria_tb1/reset_in
 add wave -noupdate -color Red -height 30 /jogo_desafio_memoria_tb1/jogar_in
 add wave -noupdate -color Red -height 30 /jogo_desafio_memoria_tb1/botoes_in
+add wave -noupdate -color Red -height 30 /jogo_desafio_memoria_tb1/memoria_in
 add wave -noupdate -divider {Deteccao de jogada}
 add wave -noupdate -color Magenta -height 30 /jogo_desafio_memoria_tb1/dut/FD/tem_jogada
 add wave -noupdate -divider Resultado

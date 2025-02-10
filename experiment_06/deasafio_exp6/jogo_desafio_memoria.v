@@ -60,11 +60,11 @@ module jogo_desafio_memoria (
     wire s_zeraT;
     wire s_timeoutL;
     wire s_menorS;
-    wire nivel;
     wire s_controla_leds;
     wire s_zeraT_leds;
     wire s_contaT_leds;
     wire s_fase_preview;
+    wire s_memoria_uc;
 
     // Fluxo de Dados
     exp6_fluxo_dados FD (
@@ -83,7 +83,7 @@ module jogo_desafio_memoria (
         .zeraT_leds                ( s_zeraT_leds       ),
         .contaT_leds               ( s_contaT_leds      ),
         .fase_preview              ( s_fase_preview     ),
-        .seletor_memoria           ( memoria            ),
+        .seletor_memoria           ( s_memoria_uc       ),
         .igual                     ( s_igualE           ),
         .enderecoIgualSequencia    ( s_igualS           ),
         .fimE                      ( s_fimE             ),
@@ -113,6 +113,7 @@ module jogo_desafio_memoria (
         .timeout       ( s_fim_timeout  ),
         .timeoutL      ( s_timeoutL     ),
         .menorS        ( s_menorS       ),
+        .memoria       ( memoria        ),
         .zeraE         ( s_zeraE        ),
         .contaE        ( s_contaE       ),
         .zeraS         ( s_zeraS        ),
@@ -130,7 +131,8 @@ module jogo_desafio_memoria (
         .controla_leds ( s_controla_leds),
         .zeraT_leds    ( s_zeraT_leds   ),
         .contaT_leds   ( s_contaT_leds  ),
-        .fase_preview  ( s_fase_preview )
+        .fase_preview  ( s_fase_preview ),
+        .memoria_uc    ( s_memoria_uc   )
     );
 
     // Display das botoes

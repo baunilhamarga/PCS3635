@@ -41,7 +41,7 @@ module exp6_fluxo_dados (
     output controle_timeout_led,
     output sequenciaMenorQueEndereco,
     output [3:0] leds,
-    output [3:0] db_seletor_memoria
+    output db_seletor_memoria
 );
 
     wire [3:0] s_endereco;
@@ -135,14 +135,14 @@ module exp6_fluxo_dados (
     );
 
     // memória 1
-    sync_rom_16x4 #(.ROM_FILE("jogo_1.mem")) memoria (
+    sync_rom_16x4 #(.ROM_FILE("jogo_1.mem")) memoria1 (
         .clock    (clock),
         .address  (s_endereco),
         .data_out (s_mem1)
     );
 
     // memória 2
-    sync_rom_16x4 #(.ROM_FILE("jogo_2.mem")) memoria (
+    sync_rom_16x4 #(.ROM_FILE("jogo_2.mem")) memoria2 (
         .clock    (clock),
         .address  (s_endereco),
         .data_out (s_mem2)

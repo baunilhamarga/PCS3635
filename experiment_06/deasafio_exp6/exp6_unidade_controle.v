@@ -24,6 +24,7 @@ module exp6_unidade_controle (
     input timeout,
     input timeoutL,
     input menorS,
+    input memoria,
     output reg zeraE,
     output reg contaE,
     output reg zeraS,
@@ -41,7 +42,8 @@ module exp6_unidade_controle (
     output reg controla_leds,
     output reg zeraT_leds,
     output reg contaT_leds,
-    output reg fase_preview
+    output reg fase_preview,
+    output reg memoria_uc
 );
 
     // Define estados
@@ -135,6 +137,7 @@ module exp6_unidade_controle (
         zeraT_leds    = (Eatual == mostrou_led || Eatual == comecar_rodada || Eatual == zera_timeout) ? 1'b1 : 1'b0;
         contaT_leds   = (Eatual == mostra_leds || Eatual == espera_led) ? 1'b1 : 1'b0;
         fase_preview  = (Eatual == mostra_leds || Eatual == mostrou_led || Eatual == zera_timeout || Eatual == comecar_rodada) ? 1'b1 : 1'b0;
+        memoria_uc    = (Eatual == preparacao) ? memoria : memoria_uc;
 
         // Saida de depuracao (estado)
         case (Eatual)

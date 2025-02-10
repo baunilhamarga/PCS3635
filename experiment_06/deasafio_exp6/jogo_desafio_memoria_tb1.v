@@ -7,6 +7,8 @@ module jogo_desafio_memoria_tb1;
     reg        reset_in   = 0;
     reg        jogar_in = 0;
     reg  [3:0] botoes_in  = 4'b0000;
+    reg        nivel_in = 1;
+    reg        memoria_in = 0;
 
     wire       ganhou_out;
     wire       perdeu_out;
@@ -24,6 +26,7 @@ module jogo_desafio_memoria_tb1;
     wire [6:0] db_estado_out;
     wire       db_timeout_out;
     wire       db_timeoutL_out;
+    wire       db_seletor_memoria_out;
 
     // Configuração do clock
     parameter clockPeriod = 1000; // in us, f=1KHz
@@ -40,6 +43,8 @@ module jogo_desafio_memoria_tb1;
         .reset(reset_in),
         .jogar(jogar_in),
         .botoes(botoes_in),
+        .nivel(nivel_in),
+        .memoria(memoria_in),
         .ganhou(ganhou_out),
         .perdeu(perdeu_out),
         .timeout(timeout_out),
@@ -56,28 +61,50 @@ module jogo_desafio_memoria_tb1;
         .db_sequencia(db_sequencia_out),
         .db_estado(db_estado_out),
         .db_timeout(db_timeout_out),
-        .db_timeoutL(db_timeoutL_out)
+        .db_timeoutL(db_timeoutL_out),
+        .db_seletor_memoria(db_seletor_memoria_out)
     );
 
     // Gabarito
-    reg [3:0] jogadas[0:15];
+    reg [3:0] jogadas_caso1[0:15];
+    reg [3:0] jogadas_caso2[0:15];
+
     initial begin
-        jogadas[0] = 4'b0001;
-        jogadas[1] = 4'b0010;
-        jogadas[2] = 4'b0100;
-        jogadas[3] = 4'b1000;
-        jogadas[4] = 4'b0100;
-        jogadas[5] = 4'b0010;
-        jogadas[6] = 4'b0001;
-        jogadas[7] = 4'b0001;
-        jogadas[8] = 4'b0010;
-        jogadas[9] = 4'b0010;
-        jogadas[10] = 4'b0100;
-        jogadas[11] = 4'b0100;
-        jogadas[12] = 4'b1000;
-        jogadas[13] = 4'b1000;
-        jogadas[14] = 4'b0001;
-        jogadas[15] = 4'b0100;
+        jogadas_caso1[0] = 4'b0001;
+        jogadas_caso1[1] = 4'b0010;
+        jogadas_caso1[2] = 4'b0100;
+        jogadas_caso1[3] = 4'b1000;
+        jogadas_caso1[4] = 4'b0100;
+        jogadas_caso1[5] = 4'b0010;
+        jogadas_caso1[6] = 4'b0001;
+        jogadas_caso1[7] = 4'b0001;
+        jogadas_caso1[8] = 4'b0010;
+        jogadas_caso1[9] = 4'b0010;
+        jogadas_caso1[10] = 4'b0100;
+        jogadas_caso1[11] = 4'b0100;
+        jogadas_caso1[12] = 4'b1000;
+        jogadas_caso1[13] = 4'b1000;
+        jogadas_caso1[14] = 4'b0001;
+        jogadas_caso1[15] = 4'b0100;
+    end
+
+    initial begin
+        jogadas_caso2[0] = 4'b0001;
+        jogadas_caso2[1] = 4'b0001;
+        jogadas_caso2[2] = 4'b0001;
+        jogadas_caso2[3] = 4'b0001;
+        jogadas_caso2[4] = 4'b0010;
+        jogadas_caso2[5] = 4'b0010;
+        jogadas_caso2[6] = 4'b0010;
+        jogadas_caso2[7] = 4'b0010;
+        jogadas_caso2[8] = 4'b0100;
+        jogadas_caso2[9] = 4'b0100;
+        jogadas_caso2[10] = 4'b0100;
+        jogadas_caso2[11] = 4'b0100;
+        jogadas_caso2[12] = 4'b1000;
+        jogadas_caso2[13] = 4'b1000;
+        jogadas_caso2[14] = 4'b1000;
+        jogadas_caso2[15] = 4'b1000;
     end
 
     // Variáveis de loop
@@ -119,7 +146,35 @@ module jogo_desafio_memoria_tb1;
             @(negedge clock_in);
 
             for (j = 0; j < i-2; j = j + 1) begin
-                botoes_in = jogadas[j];
+                botoes_in = jogadas_caso1[j];
+                #(10 * clockPeriod);
+                botoes_in = 4'b0000;
+                #(10 * clockPeriod);
+            end
+        end
+
+        // Teste 2: Jogar por 5 períodos de clock
+        caso = 2;
+        #(2 * clockPeriod);
+        memoria_in = 1;
+        #(2 * clockPeriod);
+        jogar_in = 1;
+        #(5 * clockPeriod);
+        jogar_in = 0;
+        #(10 * clockPeriod);
+
+        // Testes de jogadas
+        for (i = 3; i <= 18; i = i + 1) begin
+            #(1_000_000 * (i - 2));
+            #(500_000);
+            caso = i;
+            @(negedge clock_in);
+
+            for (j = 0; j < i-2; j = j + 1) begin
+                if(j == 4) begin
+                    memoria_in = 0;
+                end
+                botoes_in = jogadas_caso2[j];
                 #(10 * clockPeriod);
                 botoes_in = 4'b0000;
                 #(10 * clockPeriod);
