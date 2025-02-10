@@ -38,7 +38,7 @@
         </entry>
         <entry>
           <string>externalInputs</string>
-          <string>clock,reset,jogar,botoes:4</string>
+          <string>clock,reset,jogar,botoes:4,memoria,nivel</string>
         </entry>
         <entry>
           <string>Width</string>
@@ -46,11 +46,12 @@
         </entry>
         <entry>
           <string>externalOutputs</string>
-          <string>ganhou,perdeu,timeout,pronto,leds:4,db_contagem:7,db_memoria:7,db_sequencia:7,db_estado:7,db_jogadafeita:7,db_chavesIgualMemoria,db_enderecoIgualSequencia</string>
+          <string>ganhou,perdeu,timeout,pronto,leds:4,db_clock,db_tem_jogada,db_chavesIgualMemoria,db_enderecoIgualSequencia,db_fimS,db_contagem:7,db_memoria:7,db_jogadafeita:7,db_sequencia:7,db_estado:7,db_seletor_memoria,db_timeout,db_timeoutL</string>
         </entry>
         <entry>
           <string>Code</string>
-          <string>//------------------------------------------------------------------
+          <string>// --- Start of jogo_desafio_memoria.v ---
+//------------------------------------------------------------------
 // Arquivo   : jogo_desafio_memoria.v
 // Projeto   : Experiencia 6 - Jogo da Memória
 //------------------------------------------------------------------
@@ -67,18 +68,27 @@ module jogo_desafio_memoria (
     input reset,
     input jogar,
     input [3:0] botoes,
+    input memoria,
+    input nivel,
     output ganhou,
     output perdeu,
     output timeout,
     output pronto,
     output [3:0] leds,
+    output db_clock,
+    output db_tem_jogada,
+    output db_chavesIgualMemoria,
+    output db_enderecoIgualSequencia,
+    output db_fimS,
     output [6:0] db_contagem,
     output [6:0] db_memoria,
+    output [6:0] db_jogadafeita,
     output [6:0] db_sequencia,
     output [6:0] db_estado,
-    output [6:0] db_jogadafeita,
-    output db_chavesIgualMemoria,
-    output db_enderecoIgualSequencia
+    output db_seletor_memoria,
+    // Nossos debugs
+    output db_timeout,
+    output db_timeoutL
 );
 
     wire [3:0] s_jogadafeita;
@@ -103,7 +113,6 @@ module jogo_desafio_memoria (
     wire s_zeraT;
     wire s_timeoutL;
     wire s_menorS;
-    wire nivel;
     wire s_controla_leds;
     wire s_zeraT_leds;
     wire s_contaT_leds;
@@ -111,34 +120,36 @@ module jogo_desafio_memoria (
 
     // Fluxo de Dados
     exp6_fluxo_dados FD (
-        .clock                     ( clock          ),
-        .botoes                    ( botoes         ),
-        .nivel                     ( s_nivel        ),
-        .zeraT                     ( s_zeraT        ),
-        .zeraR                     ( s_zeraR        ),
-        .registraR                 ( s_registraR    ),
-        .contaE                    ( s_contaE       ),
-        .contaS                    ( s_contaS       ),
-        .contaT                    ( s_contaT       ),
-        .zeraE                     ( s_zeraE        ),
-        .zeraS                     ( s_zeraS        ),
-        .controla_leds             ( s_controla_leds),
-        .zeraT_leds                ( s_zeraT_leds   ),
-        .contaT_leds               ( s_contaT_leds  ),
-        .fase_preview              ( s_fase_preview ),
-        .igual                     ( s_igualE       ),
-        .enderecoIgualSequencia    ( s_igualS       ),
-        .fimE                      ( s_fimE         ),
-        .fimS                      ( s_fimS         ),
-        .db_contagem               ( s_contagem     ),
-        .db_jogadafeita            ( s_jogadafeita  ),
-        .db_memoria                ( s_memoria      ),
-        .tem_jogada                ( s_tem_jogada   ),
-        .controle_timeout          ( s_fim_timeout  ),
-        .db_sequencia              ( s_sequencia    ),
-        .controle_timeout_led      ( s_timeoutL     ),
-        .sequenciaMenorQueEndereco ( s_menorS       ),
-        .leds                      ( leds           )
+        .clock                     ( clock              ),
+        .botoes                    ( botoes             ),
+        .nivel                     ( s_nivel            ),
+        .zeraT                     ( s_zeraT            ),
+        .zeraR                     ( s_zeraR            ),
+        .registraR                 ( s_registraR        ),
+        .contaE                    ( s_contaE           ),
+        .contaS                    ( s_contaS           ),
+        .contaT                    ( s_contaT           ),
+        .zeraE                     ( s_zeraE            ),
+        .zeraS                     ( s_zeraS            ),
+        .controla_leds             ( s_controla_leds    ),
+        .zeraT_leds                ( s_zeraT_leds       ),
+        .contaT_leds               ( s_contaT_leds      ),
+        .fase_preview              ( s_fase_preview     ),
+        .seletor_memoria           ( memoria            ),
+        .igual                     ( s_igualE           ),
+        .enderecoIgualSequencia    ( s_igualS           ),
+        .fimE                      ( s_fimE             ),
+        .fimS                      ( s_fimS             ),
+        .db_contagem               ( s_contagem         ),
+        .db_jogadafeita            ( s_jogadafeita      ),
+        .db_memoria                ( s_memoria          ),
+        .tem_jogada                ( s_tem_jogada       ),
+        .controle_timeout          ( s_fim_timeout      ),
+        .db_sequencia              ( s_sequencia        ),
+        .controle_timeout_led      ( s_timeoutL         ),
+        .sequenciaMenorQueEndereco ( s_menorS           ),
+        .leds                      ( leds               ),
+        .db_seletor_memoria        ( db_seletor_memoria )
     );
 
     // Unidade de Controle
@@ -206,8 +217,189 @@ module jogo_desafio_memoria (
 
 assign db_chavesIgualMemoria = s_igualE;
 assign db_enderecoIgualSequencia = s_igualS;
-assign nivel = 1&apos;b1;
+assign db_fimS = s_fimS;
+assign db_tem_jogada = s_tem_jogada;
+assign db_clock = clock;
+assign db_timeout = s_fim_timeout;
+assign db_timeoutL = s_timeoutL;
 endmodule
+
+// --- End of jogo_desafio_memoria.v ---
+
+// --- Start of comparador_85.v ---
+/* -----------------------------------------------------------------
+ *  Arquivo   : comparador_85.v
+ *  Projeto   : Experiencia 2 - Um Fluxo de Dados Simples
+ * -----------------------------------------------------------------
+ * Descricao : comparador de magnitude de 4 bits 
+ *             similar ao CI 7485
+ *             baseado em descricao comportamental disponivel em	
+ * https://web.eecs.umich.edu/~jhayes/iscas.restore/74L85b.v
+ * -----------------------------------------------------------------
+ * Revisoes  :
+ *     Data        Versao  Autor             Descricao
+ *     21/12/2023  1.0     Edson Midorikawa  criacao
+ * -----------------------------------------------------------------
+ */
+
+module comparador_85 (ALBi, AGBi, AEBi, A, B, ALBo, AGBo, AEBo);
+
+    input[3:0] A, B;
+    input      ALBi, AGBi, AEBi;
+    output     ALBo, AGBo, AEBo;
+    wire[4:0]  CSL, CSG;
+
+    assign CSL  = ~A + B + ALBi;
+    assign ALBo = ~CSL[4];
+    assign CSG  = A + ~B + AGBi;
+    assign AGBo = ~CSG[4];
+    assign AEBo = ((A == B) &amp;&amp; AEBi);
+
+endmodule /* comparador_85 */
+// --- End of comparador_85.v ---
+
+// --- Start of contador_163.v ---
+//------------------------------------------------------------------
+// Arquivo   : contador_163.v
+// Projeto   : Experiencia 2 - Um Fluxo de Dados Simples
+//------------------------------------------------------------------
+// Descricao : Contador binario de 4 bits, modulo 16
+//             similar ao componente 74163
+//
+// baseado no componente Vrcntr4u.v do livro Digital Design Principles 
+// and Practices, Fifth Edition, by John F. Wakerly              
+//------------------------------------------------------------------
+// Revisoes  :
+//     Data        Versao  Autor             Descricao
+//     14/12/2023  1.0     Edson Midorikawa  versao inicial
+//------------------------------------------------------------------
+//
+module contador_163 ( clock, clr, ld, ent, enp, D, Q, rco );
+    input clock, clr, ld, ent, enp;
+    input [3:0] D;
+    output reg [3:0] Q;
+    output reg rco;
+
+    always @ (posedge clock)
+        if (~clr)               Q &lt;= 4&apos;d0;
+        else if (~ld)           Q &lt;= D;
+        else if (ent &amp;&amp; enp)    Q &lt;= Q + 1&apos;b1;
+        else                    Q &lt;= Q;
+ 
+    always @ (Q or ent)
+        if (ent &amp;&amp; (Q == 4&apos;d15))   rco = 1;
+        else                       rco = 0;
+endmodule
+// --- End of contador_163.v ---
+
+// --- Start of contador_m.v ---
+
+/*---------------Laboratorio Digital-------------------------------------
+ * Arquivo   : contador_m.v
+ * Projeto   : Experiencia 4 - Desenvolvimento de Projeto de 
+ *                             Circuitos Digitais em FPGA
+ *-----------------------------------------------------------------------
+ * Descricao : contador binario, modulo m, com parametros 
+ *             M (modulo do contador) e N (numero de bits),
+ *             sinais para clear assincrono (zera_as) e sincrono (zera_s)
+ *             e saidas de fim e meio de contagem
+ *             
+ *-----------------------------------------------------------------------
+ * Revisoes  :
+ *     Data        Versao  Autor             Descricao
+ *     30/01/2024  1.0     Edson Midorikawa  criacao
+ *     16/01/2025  1.1     Edson Midorikawa  revisao
+ *-----------------------------------------------------------------------
+ */
+
+module contador_m #(parameter M=100, N=7)
+  (
+   input  wire          clock,
+   input  wire          zera_as,
+   input  wire          zera_s,
+   input  wire          conta,
+   output reg  [N-1:0]  Q,
+   output reg           fim,
+   output reg           meio
+  );
+
+  always @(posedge clock or posedge zera_as) begin
+    if (zera_as) begin
+      Q &lt;= 0;
+    end else if (clock) begin
+      if (zera_s) begin
+        Q &lt;= 0;
+      end else if (conta) begin
+        if (Q == M-1) begin
+          Q &lt;= 0;
+        end else begin
+          Q &lt;= Q + 1&apos;b1;
+        end
+      end
+    end
+  end
+
+  // Saidas
+  always @ (Q)
+      if (Q == M-1)   fim = 1;
+      else            fim = 0;
+
+  always @ (Q)
+      if (Q == M/2-1) meio = 1;
+      else             meio = 0;
+
+endmodule
+
+// --- End of contador_m.v ---
+
+// --- Start of edge_detector.v ---
+/* ------------------------------------------------------------------------
+ *  Arquivo   : edge_detector.v
+ *  Projeto   : Experiencia 4 - Desenvolvimento de Projeto de
+ *                              Circuitos Digitais com FPGA
+ * ------------------------------------------------------------------------
+ *  Descricao : detector de borda
+ *              gera um pulso na saida de 1 periodo de clock
+ *              a partir da detecao da borda de subida sa entrada
+ *
+ *              sinal de reset ativo em alto
+ *
+ *              &gt; codigo adaptado a partir de codigo VHDL disponivel em
+ *                https://surf-vhdl.com/how-to-design-a-good-edge-detector/
+ * ------------------------------------------------------------------------
+ *  Revisoes  :
+ *      Data        Versao  Autor             Descricao
+ *      26/01/2024  1.0     Edson Midorikawa  versao inicial
+ * ------------------------------------------------------------------------
+ */
+
+module edge_detector (
+    input  clock,
+    input  reset,
+    input  sinal,
+    output pulso
+);
+
+    reg reg0;
+    reg reg1;
+
+    always @(posedge clock or posedge reset) begin
+        if (reset) begin
+            reg0 &lt;= 1&apos;b0;
+            reg1 &lt;= 1&apos;b0;
+        end else if (clock) begin
+            reg0 &lt;= sinal;
+            reg1 &lt;= reg0;
+        end
+    end
+
+    assign pulso = ~reg1 &amp; reg0;
+
+endmodule
+
+// --- End of edge_detector.v ---
+
+// --- Start of exp6_fluxo_dados.v ---
 //------------------------------------------------------------------
 // Arquivo   : exp4_fluxo_dados.v
 // Projeto   : Experiencia 6 - Jogo da Memória
@@ -237,6 +429,7 @@ module exp6_fluxo_dados (
     input zeraT_leds,
     input contaT_leds,
     input fase_preview,
+    input seletor_memoria,
     output igual,
     output enderecoIgualSequencia,
     output fimE,
@@ -249,7 +442,8 @@ module exp6_fluxo_dados (
     output [3:0] db_sequencia,
     output controle_timeout_led,
     output sequenciaMenorQueEndereco,
-    output [3:0] leds
+    output [3:0] leds,
+    output db_seletor_memoria
 );
 
     wire [3:0] s_endereco;
@@ -260,6 +454,8 @@ module exp6_fluxo_dados (
     wire s_tem_jogada = |botoes;
     wire rco;
     wire [3:0] s_mux;
+    wire [3:0] s_mem1;
+    wire [3:0] s_mem2;
 
     // mux
     mux2x1 mux (
@@ -333,11 +529,25 @@ module exp6_fluxo_dados (
         .AEBo (enderecoIgualSequencia)
     );
 
-    // memória
-    sync_rom_16x4 memoria (
+    mux2x1_n #( .BITS(4) ) mux_jogo (
+      .D0(s_mem1),
+      .D1(s_mem2),
+      .SEL(seletor_memoria),
+      .OUT(s_dado)
+    );
+
+    // memória 1
+    sync_rom_16x4 #(.ROM_FILE(&quot;jogo_1.mem&quot;)) memoria1 (
         .clock    (clock),
         .address  (s_endereco),
-        .data_out (s_dado)
+        .data_out (s_mem1)
+    );
+
+    // memória 2
+    sync_rom_16x4 #(.ROM_FILE(&quot;jogo_2.mem&quot;)) memoria2 (
+        .clock    (clock),
+        .address  (s_endereco),
+        .data_out (s_mem2)
     );
 
     // registrador
@@ -362,7 +572,7 @@ module exp6_fluxo_dados (
         .zera_s  (zeraT),
         .conta   (contaT),
         .Q       (),
-        .fim     (controle_timeout), 
+        .fim     (controle_timeout),
         .meio    ()
     );
 
@@ -372,7 +582,7 @@ module exp6_fluxo_dados (
         .zera_s  (zeraT_leds),
         .conta   (contaT_leds),
         .Q       (),
-        .fim     (controle_timeout_led), 
+        .fim     (controle_timeout_led),
         .meio    ()
     );
 
@@ -380,8 +590,12 @@ module exp6_fluxo_dados (
     assign db_contagem = s_endereco;
     assign db_sequencia = s_sequencia;
     assign db_jogadafeita = s_botoes;
+    assign db_seletor_memoria = seletor_memoria;
 endmodule
 
+// --- End of exp6_fluxo_dados.v ---
+
+// --- Start of exp6_unidade_controle.v ---
 //------------------------------------------------------------------
 // Arquivo   : exp6_unidade_controle.v
 // Projeto   : Experiencia 6 - Jogo da Memória
@@ -514,7 +728,7 @@ module exp6_unidade_controle (
         zeraS         = (Eatual == preparacao) ? 1&apos;b1 : 1&apos;b0;
         contaS        = (Eatual == nova_seq) ? 1&apos;b1 : 1&apos;b0;
         nivel_uc      = (Eatual == preparacao) ? nivel : nivel_uc;
-	zeraT         = (Eatual == proximo || Eatual == nova_seq) ? 1&apos;b1 : 1&apos;b0;
+		zeraT         = (Eatual == proximo || Eatual == nova_seq) ? 1&apos;b1 : 1&apos;b0;
         controla_leds = (Eatual == mostra_leds) ? 1&apos;b1 : 1&apos;b0;
         zeraT_leds    = (Eatual == mostrou_led || Eatual == comecar_rodada || Eatual == zera_timeout) ? 1&apos;b1 : 1&apos;b0;
         contaT_leds   = (Eatual == mostra_leds || Eatual == espera_led) ? 1&apos;b1 : 1&apos;b0;
@@ -541,170 +755,9 @@ module exp6_unidade_controle (
         endcase
     end
 endmodule
+// --- End of exp6_unidade_controle.v ---
 
-/* -----------------------------------------------------------------
- *  Arquivo   : comparador_85.v
- *  Projeto   : Experiencia 2 - Um Fluxo de Dados Simples
- * -----------------------------------------------------------------
- * Descricao : comparador de magnitude de 4 bits 
- *             similar ao CI 7485
- *             baseado em descricao comportamental disponivel em	
- * https://web.eecs.umich.edu/~jhayes/iscas.restore/74L85b.v
- * -----------------------------------------------------------------
- * Revisoes  :
- *     Data        Versao  Autor             Descricao
- *     21/12/2023  1.0     Edson Midorikawa  criacao
- * -----------------------------------------------------------------
- */
-
-module comparador_85 (ALBi, AGBi, AEBi, A, B, ALBo, AGBo, AEBo);
-
-    input[3:0] A, B;
-    input      ALBi, AGBi, AEBi;
-    output     ALBo, AGBo, AEBo;
-    wire[4:0]  CSL, CSG;
-
-    assign CSL  = ~A + B + ALBi;
-    assign ALBo = ~CSL[4];
-    assign CSG  = A + ~B + AGBi;
-    assign AGBo = ~CSG[4];
-    assign AEBo = ((A == B) &amp;&amp; AEBi);
-
-endmodule /* comparador_85 */
-
-//------------------------------------------------------------------
-// Arquivo   : contador_163.v
-// Projeto   : Experiencia 2 - Um Fluxo de Dados Simples
-//------------------------------------------------------------------
-// Descricao : Contador binario de 4 bits, modulo 16
-//             similar ao componente 74163
-//
-// baseado no componente Vrcntr4u.v do livro Digital Design Principles 
-// and Practices, Fifth Edition, by John F. Wakerly              
-//------------------------------------------------------------------
-// Revisoes  :
-//     Data        Versao  Autor             Descricao
-//     14/12/2023  1.0     Edson Midorikawa  versao inicial
-//------------------------------------------------------------------
-//
-module contador_163 ( clock, clr, ld, ent, enp, D, Q, rco );
-    input clock, clr, ld, ent, enp;
-    input [3:0] D;
-    output reg [3:0] Q;
-    output reg rco;
-
-    always @ (posedge clock)
-        if (~clr)               Q &lt;= 4&apos;d0;
-        else if (~ld)           Q &lt;= D;
-        else if (ent &amp;&amp; enp)    Q &lt;= Q + 1&apos;b1;
-        else                    Q &lt;= Q;
- 
-    always @ (Q or ent)
-        if (ent &amp;&amp; (Q == 4&apos;d15))   rco = 1;
-        else                       rco = 0;
-endmodule
-
-
-/*---------------Laboratorio Digital-------------------------------------
- * Arquivo   : contador_m.v
- * Projeto   : Experiencia 4 - Desenvolvimento de Projeto de 
- *                             Circuitos Digitais em FPGA
- *-----------------------------------------------------------------------
- * Descricao : contador binario, modulo m, com parametros 
- *             M (modulo do contador) e N (numero de bits),
- *             sinais para clear assincrono (zera_as) e sincrono (zera_s)
- *             e saidas de fim e decimo de contagem
- *             
- *-----------------------------------------------------------------------
- * Revisoes  :
- *     Data        Versao  Autor             Descricao
- *     30/01/2024  1.0     Edson Midorikawa  criacao
- *     16/01/2025  1.1     Edson Midorikawa  revisao
- *-----------------------------------------------------------------------
- */
-
-module contador_m #(parameter M=100, N=7)
-  (
-   input  wire          clock,
-   input  wire          zera_as,
-   input  wire          zera_s,
-   input  wire          conta,
-   output reg  [N-1:0]  Q,
-   output reg           fim,
-   output reg           meio
-  );
-
-  always @(posedge clock or posedge zera_as) begin
-    if (zera_as) begin
-      Q &lt;= 0;
-    end else if (clock) begin
-      if (zera_s) begin
-        Q &lt;= 0;
-      end else if (conta) begin
-        if (Q == M-1) begin
-          Q &lt;= 0;
-        end else begin
-          Q &lt;= Q + 1&apos;b1;
-        end
-      end
-    end
-  end
-
-  // Saidas
-  always @ (Q)
-      if (Q == M-1)   fim = 1;
-      else            fim = 0;
-
-  always @ (Q)
-      if (Q == M/2-1) meio = 1;
-      else             meio = 0;
-
-endmodule
-
-/* ------------------------------------------------------------------------
- *  Arquivo   : edge_detector.v
- *  Projeto   : Experiencia 4 - Desenvolvimento de Projeto de
- *                              Circuitos Digitais com FPGA
- * ------------------------------------------------------------------------
- *  Descricao : detector de borda
- *              gera um pulso na saida de 1 periodo de clock
- *              a partir da detecao da borda de subida sa entrada
- *
- *              sinal de reset ativo em alto
- *
- *              &gt; codigo adaptado a partir de codigo VHDL disponivel em
- *                https://surf-vhdl.com/how-to-design-a-good-edge-detector/
- * ------------------------------------------------------------------------
- *  Revisoes  :
- *      Data        Versao  Autor             Descricao
- *      26/01/2024  1.0     Edson Midorikawa  versao inicial
- * ------------------------------------------------------------------------
- */
-
-module edge_detector (
-    input  clock,
-    input  reset,
-    input  sinal,
-    output pulso
-);
-
-    reg reg0;
-    reg reg1;
-
-    always @(posedge clock or posedge reset) begin
-        if (reset) begin
-            reg0 &lt;= 1&apos;b0;
-            reg1 &lt;= 1&apos;b0;
-        end else if (clock) begin
-            reg0 &lt;= sinal;
-            reg1 &lt;= reg0;
-        end
-    end
-
-    assign pulso = ~reg1 &amp; reg0;
-
-endmodule
-
+// --- Start of hexa7seg.v ---
 /* ----------------------------------------------------------------
  * Arquivo   : hexa7seg.v
  * Projeto   : Experiencia 2 - Um Fluxo de Dados Simples
@@ -766,7 +819,446 @@ module hexa7seg (hexa, display);
     endcase
 endmodule
 
+// --- End of hexa7seg.v ---
 
+// --- Start of jogo_desafio_memoria_tb1.v ---
+`timescale 1us/1ns
+
+module jogo_desafio_memoria_tb1;
+
+    // Sinais para conectar com o DUT
+    reg        clock_in   = 1;
+    reg        reset_in   = 0;
+    reg        jogar_in = 0;
+    reg  [3:0] botoes_in  = 4&apos;b0000;
+
+    wire       ganhou_out;
+    wire       perdeu_out;
+    wire       pronto_out;
+    wire [3:0] leds_out;
+    wire       db_clock_out;
+    wire       db_tem_jogada_out;
+    wire       db_chavesIgualMemoria_out;
+    wire       db_enderecoIgualSequencia_out;
+    wire       db_fimS_out;
+    wire [6:0] db_contagem_out;
+    wire [6:0] db_memoria_out;
+    wire [6:0] db_jogadafeita_out;
+    wire [6:0] db_sequencia_out;
+    wire [6:0] db_estado_out;
+    wire       db_timeout_out;
+    wire       db_timeoutL_out;
+
+    // Configuração do clock
+    parameter clockPeriod = 1000; // in us, f=1KHz
+
+    // Identificação do caso de teste
+    reg [31:0] caso = 0;
+
+    // Gerador de clock
+    always #((clockPeriod / 2)) clock_in = ~clock_in;
+
+    // Instanciação do DUT
+    jogo_desafio_memoria dut (
+        .clock(clock_in),
+        .reset(reset_in),
+        .jogar(jogar_in),
+        .botoes(botoes_in),
+        .ganhou(ganhou_out),
+        .perdeu(perdeu_out),
+        .timeout(timeout_out),
+        .pronto(pronto_out),
+        .leds(leds_out),
+        .db_clock(db_clock_out),
+        .db_tem_jogada(db_tem_jogada_out),
+        .db_chavesIgualMemoria(db_chavesIgualMemoria_out),
+        .db_enderecoIgualSequencia(db_enderecoIgualSequencia_out),
+        .db_fimS(db_fimS_out),
+        .db_contagem(db_contagem_out),
+        .db_memoria(db_memoria_out),
+        .db_jogadafeita(db_jogadafeita_out),
+        .db_sequencia(db_sequencia_out),
+        .db_estado(db_estado_out),
+        .db_timeout(db_timeout_out),
+        .db_timeoutL(db_timeoutL_out)
+    );
+
+    // Gabarito
+    reg [3:0] jogadas[0:15];
+    initial begin
+        jogadas[0] = 4&apos;b0001;
+        jogadas[1] = 4&apos;b0010;
+        jogadas[2] = 4&apos;b0100;
+        jogadas[3] = 4&apos;b1000;
+        jogadas[4] = 4&apos;b0100;
+        jogadas[5] = 4&apos;b0010;
+        jogadas[6] = 4&apos;b0001;
+        jogadas[7] = 4&apos;b0001;
+        jogadas[8] = 4&apos;b0010;
+        jogadas[9] = 4&apos;b0010;
+        jogadas[10] = 4&apos;b0100;
+        jogadas[11] = 4&apos;b0100;
+        jogadas[12] = 4&apos;b1000;
+        jogadas[13] = 4&apos;b1000;
+        jogadas[14] = 4&apos;b0001;
+        jogadas[15] = 4&apos;b0100;
+    end
+
+    // Variáveis de loop
+    integer i, j;
+
+    // Geração dos estímulos de entrada
+    initial begin
+        $display(&quot;Inicio da simulacao&quot;);
+
+        // Condições iniciais
+        caso = 0;
+        clock_in = 1;
+        reset_in = 0;
+        jogar_in = 0;
+        botoes_in = 4&apos;b0000;
+        #(clockPeriod);
+
+        // Teste 1: Reset do circuito
+        caso = 1;
+        @(negedge clock_in);
+        reset_in = 1;
+        #(clockPeriod);
+        reset_in = 0;
+        #(10 * clockPeriod);
+
+        // Teste 2: Jogar por 5 períodos de clock
+        caso = 2;
+        #(2 * clockPeriod);
+        jogar_in = 1;
+        #(5 * clockPeriod);
+        jogar_in = 0;
+        #(10 * clockPeriod);
+
+        // Testes de jogadas
+        for (i = 3; i &lt;= 18; i = i + 1) begin
+            #(1_000_000 * (i - 2));
+            #(500_000);
+            caso = i;
+            @(negedge clock_in);
+
+            for (j = 0; j &lt; i-2; j = j + 1) begin
+                botoes_in = jogadas[j];
+                #(10 * clockPeriod);
+                botoes_in = 4&apos;b0000;
+                #(10 * clockPeriod);
+            end
+        end
+
+        // Final da simulação
+        caso = 99;
+        #1;
+        $display(&quot;Fim da simulacao&quot;);
+        $stop;
+    end
+endmodule
+
+// --- End of jogo_desafio_memoria_tb1.v ---
+
+// --- Start of jogo_desafio_memoria_tb2.v ---
+`timescale 1us/1ns
+
+module jogo_desafio_memoria_tb2;
+
+    // Sinais para conectar com o DUT
+    reg        clock_in   = 1;
+    reg        reset_in   = 0;
+    reg        jogar_in = 0;
+    reg  [3:0] botoes_in  = 4&apos;b0000;
+
+    wire       ganhou_out;
+    wire       perdeu_out;
+    wire       pronto_out;
+    wire [3:0] leds_out;
+    wire       db_clock_out;
+    wire       db_tem_jogada_out;
+    wire       db_chavesIgualMemoria_out;
+    wire       db_enderecoIgualSequencia_out;
+    wire       db_fimS_out;
+    wire [6:0] db_contagem_out;
+    wire [6:0] db_memoria_out;
+    wire [6:0] db_jogadafeita_out;
+    wire [6:0] db_sequencia_out;
+    wire [6:0] db_estado_out;
+    wire       db_timeout_out;
+    wire       db_timeoutL_out;
+
+    // Configuração do clock
+    parameter clockPeriod = 1000; // in us, f=1KHz
+
+    // Identificação do caso de teste
+    reg [31:0] caso = 0;
+
+    // Gerador de clock
+    always #((clockPeriod / 2)) clock_in = ~clock_in;
+
+    // Instanciação do DUT
+    jogo_desafio_memoria dut (
+        .clock(clock_in),
+        .reset(reset_in),
+        .jogar(jogar_in),
+        .botoes(botoes_in),
+        .ganhou(ganhou_out),
+        .perdeu(perdeu_out),
+        .timeout(timeout_out),
+        .pronto(pronto_out),
+        .leds(leds_out),
+        .db_clock(db_clock_out),
+        .db_tem_jogada(db_tem_jogada_out),
+        .db_chavesIgualMemoria(db_chavesIgualMemoria_out),
+        .db_enderecoIgualSequencia(db_enderecoIgualSequencia_out),
+        .db_fimS(db_fimS_out),
+        .db_contagem(db_contagem_out),
+        .db_memoria(db_memoria_out),
+        .db_jogadafeita(db_jogadafeita_out),
+        .db_sequencia(db_sequencia_out),
+        .db_estado(db_estado_out),
+        .db_timeout(db_timeout_out),
+        .db_timeoutL(db_timeoutL_out)
+    );
+
+    // Gabarito errado
+    reg [3:0] jogadas[0:15];
+    initial begin
+        jogadas[0] = 4&apos;b0001;
+        jogadas[1] = 4&apos;b0010;
+        jogadas[2] = 4&apos;b0100;
+        jogadas[3] = 4&apos;b1000;
+        jogadas[4] = 4&apos;b0100;
+        jogadas[5] = 4&apos;b0010;
+        jogadas[6] = 4&apos;b0001;
+        jogadas[7] = 4&apos;b0001;
+        jogadas[8] = 4&apos;b0010;
+        jogadas[9] = 4&apos;b0010;
+        jogadas[10] = 4&apos;b0100;
+        jogadas[11] = 4&apos;b0100;
+        jogadas[12] = 4&apos;b1000;
+        jogadas[13] = 4&apos;b1000;
+        jogadas[14] = 4&apos;b0001;
+        jogadas[15] = 4&apos;b0100;
+    end
+
+    // Variáveis de loop
+    integer i, j;
+
+    // Geração dos estímulos de entrada
+    initial begin
+        $display(&quot;Inicio da simulacao&quot;);
+
+        // Condições iniciais
+        caso = 0;
+        clock_in = 1;
+        reset_in = 0;
+        jogar_in = 0;
+        botoes_in = 4&apos;b0000;
+        #(clockPeriod);
+
+        // Teste 1: Reset do circuito
+        caso = 1;
+        @(negedge clock_in);
+        reset_in = 1;
+        #(clockPeriod);
+        reset_in = 0;
+        #(10 * clockPeriod);
+
+        // Teste 2: Jogar por 5 períodos de clock
+        caso = 2;
+        #(2 * clockPeriod);
+        jogar_in = 1;
+        #(5 * clockPeriod);
+        jogar_in = 0;
+        #(10 * clockPeriod);
+
+        // Testes de jogadas
+        for (i = 3; i &lt;= 6; i = i + 1) begin
+            #(1_000_000 * (i - 2));
+            #(500_000);
+            caso = i;
+            @(negedge clock_in);
+
+            for (j = 0; j &lt; i-2; j = j + 1) begin
+                if (i == 6 &amp;&amp;  j == 2) begin
+                    botoes_in = 4&apos;b0010;
+                    j = i - 2;
+                end
+                else begin
+                    botoes_in = jogadas[j];
+                end
+                #(10 * clockPeriod);
+                botoes_in = 4&apos;b0000;
+                #(10 * clockPeriod);
+            end
+        end
+
+        // Teste 7: Acionar o sinal jogar
+        caso = 7;
+        #(2 * clockPeriod);
+        jogar_in = 1;
+        #(5 * clockPeriod);
+        jogar_in = 0;
+        #(10 * clockPeriod);
+
+        // Testes de jogadas
+        for (i = 8; i &lt;= 9; i = i + 1) begin
+            #(1_000_000 * (i - 7));
+            #(500_000);
+            caso = i;
+            @(negedge clock_in);
+
+            for (j = 0; j &lt; i-7; j = j + 1) begin
+                if (i == 9 &amp;&amp;  j == 1) begin
+                    botoes_in = 4&apos;b0100;
+                    j = i - 7;
+                end
+                else begin
+                    botoes_in = jogadas[j];
+                end
+                #(10 * clockPeriod);
+                botoes_in = 4&apos;b0000;
+                #(10 * clockPeriod);
+            end
+        end
+
+        // Final da simulação
+        caso = 99;
+        #1;
+        $display(&quot;Fim da simulacao&quot;);
+        $stop;
+    end
+endmodule
+
+// --- End of jogo_desafio_memoria_tb2.v ---
+
+// --- Start of jogo_desafio_memoria_tb3.v ---
+`timescale 1us/1ns
+
+module jogo_desafio_memoria_tb3;
+
+    // Sinais para conectar com o DUT
+    reg        clock_in   = 1;
+    reg        reset_in   = 0;
+    reg        jogar_in = 0;
+    reg  [3:0] botoes_in  = 4&apos;b0000;
+
+    wire       ganhou_out;
+    wire       perdeu_out;
+    wire       pronto_out;
+    wire [3:0] leds_out;
+    wire       db_clock_out;
+    wire       db_tem_jogada_out;
+    wire       db_chavesIgualMemoria_out;
+    wire       db_enderecoIgualSequencia_out;
+    wire       db_fimS_out;
+    wire [6:0] db_contagem_out;
+    wire [6:0] db_memoria_out;
+    wire [6:0] db_jogadafeita_out;
+    wire [6:0] db_sequencia_out;
+    wire [6:0] db_estado_out;
+    wire       db_timeout_out;
+    wire       db_timeoutL_out;
+
+    // Configuração do clock
+    parameter clockPeriod = 1000; // in us, f=1KHz
+
+    // Identificação do caso de teste
+    reg [31:0] caso = 0;
+
+    // Gerador de clock
+    always #((clockPeriod / 2)) clock_in = ~clock_in;
+
+    // Instanciação do DUT
+    jogo_desafio_memoria dut (
+        .clock(clock_in),
+        .reset(reset_in),
+        .jogar(jogar_in),
+        .botoes(botoes_in),
+        .ganhou(ganhou_out),
+        .perdeu(perdeu_out),
+        .timeout(timeout_out),
+        .pronto(pronto_out),
+        .leds(leds_out),
+        .db_clock(db_clock_out),
+        .db_tem_jogada(db_tem_jogada_out),
+        .db_chavesIgualMemoria(db_chavesIgualMemoria_out),
+        .db_enderecoIgualSequencia(db_enderecoIgualSequencia_out),
+        .db_fimS(db_fimS_out),
+        .db_contagem(db_contagem_out),
+        .db_memoria(db_memoria_out),
+        .db_jogadafeita(db_jogadafeita_out),
+        .db_sequencia(db_sequencia_out),
+        .db_estado(db_estado_out),
+        .db_timeout(db_timeout_out),
+        .db_timeoutL(db_timeoutL_out)
+    );
+
+    // Geração dos estímulos de entrada
+    initial begin
+        $display(&quot;Inicio da simulacao&quot;);
+
+        // Condições iniciais
+        caso = 0;
+        clock_in = 1;
+        reset_in = 0;
+        jogar_in = 0;
+        botoes_in = 4&apos;b0000;
+        #(clockPeriod);
+
+        // Teste 1: Reset do circuito
+        caso = 1;
+        @(negedge clock_in);
+        reset_in = 1;
+        #(clockPeriod);
+        reset_in = 0;
+        #(10 * clockPeriod);
+
+        // Teste 2: Jogar por 5 períodos de clock
+        caso = 2;
+        #(2 * clockPeriod);
+        jogar_in = 1;
+        #(5 * clockPeriod);
+        jogar_in = 0;
+        #(10 * clockPeriod);
+
+        // Jogar a primeira rodada
+        #(1_000_000);
+        #(500_000);
+        botoes_in = 4&apos;b0001;
+        #(10 * clockPeriod);
+        botoes_in = 4&apos;b0000;
+        #(10 * clockPeriod);
+
+        // Jogar a segunda rodada e aguardar mais de 5s
+        #(2_000_000);
+        #(500_000);
+        botoes_in = 4&apos;b0001;
+        #(10 * clockPeriod);
+        botoes_in = 4&apos;b0000;
+        #(10 * clockPeriod);
+        botoes_in = 4&apos;b0010;
+        #(10 * clockPeriod);
+        botoes_in = 4&apos;b0000;
+        #(10 * clockPeriod);
+
+        // Testes de jogadas
+        #(8_000_000);
+        #(500_000);
+
+        // Final da simulação
+        caso = 99;
+        #1;
+        $display(&quot;Fim da simulacao&quot;);
+        $stop;
+    end
+endmodule
+
+// --- End of jogo_desafio_memoria_tb3.v ---
+
+// --- Start of mux2x1.v ---
 /*------------------------------------------------------------------------
  * Arquivo   : mux2x1.v
  * Projeto   : Jogo do Desafio da Memoria
@@ -801,81 +1293,9 @@ end
 
 endmodule
 
+// --- End of mux2x1.v ---
 
-//------------------------------------------------------------------
-// Arquivo   : registrador_4.v
-// Projeto   : Experiencia 3 - Projeto de uma Unidade de Controle 
-//------------------------------------------------------------------
-// Descricao : Registrador de 4 bits
-//             
-//------------------------------------------------------------------
-// Revisoes  :
-//     Data        Versao  Autor             Descricao
-//     14/12/2023  1.0     Edson Midorikawa  versao inicial
-//------------------------------------------------------------------
-//
-module registrador_4 (
-    input        clock,
-    input        clear,
-    input        enable,
-    input  [3:0] D,
-    output [3:0] Q
-);
-
-    reg [3:0] IQ;
-
-    always @(posedge clock or posedge clear) begin
-        if (clear)
-            IQ &lt;= 0;
-        else if (enable)
-            IQ &lt;= D;
-    end
-
-    assign Q = IQ;
-
-endmodule
-
-
-//------------------------------------------------------------------
-// Arquivo   : sync_rom_16x4.v
-// Projeto   : Experiencia 3 - Projeto de uma Unidade de Controle 
-//------------------------------------------------------------------
-// Descricao : ROM sincrona 16x4 (conteúdo pre-programado)
-//             
-//------------------------------------------------------------------
-// Revisoes  :
-//     Data        Versao  Autor             Descricao
-//     14/12/2023  1.0     Edson Midorikawa  versao inicial
-//------------------------------------------------------------------
-//
-module sync_rom_16x4 (clock, address, data_out);
-    input            clock;
-    input      [3:0] address;
-    output reg [3:0] data_out;
-
-    always @ (posedge clock)
-    begin
-        case (address)
-            4&apos;b0000: data_out = 4&apos;b0001;
-            4&apos;b0001: data_out = 4&apos;b0010;
-            4&apos;b0010: data_out = 4&apos;b0100;
-            4&apos;b0011: data_out = 4&apos;b1000;
-            4&apos;b0100: data_out = 4&apos;b0100;
-            4&apos;b0101: data_out = 4&apos;b0010;
-            4&apos;b0110: data_out = 4&apos;b0001;
-            4&apos;b0111: data_out = 4&apos;b0001;
-            4&apos;b1000: data_out = 4&apos;b0010;
-            4&apos;b1001: data_out = 4&apos;b0010;
-            4&apos;b1010: data_out = 4&apos;b0100;
-            4&apos;b1011: data_out = 4&apos;b0100;
-            4&apos;b1100: data_out = 4&apos;b1000;
-            4&apos;b1101: data_out = 4&apos;b1000;
-            4&apos;b1110: data_out = 4&apos;b0001;
-            4&apos;b1111: data_out = 4&apos;b0100;
-        endcase
-    end
-endmodule
-
+// --- Start of mux2x1_n.v ---
 /*------------------------------------------------------------------------
  * Arquivo   : mux2x1_n.v
  * Projeto   : Jogo do Desafio da Memoria
@@ -909,10 +1329,158 @@ always @(*) begin
     endcase
 end
 
-endmodule</string>
+endmodule
+// --- End of mux2x1_n.v ---
+
+// --- Start of mux2x1_tb.v ---
+/*------------------------------------------------------------------------
+ * Arquivo   : mux2x1_tb.v
+ * Projeto   : Jogo do Desafio da Memoria
+ *------------------------------------------------------------------------
+ * Descricao : testbench para o multiplexador 2x1 
+ * 
+ *------------------------------------------------------------------------
+ * Revisoes  :
+ *     Data        Versao  Autor             Descricao
+ *     15/02/2024  1.0     Edson Midorikawa  criacao
+ *     31/01/2025  1.1     Edson Midorikawa  revisao
+ *------------------------------------------------------------------------
+ */
+ 
+`timescale 1ns/1ns
+
+module mux2x1_tb;
+    
+    // Entradas
+    reg D0, D1;
+    reg SEL;
+    
+    // Saída
+    wire OUT;
+    
+    // Instanciacao do DUT
+    mux2x1 mux_inst (
+        .D0  ( D0  ),
+        .D1  ( D1  ),
+        .SEL ( SEL ),
+        .OUT ( OUT )
+    );
+    
+    // Geracao de Estimulos
+    initial begin
+        $monitor(&quot;Time=%0t D0=%b D1=%b SEL=%b MUX_OUT=%b&quot;, $time, D0, D1, SEL, OUT);
+        
+        // Caso de teste 1: SEL = 0
+        SEL = 0;
+        D0 = 1&apos;b0; D1 = 1&apos;b1;
+        #10;
+
+        // Caso de teste 2: SEL = 0
+        SEL = 0;
+        D0 = 1&apos;b1; D1 = 1&apos;b0;
+        #10;
+ 
+        // Caso de teste 3: SEL = 1
+        SEL = 1;
+        D0 = 1&apos;b0; D1 = 1&apos;b1;
+        #10;
+ 
+        // Caso de teste 4: SEL = 1
+        SEL = 1;
+        D0 = 1&apos;b1; D1 = 1&apos;b0;
+        #10;
+        
+        // Caso de teste 5: SEL = X
+        SEL = 1&apos;bx;
+        D0 = 1&apos;b0; D1 = 1&apos;b0;
+        #10;
+        
+        // Caso de teste 6: SEL = X
+        SEL = 1&apos;bx;
+        D0 = 1&apos;b1; D1 = 1&apos;b0;
+        #10;
+        
+        // Fim da simulacao
+        $stop;
+    end
+    
+endmodule
+
+// --- End of mux2x1_tb.v ---
+
+// --- Start of registrador_4.v ---
+//------------------------------------------------------------------
+// Arquivo   : registrador_4.v
+// Projeto   : Experiencia 3 - Projeto de uma Unidade de Controle 
+//------------------------------------------------------------------
+// Descricao : Registrador de 4 bits
+//             
+//------------------------------------------------------------------
+// Revisoes  :
+//     Data        Versao  Autor             Descricao
+//     14/12/2023  1.0     Edson Midorikawa  versao inicial
+//------------------------------------------------------------------
+//
+module registrador_4 (
+    input        clock,
+    input        clear,
+    input        enable,
+    input  [3:0] D,
+    output [3:0] Q
+);
+
+    reg [3:0] IQ;
+
+    always @(posedge clock or posedge clear) begin
+        if (clear)
+            IQ &lt;= 0;
+        else if (enable)
+            IQ &lt;= D;
+    end
+
+    assign Q = IQ;
+
+endmodule
+// --- End of registrador_4.v ---
+
+// --- Start of sync_rom_16x4.v ---
+//------------------------------------------------------------------
+// Arquivo   : sync_rom_16x4.v
+// Projeto   : Experiencia 3 - Projeto de uma Unidade de Controle 
+//------------------------------------------------------------------
+// Descricao : ROM sincrona 16x4 (conteúdo pre-programado)
+//             
+//------------------------------------------------------------------
+// Revisoes  :
+//     Data        Versao  Autor             Descricao
+//     14/12/2023  1.0     Edson Midorikawa  versao inicial
+//------------------------------------------------------------------
+//
+
+module sync_rom_16x4 #(parameter ROM_FILE = &quot;jogo_1.mem&quot;) (
+    input            clock,
+    input      [3:0] address,
+    output reg [3:0] data_out
+);
+
+    reg [3:0] rom [15:0];  // Declaração da ROM como um array de registradores
+
+    initial begin
+        $readmemb(ROM_FILE, rom); // Lê os dados do arquivo binário
+        // Para arquivo hexadecimal, use: $readmemh(ROM_FILE, rom);
+    end
+
+    always @ (posedge clock) begin
+        data_out &lt;= rom[address];  // Atribui o valor da ROM com base no endereço
+    end
+
+endmodule
+
+
+// --- End of sync_rom_16x4.v ---</string>
         </entry>
       </elementAttributes>
-      <pos x="740" y="-400"/>
+      <pos x="740" y="-520"/>
     </visualElement>
     <visualElement>
       <elementName>Seven-Seg</elementName>
@@ -1258,7 +1826,7 @@ endmodule</string>
           <int>1000</int>
         </entry>
       </elementAttributes>
-      <pos x="500" y="-480"/>
+      <pos x="500" y="-520"/>
     </visualElement>
     <visualElement>
       <elementName>LED</elementName>
@@ -1395,7 +1963,7 @@ endmodule</string>
           <string>RESET</string>
         </entry>
       </elementAttributes>
-      <pos x="500" y="-420"/>
+      <pos x="500" y="-480"/>
     </visualElement>
     <visualElement>
       <elementName>Button</elementName>
@@ -1405,7 +1973,7 @@ endmodule</string>
           <string>JOGAR</string>
         </entry>
       </elementAttributes>
-      <pos x="500" y="-360"/>
+      <pos x="500" y="-440"/>
     </visualElement>
     <visualElement>
       <elementName>LED</elementName>
@@ -1464,7 +2032,7 @@ endmodule</string>
           <string>C = M</string>
         </entry>
       </elementAttributes>
-      <pos x="1120" y="-140"/>
+      <pos x="1620" y="-100"/>
     </visualElement>
     <visualElement>
       <elementName>Out</elementName>
@@ -1474,7 +2042,7 @@ endmodule</string>
           <string>E = S</string>
         </entry>
       </elementAttributes>
-      <pos x="1120" y="-180"/>
+      <pos x="1620" y="-140"/>
     </visualElement>
     <visualElement>
       <elementName>ButtonLED</elementName>
@@ -1564,6 +2132,90 @@ endmodule</string>
       <elementAttributes/>
       <pos x="580" y="220"/>
     </visualElement>
+    <visualElement>
+      <elementName>In</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>Memoria a ser Jogada</string>
+        </entry>
+      </elementAttributes>
+      <pos x="500" y="-400"/>
+    </visualElement>
+    <visualElement>
+      <elementName>In</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>Nivel de Dificuldade</string>
+        </entry>
+        <entry>
+          <string>InDefault</string>
+          <value v="1" z="false"/>
+        </entry>
+      </elementAttributes>
+      <pos x="500" y="-360"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>db\_clock</string>
+        </entry>
+      </elementAttributes>
+      <pos x="1620" y="-300"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>db\_tem\_jogada</string>
+        </entry>
+      </elementAttributes>
+      <pos x="1620" y="-220"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>db\_fimS</string>
+        </entry>
+      </elementAttributes>
+      <pos x="1620" y="-180"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>db\_seletor\_memoria</string>
+        </entry>
+      </elementAttributes>
+      <pos x="1460" y="-60"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>db\_timeout</string>
+        </entry>
+      </elementAttributes>
+      <pos x="1460" y="-20"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>db\_timeoutL</string>
+        </entry>
+      </elementAttributes>
+      <pos x="1460" y="20"/>
+    </visualElement>
   </visualElements>
   <wires>
     <wire>
@@ -1591,6 +2243,222 @@ endmodule</string>
       <p2 x="1980" y="-260"/>
     </wire>
     <wire>
+      <p1 x="1740" y="-900"/>
+      <p2 x="1860" y="-900"/>
+    </wire>
+    <wire>
+      <p1 x="580" y="260"/>
+      <p2 x="680" y="260"/>
+    </wire>
+    <wire>
+      <p1 x="500" y="-520"/>
+      <p2 x="740" y="-520"/>
+    </wire>
+    <wire>
+      <p1 x="1060" y="-520"/>
+      <p2 x="1340" y="-520"/>
+    </wire>
+    <wire>
+      <p1 x="2360" y="-140"/>
+      <p2 x="2540" y="-140"/>
+    </wire>
+    <wire>
+      <p1 x="1200" y="-140"/>
+      <p2 x="1620" y="-140"/>
+    </wire>
+    <wire>
+      <p1 x="2440" y="140"/>
+      <p2 x="2480" y="140"/>
+    </wire>
+    <wire>
+      <p1 x="1260" y="140"/>
+      <p2 x="1300" y="140"/>
+    </wire>
+    <wire>
+      <p1 x="1800" y="140"/>
+      <p2 x="1840" y="140"/>
+    </wire>
+    <wire>
+      <p1 x="1300" y="140"/>
+      <p2 x="1480" y="140"/>
+    </wire>
+    <wire>
+      <p1 x="500" y="-400"/>
+      <p2 x="580" y="-400"/>
+    </wire>
+    <wire>
+      <p1 x="1060" y="-400"/>
+      <p2 x="1600" y="-400"/>
+    </wire>
+    <wire>
+      <p1 x="2400" y="-660"/>
+      <p2 x="2440" y="-660"/>
+    </wire>
+    <wire>
+      <p1 x="1780" y="-660"/>
+      <p2 x="1820" y="-660"/>
+    </wire>
+    <wire>
+      <p1 x="1400" y="-20"/>
+      <p2 x="1460" y="-20"/>
+    </wire>
+    <wire>
+      <p1 x="1440" y="20"/>
+      <p2 x="1460" y="20"/>
+    </wire>
+    <wire>
+      <p1 x="1160" y="-280"/>
+      <p2 x="1580" y="-280"/>
+    </wire>
+    <wire>
+      <p1 x="1060" y="-280"/>
+      <p2 x="1140" y="-280"/>
+    </wire>
+    <wire>
+      <p1 x="2360" y="-540"/>
+      <p2 x="2540" y="-540"/>
+    </wire>
+    <wire>
+      <p1 x="1080" y="-540"/>
+      <p2 x="1980" y="-540"/>
+    </wire>
+    <wire>
+      <p1 x="2020" y="-160"/>
+      <p2 x="2080" y="-160"/>
+    </wire>
+    <wire>
+      <p1 x="1820" y="160"/>
+      <p2 x="1860" y="160"/>
+    </wire>
+    <wire>
+      <p1 x="1960" y="160"/>
+      <p2 x="2060" y="160"/>
+    </wire>
+    <wire>
+      <p1 x="2460" y="160"/>
+      <p2 x="2500" y="160"/>
+    </wire>
+    <wire>
+      <p1 x="2060" y="160"/>
+      <p2 x="2180" y="160"/>
+    </wire>
+    <wire>
+      <p1 x="2320" y="-420"/>
+      <p2 x="2440" y="-420"/>
+    </wire>
+    <wire>
+      <p1 x="1320" y="-420"/>
+      <p2 x="1620" y="-420"/>
+    </wire>
+    <wire>
+      <p1 x="520" y="-420"/>
+      <p2 x="560" y="-420"/>
+    </wire>
+    <wire>
+      <p1 x="600" y="-420"/>
+      <p2 x="740" y="-420"/>
+    </wire>
+    <wire>
+      <p1 x="1060" y="-420"/>
+      <p2 x="1260" y="-420"/>
+    </wire>
+    <wire>
+      <p1 x="1760" y="-680"/>
+      <p2 x="1800" y="-680"/>
+    </wire>
+    <wire>
+      <p1 x="2340" y="-40"/>
+      <p2 x="2460" y="-40"/>
+    </wire>
+    <wire>
+      <p1 x="1260" y="-300"/>
+      <p2 x="1620" y="-300"/>
+    </wire>
+    <wire>
+      <p1 x="1060" y="-300"/>
+      <p2 x="1080" y="-300"/>
+    </wire>
+    <wire>
+      <p1 x="1720" y="-560"/>
+      <p2 x="1900" y="-560"/>
+    </wire>
+    <wire>
+      <p1 x="2020" y="-560"/>
+      <p2 x="2080" y="-560"/>
+    </wire>
+    <wire>
+      <p1 x="2040" y="-180"/>
+      <p2 x="2080" y="-180"/>
+    </wire>
+    <wire>
+      <p1 x="2100" y="-180"/>
+      <p2 x="2180" y="-180"/>
+    </wire>
+    <wire>
+      <p1 x="2220" y="-180"/>
+      <p2 x="2320" y="-180"/>
+    </wire>
+    <wire>
+      <p1 x="1580" y="-180"/>
+      <p2 x="1620" y="-180"/>
+    </wire>
+    <wire>
+      <p1 x="1060" y="-180"/>
+      <p2 x="1440" y="-180"/>
+    </wire>
+    <wire>
+      <p1 x="2320" y="-820"/>
+      <p2 x="2440" y="-820"/>
+    </wire>
+    <wire>
+      <p1 x="1300" y="180"/>
+      <p2 x="1340" y="180"/>
+    </wire>
+    <wire>
+      <p1 x="1360" y="180"/>
+      <p2 x="1500" y="180"/>
+    </wire>
+    <wire>
+      <p1 x="1540" y="180"/>
+      <p2 x="1680" y="180"/>
+    </wire>
+    <wire>
+      <p1 x="2480" y="180"/>
+      <p2 x="2520" y="180"/>
+    </wire>
+    <wire>
+      <p1 x="2340" y="-440"/>
+      <p2 x="2460" y="-440"/>
+    </wire>
+    <wire>
+      <p1 x="500" y="-440"/>
+      <p2 x="540" y="-440"/>
+    </wire>
+    <wire>
+      <p1 x="580" y="-440"/>
+      <p2 x="740" y="-440"/>
+    </wire>
+    <wire>
+      <p1 x="1060" y="-440"/>
+      <p2 x="1240" y="-440"/>
+    </wire>
+    <wire>
+      <p1 x="1680" y="-60"/>
+      <p2 x="1800" y="-60"/>
+    </wire>
+    <wire>
+      <p1 x="2360" y="-60"/>
+      <p2 x="2480" y="-60"/>
+    </wire>
+    <wire>
+      <p1 x="1360" y="-60"/>
+      <p2 x="1460" y="-60"/>
+    </wire>
+    <wire>
+      <p1 x="1060" y="-320"/>
+      <p2 x="1220" y="-320"/>
+    </wire>
+    <wire>
       <p1 x="2040" y="-580"/>
       <p2 x="2080" y="-580"/>
     </wire>
@@ -1607,20 +2475,12 @@ endmodule</string>
       <p2 x="1340" y="-580"/>
     </wire>
     <wire>
-      <p1 x="1740" y="-900"/>
-      <p2 x="1860" y="-900"/>
-    </wire>
-    <wire>
-      <p1 x="580" y="260"/>
-      <p2 x="680" y="260"/>
-    </wire>
-    <wire>
       <p1 x="2460" y="-200"/>
       <p2 x="2500" y="-200"/>
     </wire>
     <wire>
       <p1 x="1060" y="-200"/>
-      <p2 x="1100" y="-200"/>
+      <p2 x="1400" y="-200"/>
     </wire>
     <wire>
       <p1 x="2340" y="-840"/>
@@ -1663,14 +2523,6 @@ endmodule</string>
       <p2 x="800" y="200"/>
     </wire>
     <wire>
-      <p1 x="2360" y="-140"/>
-      <p2 x="2540" y="-140"/>
-    </wire>
-    <wire>
-      <p1 x="1080" y="-140"/>
-      <p2 x="1120" y="-140"/>
-    </wire>
-    <wire>
       <p1 x="2480" y="-460"/>
       <p2 x="2540" y="-460"/>
     </wire>
@@ -1679,20 +2531,12 @@ endmodule</string>
       <p2 x="1620" y="-460"/>
     </wire>
     <wire>
-      <p1 x="2440" y="140"/>
-      <p2 x="2480" y="140"/>
+      <p1 x="560" y="-460"/>
+      <p2 x="740" y="-460"/>
     </wire>
     <wire>
-      <p1 x="1260" y="140"/>
-      <p2 x="1300" y="140"/>
-    </wire>
-    <wire>
-      <p1 x="1800" y="140"/>
-      <p2 x="1840" y="140"/>
-    </wire>
-    <wire>
-      <p1 x="1300" y="140"/>
-      <p2 x="1480" y="140"/>
+      <p1 x="1060" y="-460"/>
+      <p2 x="1280" y="-460"/>
     </wire>
     <wire>
       <p1 x="2500" y="-80"/>
@@ -1703,28 +2547,12 @@ endmodule</string>
       <p2 x="1820" y="-80"/>
     </wire>
     <wire>
-      <p1 x="700" y="-400"/>
-      <p2 x="740" y="-400"/>
-    </wire>
-    <wire>
-      <p1 x="1060" y="-400"/>
-      <p2 x="1340" y="-400"/>
-    </wire>
-    <wire>
-      <p1 x="1060" y="-340"/>
+      <p1 x="1280" y="-340"/>
       <p2 x="1620" y="-340"/>
     </wire>
     <wire>
-      <p1 x="520" y="-340"/>
-      <p2 x="740" y="-340"/>
-    </wire>
-    <wire>
-      <p1 x="2400" y="-660"/>
-      <p2 x="2440" y="-660"/>
-    </wire>
-    <wire>
-      <p1 x="1780" y="-660"/>
-      <p2 x="1820" y="-660"/>
+      <p1 x="1060" y="-340"/>
+      <p2 x="1160" y="-340"/>
     </wire>
     <wire>
       <p1 x="1300" y="-600"/>
@@ -1743,10 +2571,6 @@ endmodule</string>
       <p2 x="2500" y="-600"/>
     </wire>
     <wire>
-      <p1 x="1060" y="-280"/>
-      <p2 x="1980" y="-280"/>
-    </wire>
-    <wire>
       <p1 x="1700" y="-860"/>
       <p2 x="1820" y="-860"/>
     </wire>
@@ -1755,20 +2579,20 @@ endmodule</string>
       <p2 x="2540" y="-860"/>
     </wire>
     <wire>
-      <p1 x="2360" y="-540"/>
-      <p2 x="2540" y="-540"/>
-    </wire>
-    <wire>
       <p1 x="2440" y="-220"/>
       <p2 x="2480" y="-220"/>
     </wire>
     <wire>
-      <p1 x="1060" y="-220"/>
-      <p2 x="1260" y="-220"/>
-    </wire>
-    <wire>
       <p1 x="1980" y="-220"/>
       <p2 x="2040" y="-220"/>
+    </wire>
+    <wire>
+      <p1 x="1600" y="-220"/>
+      <p2 x="1620" y="-220"/>
+    </wire>
+    <wire>
+      <p1 x="1060" y="-220"/>
+      <p2 x="1360" y="-220"/>
     </wire>
     <wire>
       <p1 x="2040" y="-220"/>
@@ -1787,44 +2611,20 @@ endmodule</string>
       <p2 x="1240" y="220"/>
     </wire>
     <wire>
-      <p1 x="2020" y="-160"/>
-      <p2 x="2080" y="-160"/>
-    </wire>
-    <wire>
       <p1 x="2380" y="-480"/>
       <p2 x="2500" y="-480"/>
     </wire>
     <wire>
       <p1 x="500" y="-480"/>
-      <p2 x="700" y="-480"/>
+      <p2 x="520" y="-480"/>
     </wire>
     <wire>
-      <p1 x="1820" y="160"/>
-      <p2 x="1860" y="160"/>
+      <p1 x="540" y="-480"/>
+      <p2 x="740" y="-480"/>
     </wire>
     <wire>
-      <p1 x="1960" y="160"/>
-      <p2 x="2060" y="160"/>
-    </wire>
-    <wire>
-      <p1 x="2460" y="160"/>
-      <p2 x="2500" y="160"/>
-    </wire>
-    <wire>
-      <p1 x="2060" y="160"/>
-      <p2 x="2180" y="160"/>
-    </wire>
-    <wire>
-      <p1 x="2320" y="-420"/>
-      <p2 x="2440" y="-420"/>
-    </wire>
-    <wire>
-      <p1 x="500" y="-420"/>
-      <p2 x="680" y="-420"/>
-    </wire>
-    <wire>
-      <p1 x="1360" y="-420"/>
-      <p2 x="1620" y="-420"/>
+      <p1 x="1060" y="-480"/>
+      <p2 x="1300" y="-480"/>
     </wire>
     <wire>
       <p1 x="2400" y="-100"/>
@@ -1835,24 +2635,20 @@ endmodule</string>
       <p2 x="1900" y="-100"/>
     </wire>
     <wire>
+      <p1 x="1180" y="-100"/>
+      <p2 x="1620" y="-100"/>
+    </wire>
+    <wire>
       <p1 x="1760" y="100"/>
       <p2 x="1800" y="100"/>
     </wire>
     <wire>
-      <p1 x="1760" y="-680"/>
-      <p2 x="1800" y="-680"/>
-    </wire>
-    <wire>
-      <p1 x="2340" y="-40"/>
-      <p2 x="2460" y="-40"/>
-    </wire>
-    <wire>
       <p1 x="500" y="-360"/>
-      <p2 x="740" y="-360"/>
+      <p2 x="600" y="-360"/>
     </wire>
     <wire>
       <p1 x="1060" y="-360"/>
-      <p2 x="1380" y="-360"/>
+      <p2 x="1200" y="-360"/>
     </wire>
     <wire>
       <p1 x="1820" y="-620"/>
@@ -1869,18 +2665,6 @@ endmodule</string>
     <wire>
       <p1 x="2040" y="-620"/>
       <p2 x="2160" y="-620"/>
-    </wire>
-    <wire>
-      <p1 x="1060" y="-300"/>
-      <p2 x="1220" y="-300"/>
-    </wire>
-    <wire>
-      <p1 x="1720" y="-560"/>
-      <p2 x="1900" y="-560"/>
-    </wire>
-    <wire>
-      <p1 x="2020" y="-560"/>
-      <p2 x="2080" y="-560"/>
     </wire>
     <wire>
       <p1 x="1840" y="-880"/>
@@ -1903,52 +2687,20 @@ endmodule</string>
       <p2 x="2560" y="240"/>
     </wire>
     <wire>
-      <p1 x="2040" y="-180"/>
-      <p2 x="2080" y="-180"/>
+      <p1 x="520" y="-500"/>
+      <p2 x="740" y="-500"/>
     </wire>
     <wire>
-      <p1 x="2100" y="-180"/>
-      <p2 x="2180" y="-180"/>
-    </wire>
-    <wire>
-      <p1 x="2220" y="-180"/>
-      <p2 x="2320" y="-180"/>
-    </wire>
-    <wire>
-      <p1 x="1100" y="-180"/>
-      <p2 x="1120" y="-180"/>
-    </wire>
-    <wire>
-      <p1 x="1060" y="-180"/>
-      <p2 x="1080" y="-180"/>
-    </wire>
-    <wire>
-      <p1 x="2320" y="-820"/>
-      <p2 x="2440" y="-820"/>
-    </wire>
-    <wire>
-      <p1 x="1300" y="180"/>
-      <p2 x="1340" y="180"/>
-    </wire>
-    <wire>
-      <p1 x="1360" y="180"/>
-      <p2 x="1500" y="180"/>
-    </wire>
-    <wire>
-      <p1 x="1540" y="180"/>
-      <p2 x="1680" y="180"/>
-    </wire>
-    <wire>
-      <p1 x="2480" y="180"/>
-      <p2 x="2520" y="180"/>
+      <p1 x="1060" y="-500"/>
+      <p2 x="1320" y="-500"/>
     </wire>
     <wire>
       <p1 x="1740" y="-120"/>
       <p2 x="1860" y="-120"/>
     </wire>
     <wire>
-      <p1 x="2340" y="-440"/>
-      <p2 x="2460" y="-440"/>
+      <p1 x="1140" y="-120"/>
+      <p2 x="1260" y="-120"/>
     </wire>
     <wire>
       <p1 x="1780" y="120"/>
@@ -1959,24 +2711,12 @@ endmodule</string>
       <p2 x="2460" y="120"/>
     </wire>
     <wire>
-      <p1 x="1680" y="-60"/>
-      <p2 x="1800" y="-60"/>
-    </wire>
-    <wire>
-      <p1 x="2360" y="-60"/>
-      <p2 x="2480" y="-60"/>
-    </wire>
-    <wire>
-      <p1 x="680" y="-380"/>
-      <p2 x="740" y="-380"/>
+      <p1 x="1300" y="-380"/>
+      <p2 x="1620" y="-380"/>
     </wire>
     <wire>
       <p1 x="1060" y="-380"/>
-      <p2 x="1360" y="-380"/>
-    </wire>
-    <wire>
-      <p1 x="1380" y="-380"/>
-      <p2 x="1620" y="-380"/>
+      <p2 x="1180" y="-380"/>
     </wire>
     <wire>
       <p1 x="1800" y="-640"/>
@@ -1995,16 +2735,16 @@ endmodule</string>
       <p2 x="1480" y="-640"/>
     </wire>
     <wire>
-      <p1 x="1060" y="-320"/>
-      <p2 x="1240" y="-320"/>
-    </wire>
-    <wire>
       <p1 x="2560" y="-80"/>
       <p2 x="2560" y="240"/>
     </wire>
     <wire>
       <p1 x="640" y="0"/>
       <p2 x="640" y="200"/>
+    </wire>
+    <wire>
+      <p1 x="1280" y="-460"/>
+      <p2 x="1280" y="-340"/>
     </wire>
     <wire>
       <p1 x="1800" y="-640"/>
@@ -2027,7 +2767,11 @@ endmodule</string>
       <p2 x="520" y="0"/>
     </wire>
     <wire>
-      <p1 x="520" y="-340"/>
+      <p1 x="520" y="-500"/>
+      <p2 x="520" y="-480"/>
+    </wire>
+    <wire>
+      <p1 x="520" y="-420"/>
       <p2 x="520" y="-120"/>
     </wire>
     <wire>
@@ -2049,6 +2793,10 @@ endmodule</string>
     <wire>
       <p1 x="2440" y="-680"/>
       <p2 x="2440" y="-660"/>
+    </wire>
+    <wire>
+      <p1 x="1160" y="-340"/>
+      <p2 x="1160" y="-280"/>
     </wire>
     <wire>
       <p1 x="2060" y="160"/>
@@ -2077,6 +2825,10 @@ endmodule</string>
     <wire>
       <p1 x="1300" y="140"/>
       <p2 x="1300" y="180"/>
+    </wire>
+    <wire>
+      <p1 x="1300" y="-480"/>
+      <p2 x="1300" y="-380"/>
     </wire>
     <wire>
       <p1 x="1820" y="-860"/>
@@ -2119,8 +2871,20 @@ endmodule</string>
       <p2 x="2460" y="-640"/>
     </wire>
     <wire>
+      <p1 x="540" y="-480"/>
+      <p2 x="540" y="-440"/>
+    </wire>
+    <wire>
+      <p1 x="1180" y="-380"/>
+      <p2 x="1180" y="-100"/>
+    </wire>
+    <wire>
       <p1 x="800" y="0"/>
       <p2 x="800" y="200"/>
+    </wire>
+    <wire>
+      <p1 x="1440" y="-180"/>
+      <p2 x="1440" y="20"/>
     </wire>
     <wire>
       <p1 x="1700" y="-860"/>
@@ -2143,10 +2907,6 @@ endmodule</string>
       <p2 x="2340" y="-600"/>
     </wire>
     <wire>
-      <p1 x="680" y="-420"/>
-      <p2 x="680" y="-380"/>
-    </wire>
-    <wire>
       <p1 x="680" y="-100"/>
       <p2 x="680" y="0"/>
     </wire>
@@ -2157,6 +2917,14 @@ endmodule</string>
     <wire>
       <p1 x="1960" y="-240"/>
       <p2 x="1960" y="160"/>
+    </wire>
+    <wire>
+      <p1 x="1320" y="-500"/>
+      <p2 x="1320" y="-420"/>
+    </wire>
+    <wire>
+      <p1 x="1580" y="-280"/>
+      <p2 x="1580" y="-180"/>
     </wire>
     <wire>
       <p1 x="1840" y="-700"/>
@@ -2203,6 +2971,14 @@ endmodule</string>
       <p2 x="560" y="200"/>
     </wire>
     <wire>
+      <p1 x="560" y="-460"/>
+      <p2 x="560" y="-420"/>
+    </wire>
+    <wire>
+      <p1 x="1200" y="-360"/>
+      <p2 x="1200" y="-140"/>
+    </wire>
+    <wire>
       <p1 x="1720" y="-620"/>
       <p2 x="1720" y="-560"/>
     </wire>
@@ -2223,28 +2999,24 @@ endmodule</string>
       <p2 x="2360" y="-540"/>
     </wire>
     <wire>
-      <p1 x="1080" y="-180"/>
-      <p2 x="1080" y="-140"/>
-    </wire>
-    <wire>
       <p1 x="1080" y="40"/>
       <p2 x="1080" y="180"/>
     </wire>
     <wire>
-      <p1 x="700" y="-480"/>
-      <p2 x="700" y="-400"/>
-    </wire>
-    <wire>
-      <p1 x="1980" y="-620"/>
-      <p2 x="1980" y="-280"/>
+      <p1 x="1080" y="-540"/>
+      <p2 x="1080" y="-300"/>
     </wire>
     <wire>
       <p1 x="1980" y="-260"/>
       <p2 x="1980" y="-220"/>
     </wire>
     <wire>
-      <p1 x="1340" y="-460"/>
-      <p2 x="1340" y="-400"/>
+      <p1 x="1980" y="-620"/>
+      <p2 x="1980" y="-540"/>
+    </wire>
+    <wire>
+      <p1 x="1340" y="-520"/>
+      <p2 x="1340" y="-460"/>
     </wire>
     <wire>
       <p1 x="960" y="200"/>
@@ -2253,6 +3025,10 @@ endmodule</string>
     <wire>
       <p1 x="960" y="40"/>
       <p2 x="960" y="180"/>
+    </wire>
+    <wire>
+      <p1 x="1600" y="-400"/>
+      <p2 x="1600" y="-220"/>
     </wire>
     <wire>
       <p1 x="1860" y="-700"/>
@@ -2295,12 +3071,16 @@ endmodule</string>
       <p2 x="2500" y="-820"/>
     </wire>
     <wire>
-      <p1 x="1220" y="-640"/>
-      <p2 x="1220" y="-300"/>
-    </wire>
-    <wire>
       <p1 x="580" y="220"/>
       <p2 x="580" y="260"/>
+    </wire>
+    <wire>
+      <p1 x="580" y="-440"/>
+      <p2 x="580" y="-400"/>
+    </wire>
+    <wire>
+      <p1 x="1220" y="-640"/>
+      <p2 x="1220" y="-320"/>
     </wire>
     <wire>
       <p1 x="1740" y="-900"/>
@@ -2309,10 +3089,6 @@ endmodule</string>
     <wire>
       <p1 x="1740" y="-120"/>
       <p2 x="1740" y="160"/>
-    </wire>
-    <wire>
-      <p1 x="1100" y="-200"/>
-      <p2 x="1100" y="-180"/>
     </wire>
     <wire>
       <p1 x="2380" y="-480"/>
@@ -2331,12 +3107,16 @@ endmodule</string>
       <p2 x="720" y="200"/>
     </wire>
     <wire>
-      <p1 x="1360" y="-420"/>
-      <p2 x="1360" y="-380"/>
+      <p1 x="1360" y="-220"/>
+      <p2 x="1360" y="-60"/>
     </wire>
     <wire>
       <p1 x="600" y="-100"/>
       <p2 x="600" y="0"/>
+    </wire>
+    <wire>
+      <p1 x="600" y="-420"/>
+      <p2 x="600" y="-360"/>
     </wire>
     <wire>
       <p1 x="2520" y="100"/>
@@ -2347,7 +3127,7 @@ endmodule</string>
       <p2 x="2520" y="-40"/>
     </wire>
     <wire>
-      <p1 x="1240" y="-320"/>
+      <p1 x="1240" y="-440"/>
       <p2 x="1240" y="220"/>
     </wire>
     <wire>
@@ -2371,10 +3151,6 @@ endmodule</string>
       <p2 x="2400" y="-600"/>
     </wire>
     <wire>
-      <p1 x="1380" y="-380"/>
-      <p2 x="1380" y="-360"/>
-    </wire>
-    <wire>
       <p1 x="1900" y="-880"/>
       <p2 x="1900" y="-560"/>
     </wire>
@@ -2391,7 +3167,11 @@ endmodule</string>
       <p2 x="2540" y="-540"/>
     </wire>
     <wire>
-      <p1 x="1260" y="-220"/>
+      <p1 x="1260" y="-420"/>
+      <p2 x="1260" y="-300"/>
+    </wire>
+    <wire>
+      <p1 x="1260" y="-120"/>
       <p2 x="1260" y="140"/>
     </wire>
     <wire>
@@ -2419,6 +3199,10 @@ endmodule</string>
       <p2 x="1140" y="180"/>
     </wire>
     <wire>
+      <p1 x="1140" y="-280"/>
+      <p2 x="1140" y="-120"/>
+    </wire>
+    <wire>
       <p1 x="2040" y="-220"/>
       <p2 x="2040" y="-180"/>
     </wire>
@@ -2429,6 +3213,10 @@ endmodule</string>
     <wire>
       <p1 x="760" y="-100"/>
       <p2 x="760" y="0"/>
+    </wire>
+    <wire>
+      <p1 x="1400" y="-200"/>
+      <p2 x="1400" y="-20"/>
     </wire>
     <wire>
       <p1 x="1020" y="40"/>
