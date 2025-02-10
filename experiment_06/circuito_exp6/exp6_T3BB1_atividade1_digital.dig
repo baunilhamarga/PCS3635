@@ -105,6 +105,8 @@ module jogo_desafio_memoria (
     wire s_menorS;
     wire nivel;
     wire s_controla_leds;
+    wire s_zeraT_leds;
+    wire s_contaT_leds;
     wire s_fase_preview;
 
     // Fluxo de Dados
@@ -354,16 +356,6 @@ module exp6_fluxo_dados (
         .pulso (tem_jogada)
     );
 
-    contador_m #(.M(5000), .N(13)) contador_timeout (
-        .clock   (clock),
-        .zera_as (zeraC || zeraR),
-        .zera_s  (zeraT),
-        .conta   (contaT),
-        .Q       (),
-        .fim     (controle_timeout), 
-        .meio    ()
-    );
-
     contador_m #(.M(5000), .N(13)) contador_timeout_jogadas (
         .clock   (clock),
         .zera_as (zeraC || zeraR),
@@ -389,6 +381,7 @@ module exp6_fluxo_dados (
     assign db_sequencia = s_sequencia;
     assign db_jogadafeita = s_botoes;
 endmodule
+
 //------------------------------------------------------------------
 // Arquivo   : exp6_unidade_controle.v
 // Projeto   : Experiencia 6 - Jogo da Memória
@@ -521,7 +514,7 @@ module exp6_unidade_controle (
         zeraS         = (Eatual == preparacao) ? 1&apos;b1 : 1&apos;b0;
         contaS        = (Eatual == nova_seq) ? 1&apos;b1 : 1&apos;b0;
         nivel_uc      = (Eatual == preparacao) ? nivel : nivel_uc;
-		zeraT         = (Eatual == proximo || Eatual == nova_seq) ? 1&apos;b1 : 1&apos;b0;
+	zeraT         = (Eatual == proximo || Eatual == nova_seq) ? 1&apos;b1 : 1&apos;b0;
         controla_leds = (Eatual == mostra_leds) ? 1&apos;b1 : 1&apos;b0;
         zeraT_leds    = (Eatual == mostrou_led || Eatual == comecar_rodada || Eatual == zera_timeout) ? 1&apos;b1 : 1&apos;b0;
         contaT_leds   = (Eatual == mostra_leds || Eatual == espera_led) ? 1&apos;b1 : 1&apos;b0;

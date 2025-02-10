@@ -61,7 +61,7 @@ module exp6_fluxo_dados (
 
     // mux n
     mux2x1_n #( .BITS(4) ) mux_leds (
-      .D0(s_botoes),
+      .D0(botoes),
       .D1(s_mux),
       .SEL(fase_preview),
       .OUT(leds)
@@ -144,16 +144,6 @@ module exp6_fluxo_dados (
         .reset (zeraS),
         .sinal (s_tem_jogada),
         .pulso (tem_jogada)
-    );
-
-    contador_m #(.M(5000), .N(13)) contador_timeout (
-        .clock   (clock),
-        .zera_as (zeraC || zeraR),
-        .zera_s  (zeraT),
-        .conta   (contaT),
-        .Q       (),
-        .fim     (controle_timeout), 
-        .meio    ()
     );
 
     contador_m #(.M(5000), .N(13)) contador_timeout_jogadas (
