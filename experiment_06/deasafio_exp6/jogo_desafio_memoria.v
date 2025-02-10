@@ -60,7 +60,6 @@ module jogo_desafio_memoria (
     wire s_zeraT;
     wire s_timeoutL;
     wire s_menorS;
-    wire nivel;
     wire s_controla_leds;
     wire s_zeraT_leds;
     wire s_contaT_leds;
