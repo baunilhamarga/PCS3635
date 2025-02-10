@@ -26,6 +26,7 @@ module exp6_fluxo_dados (
     input controla_leds,
     input zeraT_leds,
     input contaT_leds,
+    input fase_preview,
     output igual,
     output enderecoIgualSequencia,
     output fimE,
@@ -48,6 +49,7 @@ module exp6_fluxo_dados (
     wire [3:0] s_sequencia_fixo;
     wire s_tem_jogada = |botoes;
     wire rco;
+    wire [3:0] s_mux;
 
     // mux
     mux2x1 mux (
@@ -57,12 +59,20 @@ module exp6_fluxo_dados (
         .OUT (fimE)
     );
 
-    // mux
-    mux2x1_n mux (
-        .D0 (4'b0000),
-        .D1 (s_dado),
-        .SEL (controla_leds),
-        .OUT (leds)
+    // mux n
+    mux2x1_n #( .BITS(4) ) mux_leds (
+      .D0(s_botoes),
+      .D1(s_mux),
+      .SEL(fase_preview),
+      .OUT(leds)
+    );
+
+    // mux n
+    mux2x1_n #( .BITS(4) ) mux_zera (
+      .D0(4'b0000),
+      .D1(s_dado),
+      .SEL(controla_leds),
+      .OUT(s_mux)
     );
 
     // contador endereços
@@ -143,7 +153,7 @@ module exp6_fluxo_dados (
         .conta   (contaT),
         .Q       (),
         .fim     (controle_timeout), 
-        .decimo  (controle_timeout_led)
+        .meio    ()
     );
 
     contador_m #(.M(5000), .N(13)) contador_timeout_jogadas (
@@ -170,5 +180,4 @@ module exp6_fluxo_dados (
     assign db_contagem = s_endereco;
     assign db_sequencia = s_sequencia;
     assign db_jogadafeita = s_botoes;
-    assign leds = botoes;
 endmodule

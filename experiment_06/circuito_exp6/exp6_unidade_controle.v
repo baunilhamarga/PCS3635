@@ -40,7 +40,8 @@ module exp6_unidade_controle (
     output reg zeraT,
     output reg controla_leds,
     output reg zeraT_leds,
-    output reg contaT_leds
+    output reg contaT_leds,
+    output reg fase_preview
 );
 
     // Define estados
@@ -98,10 +99,10 @@ module exp6_unidade_controle (
         case (Eatual)
             inicial:        Eprox = jogar ? preparacao : inicial;
             preparacao:     Eprox = mostra_leds;
-            nova_seq:       Eprox = mostra_leds;
-            mostra_leds:    Eprox = menorS ? comecar_rodada : (timeoutL ? (fimE ? comecar_rodada : mostrou_led) : mostra_leds);
+            nova_seq:       Eprox = espera_led;
+            mostra_leds:    Eprox = timeoutL ? (fimE ? comecar_rodada : mostrou_led) : mostra_leds;
             mostrou_led:    Eprox = espera_led;
-            espera_led:     Eprox = timeoutL ? zera_timeout : espera_led;
+            espera_led:     Eprox = menorS ? comecar_rodada : (timeoutL ? zera_timeout : espera_led);
             zera_timeout:   Eprox = mostra_leds;
             comecar_rodada: Eprox = espera;
             espera:         Eprox = timeout ? fim_timeout : (tem_jogada ? registra : espera);
@@ -133,6 +134,7 @@ module exp6_unidade_controle (
         controla_leds = (Eatual == mostra_leds) ? 1'b1 : 1'b0;
         zeraT_leds    = (Eatual == mostrou_led || Eatual == comecar_rodada || Eatual == zera_timeout) ? 1'b1 : 1'b0;
         contaT_leds   = (Eatual == mostra_leds || Eatual == espera_led) ? 1'b1 : 1'b0;
+        fase_preview  = (Eatual == mostra_leds || Eatual == mostrou_led || Eatual == zera_timeout || Eatual == comecar_rodada) ? 1'b1 : 1'b0;
 
         // Saida de depuracao (estado)
         case (Eatual)

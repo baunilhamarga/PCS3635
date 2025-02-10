@@ -105,6 +105,7 @@ module jogo_desafio_memoria (
     wire s_menorS;
     wire nivel;
     wire s_controla_leds;
+    wire s_fase_preview;
 
     // Fluxo de Dados
     exp6_fluxo_dados FD (
@@ -120,6 +121,9 @@ module jogo_desafio_memoria (
         .zeraE                     ( s_zeraE        ),
         .zeraS                     ( s_zeraS        ),
         .controla_leds             ( s_controla_leds),
+        .zeraT_leds                ( s_zeraT_leds   ),
+        .contaT_leds               ( s_contaT_leds  ),
+        .fase_preview              ( s_fase_preview ),
         .igual                     ( s_igualE       ),
         .enderecoIgualSequencia    ( s_igualS       ),
         .fimE                      ( s_fimE         ),
@@ -162,7 +166,10 @@ module jogo_desafio_memoria (
         .contaT        ( s_contaT       ),
         .nivel_uc      ( s_nivel        ),
         .zeraT         ( s_zeraT        ),
-        .controla_leds ( s_controla_leds)
+        .controla_leds ( s_controla_leds),
+        .zeraT_leds    ( s_zeraT_leds   ),
+        .contaT_leds   ( s_contaT_leds  ),
+        .fase_preview  ( s_fase_preview )
     );
 
     // Display das botoes
@@ -199,19 +206,6 @@ assign db_chavesIgualMemoria = s_igualE;
 assign db_enderecoIgualSequencia = s_igualS;
 assign nivel = 1&apos;b1;
 endmodule
-
-//------------------------------------------------------------------
-// Arquivo   : exp4_fluxo_dados.v
-// Projeto   : Experiencia 6 - Jogo da Memória
-//------------------------------------------------------------------
-// Descricao : Fluxo de Dados da Experiência 6
-//             
-//------------------------------------------------------------------
-// Revisoes  :
-//     Data        Versao  Autor             Descricao
-//     25/01/2025  1.0     Ana Vitória       versao inicial
-//------------------------------------------------------------------
-//
 //------------------------------------------------------------------
 // Arquivo   : exp4_fluxo_dados.v
 // Projeto   : Experiencia 6 - Jogo da Memória
@@ -238,6 +232,9 @@ module exp6_fluxo_dados (
     input zeraE,
     input zeraS,
     input controla_leds,
+    input zeraT_leds,
+    input contaT_leds,
+    input fase_preview,
     output igual,
     output enderecoIgualSequencia,
     output fimE,
@@ -260,6 +257,7 @@ module exp6_fluxo_dados (
     wire [3:0] s_sequencia_fixo;
     wire s_tem_jogada = |botoes;
     wire rco;
+    wire [3:0] s_mux;
 
     // mux
     mux2x1 mux (
@@ -267,6 +265,22 @@ module exp6_fluxo_dados (
         .D1 (rco),
         .SEL (nivel),
         .OUT (fimE)
+    );
+
+    // mux n
+    mux2x1_n #( .BITS(4) ) mux_leds (
+      .D0(botoes),
+      .D1(s_mux),
+      .SEL(fase_preview),
+      .OUT(leds)
+    );
+
+    // mux n
+    mux2x1_n #( .BITS(4) ) mux_zera (
+      .D0(4&apos;b0000),
+      .D1(s_dado),
+      .SEL(controla_leds),
+      .OUT(s_mux)
     );
 
     // contador endereços
@@ -347,16 +361,34 @@ module exp6_fluxo_dados (
         .conta   (contaT),
         .Q       (),
         .fim     (controle_timeout), 
-        .decimo  (controle_timeout_led)
+        .meio    ()
+    );
+
+    contador_m #(.M(5000), .N(13)) contador_timeout_jogadas (
+        .clock   (clock),
+        .zera_as (zeraC || zeraR),
+        .zera_s  (zeraT),
+        .conta   (contaT),
+        .Q       (),
+        .fim     (controle_timeout), 
+        .meio    ()
+    );
+
+    contador_m #(.M(500), .N(9)) contador_timeout_leds (
+        .clock   (clock),
+        .zera_as (zeraC || zeraR),
+        .zera_s  (zeraT_leds),
+        .conta   (contaT_leds),
+        .Q       (),
+        .fim     (controle_timeout_led), 
+        .meio    ()
     );
 
     assign db_memoria  = s_dado;
     assign db_contagem = s_endereco;
     assign db_sequencia = s_sequencia;
     assign db_jogadafeita = s_botoes;
-    assign leds = controla_leds ? s_dado : 4&apos;b0000;
 endmodule
-
 //------------------------------------------------------------------
 // Arquivo   : exp6_unidade_controle.v
 // Projeto   : Experiencia 6 - Jogo da Memória
@@ -397,7 +429,10 @@ module exp6_unidade_controle (
     output reg contaT,
     output reg nivel_uc,
     output reg zeraT,
-    output reg controla_leds
+    output reg controla_leds,
+    output reg zeraT_leds,
+    output reg contaT_leds,
+    output reg fase_preview
 );
 
     // Define estados
@@ -455,10 +490,10 @@ module exp6_unidade_controle (
         case (Eatual)
             inicial:        Eprox = jogar ? preparacao : inicial;
             preparacao:     Eprox = mostra_leds;
-            nova_seq:       Eprox = mostra_leds;
-            mostra_leds:    Eprox = menorS ? comecar_rodada : (timeoutL ? (fimE ? comecar_rodada : mostrou_led) : mostra_leds);
+            nova_seq:       Eprox = espera_led;
+            mostra_leds:    Eprox = timeoutL ? (fimE ? comecar_rodada : mostrou_led) : mostra_leds;
             mostrou_led:    Eprox = espera_led;
-            espera_led:     Eprox = timeoutL ? zera_timeout : espera_led;
+            espera_led:     Eprox = menorS ? comecar_rodada : (timeoutL ? zera_timeout : espera_led);
             zera_timeout:   Eprox = mostra_leds;
             comecar_rodada: Eprox = espera;
             espera:         Eprox = timeout ? fim_timeout : (tem_jogada ? registra : espera);
@@ -482,12 +517,15 @@ module exp6_unidade_controle (
         ganhou        = (Eatual == fim_acerto) ? 1&apos;b1 : 1&apos;b0;
         perdeu        = (Eatual == fim_erro || Eatual == fim_timeout) ? 1&apos;b1 : 1&apos;b0;
         deu_timeout   = (Eatual == fim_timeout) ? 1&apos;b1 : 1&apos;b0;
-        contaT        = (Eatual == espera || Eatual == mostra_leds || Eatual == espera_led) ? 1&apos;b1: 1&apos;b0;
+        contaT        = (Eatual == espera) ? 1&apos;b1: 1&apos;b0;
         zeraS         = (Eatual == preparacao) ? 1&apos;b1 : 1&apos;b0;
         contaS        = (Eatual == nova_seq) ? 1&apos;b1 : 1&apos;b0;
         nivel_uc      = (Eatual == preparacao) ? nivel : nivel_uc;
-		zeraT         = (Eatual == proximo || Eatual == nova_seq || Eatual == mostrou_led || Eatual == comecar_rodada || Eatual == zera_timeout || Eatual == fim_acerto || Eatual == fim_erro || Eatual == fim_timeout) ? 1&apos;b1 : 1&apos;b0;
+		zeraT         = (Eatual == proximo || Eatual == nova_seq) ? 1&apos;b1 : 1&apos;b0;
         controla_leds = (Eatual == mostra_leds) ? 1&apos;b1 : 1&apos;b0;
+        zeraT_leds    = (Eatual == mostrou_led || Eatual == comecar_rodada || Eatual == zera_timeout) ? 1&apos;b1 : 1&apos;b0;
+        contaT_leds   = (Eatual == mostra_leds || Eatual == espera_led) ? 1&apos;b1 : 1&apos;b0;
+        fase_preview  = (Eatual == mostra_leds || Eatual == mostrou_led || Eatual == zera_timeout || Eatual == comecar_rodada) ? 1&apos;b1 : 1&apos;b0;
 
         // Saida de depuracao (estado)
         case (Eatual)
@@ -600,7 +638,7 @@ module contador_m #(parameter M=100, N=7)
    input  wire          conta,
    output reg  [N-1:0]  Q,
    output reg           fim,
-   output reg           decimo
+   output reg           meio
   );
 
   always @(posedge clock or posedge zera_as) begin
@@ -625,8 +663,8 @@ module contador_m #(parameter M=100, N=7)
       else            fim = 0;
 
   always @ (Q)
-      if (Q == M/10-1) decimo = 1;
-      else             decimo = 0;
+      if (Q == M/2-1) meio = 1;
+      else             meio = 0;
 
 endmodule
 
@@ -843,6 +881,41 @@ module sync_rom_16x4 (clock, address, data_out);
             4&apos;b1111: data_out = 4&apos;b0100;
         endcase
     end
+endmodule
+
+/*------------------------------------------------------------------------
+ * Arquivo   : mux2x1_n.v
+ * Projeto   : Jogo do Desafio da Memoria
+ *------------------------------------------------------------------------
+ * Descricao : multiplexador 2x1 com entradas de n bits (parametrizado) 
+ * 
+ * adaptado a partir do codigo my_4t1_mux.vhd do livro &quot;Free Range VHDL&quot;
+ * 
+ * exemplo de uso: ver testbench mux2x1_n_tb.v
+ *------------------------------------------------------------------------
+ * Revisoes  :
+ *     Data        Versao  Autor             Descricao
+ *     15/02/2024  1.0     Edson Midorikawa  criacao
+ *------------------------------------------------------------------------
+ */
+
+module mux2x1_n #(
+    parameter BITS = 4
+) (
+    input      [BITS-1:0] D0,
+    input      [BITS-1:0] D1,
+    input                 SEL,
+    output reg [BITS-1:0] OUT
+);
+
+always @(*) begin
+    case (SEL)
+        1&apos;b0:    OUT = D0;
+        1&apos;b1:    OUT = D1;
+        default: OUT = {BITS{1&apos;b1}}; // todos os bits em 1
+    endcase
+end
+
 endmodule</string>
         </entry>
       </elementAttributes>
