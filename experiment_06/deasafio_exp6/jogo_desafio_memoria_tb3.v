@@ -7,6 +7,8 @@ module jogo_desafio_memoria_tb3;
     reg        reset_in   = 0;
     reg        jogar_in = 0;
     reg  [3:0] botoes_in  = 4'b0000;
+    reg        nivel_in = 1;
+    reg        memoria_in = 0;
 
     wire       ganhou_out;
     wire       perdeu_out;
@@ -24,6 +26,7 @@ module jogo_desafio_memoria_tb3;
     wire [6:0] db_estado_out;
     wire       db_timeout_out;
     wire       db_timeoutL_out;
+    wire       db_seletor_memoria_out;
 
     // Configuração do clock
     parameter clockPeriod = 1000; // in us, f=1KHz
@@ -40,6 +43,8 @@ module jogo_desafio_memoria_tb3;
         .reset(reset_in),
         .jogar(jogar_in),
         .botoes(botoes_in),
+        .nivel(nivel_in),
+        .memoria(memoria_in),
         .ganhou(ganhou_out),
         .perdeu(perdeu_out),
         .timeout(timeout_out),
@@ -56,7 +61,8 @@ module jogo_desafio_memoria_tb3;
         .db_sequencia(db_sequencia_out),
         .db_estado(db_estado_out),
         .db_timeout(db_timeout_out),
-        .db_timeoutL(db_timeoutL_out)
+        .db_timeoutL(db_timeoutL_out),
+        .db_seletor_memoria(db_seletor_memoria_out)
     );
 
     // Geração dos estímulos de entrada
