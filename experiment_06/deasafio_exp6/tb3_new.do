@@ -6,6 +6,7 @@ add wave -noupdate -height 30 /jogo_desafio_memoria_tb3/clock_in
 add wave -noupdate -color Red -height 30 /jogo_desafio_memoria_tb3/reset_in
 add wave -noupdate -color Red -height 30 /jogo_desafio_memoria_tb3/jogar_in
 add wave -noupdate -color Red -height 30 /jogo_desafio_memoria_tb3/botoes_in
+add wave -noupdate -color Red -height 30 /jogo_desafio_memoria_tb3/memoria_in
 add wave -noupdate -divider {Deteccao de jogada}
 add wave -noupdate -color Magenta -height 30 /jogo_desafio_memoria_tb3/dut/FD/tem_jogada
 add wave -noupdate -divider Resultado
@@ -13,9 +14,7 @@ add wave -noupdate -color Cyan -height 30 /jogo_desafio_memoria_tb3/ganhou_out
 add wave -noupdate -color Cyan -height 30 /jogo_desafio_memoria_tb3/perdeu_out
 add wave -noupdate -color Cyan -height 30 /jogo_desafio_memoria_tb3/pronto_out
 add wave -noupdate -divider Saidas
-add wave -noupdate -color Cyan /jogo_desafio_memoria_tb3/db_timeout_out
-add wave -noupdate -color Cyan /jogo_desafio_memoria_tb3/db_timeoutL_out
-add wave -noupdate -color Cyan -height 30 /jogo_desafio_memoria_tb3/leds_out
+add wave -noupdate -color {Medium Orchid} -height 40 /jogo_desafio_memoria_tb3/leds_out
 add wave -noupdate -divider FD
 add wave -noupdate -color Khaki -height 30 /jogo_desafio_memoria_tb3/dut/s_memoria
 add wave -noupdate -color Khaki -height 30 /jogo_desafio_memoria_tb3/dut/FD/s_botoes
@@ -28,9 +27,10 @@ add wave -noupdate -divider Depuracao
 add wave -noupdate -color Blue /jogo_desafio_memoria_tb3/db_chavesIgualMemoria_out
 add wave -noupdate -color Blue /jogo_desafio_memoria_tb3/db_enderecoIgualSequencia_out
 add wave -noupdate -color Blue /jogo_desafio_memoria_tb3/db_fimS_out
+add wave -noupdate -color Blue /jogo_desafio_memoria_tb3/db_seletor_memoria_out
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {129914000000 ns} 0} {{Cursor 2} {145914000000 ns} 0}
-quietly wave cursor active 2
+WaveRestoreCursors {{Cursor 1} {146529500000 ns} 0} {{Cursor 2} {296203174716 ns} 0}
+quietly wave cursor active 1
 configure wave -namecolwidth 166
 configure wave -valuecolwidth 98
 configure wave -justifyvalue left
@@ -45,4 +45,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ms
 update
-WaveRestoreZoom {128078110341 ns} {147732205772 ns}
+WaveRestoreZoom {143874748658 ns} {149188051737 ns}
