@@ -63,6 +63,8 @@
 //     25/01/2025  1.0     Ana Vitória       versao inicial
 //------------------------------------------------------------------
 //
+
+
 module jogo_desafio_memoria (
     input clock,
     input reset,
@@ -117,6 +119,7 @@ module jogo_desafio_memoria (
     wire s_zeraT_leds;
     wire s_contaT_leds;
     wire s_fase_preview;
+    wire s_memoria_uc;
 
     // Fluxo de Dados
     exp6_fluxo_dados FD (
@@ -135,7 +138,7 @@ module jogo_desafio_memoria (
         .zeraT_leds                ( s_zeraT_leds       ),
         .contaT_leds               ( s_contaT_leds      ),
         .fase_preview              ( s_fase_preview     ),
-        .seletor_memoria           ( memoria            ),
+        .seletor_memoria           ( s_memoria_uc       ),
         .igual                     ( s_igualE           ),
         .enderecoIgualSequencia    ( s_igualS           ),
         .fimE                      ( s_fimE             ),
@@ -165,6 +168,7 @@ module jogo_desafio_memoria (
         .timeout       ( s_fim_timeout  ),
         .timeoutL      ( s_timeoutL     ),
         .menorS        ( s_menorS       ),
+        .memoria       ( memoria        ),
         .zeraE         ( s_zeraE        ),
         .contaE        ( s_contaE       ),
         .zeraS         ( s_zeraS        ),
@@ -182,7 +186,8 @@ module jogo_desafio_memoria (
         .controla_leds ( s_controla_leds),
         .zeraT_leds    ( s_zeraT_leds   ),
         .contaT_leds   ( s_contaT_leds  ),
-        .fase_preview  ( s_fase_preview )
+        .fase_preview  ( s_fase_preview ),
+        .memoria_uc    ( s_memoria_uc   )
     );
 
     // Display das botoes
@@ -622,6 +627,7 @@ module exp6_unidade_controle (
     input timeout,
     input timeoutL,
     input menorS,
+    input memoria,
     output reg zeraE,
     output reg contaE,
     output reg zeraS,
@@ -639,7 +645,8 @@ module exp6_unidade_controle (
     output reg controla_leds,
     output reg zeraT_leds,
     output reg contaT_leds,
-    output reg fase_preview
+    output reg fase_preview,
+    output reg memoria_uc
 );
 
     // Define estados
@@ -733,6 +740,7 @@ module exp6_unidade_controle (
         zeraT_leds    = (Eatual == mostrou_led || Eatual == comecar_rodada || Eatual == zera_timeout) ? 1&apos;b1 : 1&apos;b0;
         contaT_leds   = (Eatual == mostra_leds || Eatual == espera_led) ? 1&apos;b1 : 1&apos;b0;
         fase_preview  = (Eatual == mostra_leds || Eatual == mostrou_led || Eatual == zera_timeout || Eatual == comecar_rodada) ? 1&apos;b1 : 1&apos;b0;
+        memoria_uc    = (Eatual == preparacao) ? memoria : memoria_uc;
 
         // Saida de depuracao (estado)
         case (Eatual)
@@ -831,6 +839,8 @@ module jogo_desafio_memoria_tb1;
     reg        reset_in   = 0;
     reg        jogar_in = 0;
     reg  [3:0] botoes_in  = 4&apos;b0000;
+    reg        nivel_in = 1;
+    reg        memoria_in = 0;
 
     wire       ganhou_out;
     wire       perdeu_out;
@@ -848,6 +858,7 @@ module jogo_desafio_memoria_tb1;
     wire [6:0] db_estado_out;
     wire       db_timeout_out;
     wire       db_timeoutL_out;
+    wire       db_seletor_memoria_out;
 
     // Configuração do clock
     parameter clockPeriod = 1000; // in us, f=1KHz
@@ -864,6 +875,8 @@ module jogo_desafio_memoria_tb1;
         .reset(reset_in),
         .jogar(jogar_in),
         .botoes(botoes_in),
+        .nivel(nivel_in),
+        .memoria(memoria_in),
         .ganhou(ganhou_out),
         .perdeu(perdeu_out),
         .timeout(timeout_out),
@@ -880,28 +893,50 @@ module jogo_desafio_memoria_tb1;
         .db_sequencia(db_sequencia_out),
         .db_estado(db_estado_out),
         .db_timeout(db_timeout_out),
-        .db_timeoutL(db_timeoutL_out)
+        .db_timeoutL(db_timeoutL_out),
+        .db_seletor_memoria(db_seletor_memoria_out)
     );
 
     // Gabarito
-    reg [3:0] jogadas[0:15];
+    reg [3:0] jogadas_caso1[0:15];
+    reg [3:0] jogadas_caso2[0:15];
+
     initial begin
-        jogadas[0] = 4&apos;b0001;
-        jogadas[1] = 4&apos;b0010;
-        jogadas[2] = 4&apos;b0100;
-        jogadas[3] = 4&apos;b1000;
-        jogadas[4] = 4&apos;b0100;
-        jogadas[5] = 4&apos;b0010;
-        jogadas[6] = 4&apos;b0001;
-        jogadas[7] = 4&apos;b0001;
-        jogadas[8] = 4&apos;b0010;
-        jogadas[9] = 4&apos;b0010;
-        jogadas[10] = 4&apos;b0100;
-        jogadas[11] = 4&apos;b0100;
-        jogadas[12] = 4&apos;b1000;
-        jogadas[13] = 4&apos;b1000;
-        jogadas[14] = 4&apos;b0001;
-        jogadas[15] = 4&apos;b0100;
+        jogadas_caso1[0] = 4&apos;b0001;
+        jogadas_caso1[1] = 4&apos;b0010;
+        jogadas_caso1[2] = 4&apos;b0100;
+        jogadas_caso1[3] = 4&apos;b1000;
+        jogadas_caso1[4] = 4&apos;b0100;
+        jogadas_caso1[5] = 4&apos;b0010;
+        jogadas_caso1[6] = 4&apos;b0001;
+        jogadas_caso1[7] = 4&apos;b0001;
+        jogadas_caso1[8] = 4&apos;b0010;
+        jogadas_caso1[9] = 4&apos;b0010;
+        jogadas_caso1[10] = 4&apos;b0100;
+        jogadas_caso1[11] = 4&apos;b0100;
+        jogadas_caso1[12] = 4&apos;b1000;
+        jogadas_caso1[13] = 4&apos;b1000;
+        jogadas_caso1[14] = 4&apos;b0001;
+        jogadas_caso1[15] = 4&apos;b0100;
+    end
+
+    initial begin
+        jogadas_caso2[0] = 4&apos;b0001;
+        jogadas_caso2[1] = 4&apos;b0001;
+        jogadas_caso2[2] = 4&apos;b0001;
+        jogadas_caso2[3] = 4&apos;b0001;
+        jogadas_caso2[4] = 4&apos;b0010;
+        jogadas_caso2[5] = 4&apos;b0010;
+        jogadas_caso2[6] = 4&apos;b0010;
+        jogadas_caso2[7] = 4&apos;b0010;
+        jogadas_caso2[8] = 4&apos;b0100;
+        jogadas_caso2[9] = 4&apos;b0100;
+        jogadas_caso2[10] = 4&apos;b0100;
+        jogadas_caso2[11] = 4&apos;b0100;
+        jogadas_caso2[12] = 4&apos;b1000;
+        jogadas_caso2[13] = 4&apos;b1000;
+        jogadas_caso2[14] = 4&apos;b1000;
+        jogadas_caso2[15] = 4&apos;b1000;
     end
 
     // Variáveis de loop
@@ -943,7 +978,35 @@ module jogo_desafio_memoria_tb1;
             @(negedge clock_in);
 
             for (j = 0; j &lt; i-2; j = j + 1) begin
-                botoes_in = jogadas[j];
+                botoes_in = jogadas_caso1[j];
+                #(10 * clockPeriod);
+                botoes_in = 4&apos;b0000;
+                #(10 * clockPeriod);
+            end
+        end
+
+        // Teste 2: Jogar por 5 períodos de clock
+        caso = 2;
+        #(2 * clockPeriod);
+        memoria_in = 1;
+        #(2 * clockPeriod);
+        jogar_in = 1;
+        #(5 * clockPeriod);
+        jogar_in = 0;
+        #(10 * clockPeriod);
+
+        // Testes de jogadas
+        for (i = 3; i &lt;= 18; i = i + 1) begin
+            #(1_000_000 * (i - 2));
+            #(500_000);
+            caso = i;
+            @(negedge clock_in);
+
+            for (j = 0; j &lt; i-2; j = j + 1) begin
+                if(j == 4) begin
+                    memoria_in = 0;
+                end
+                botoes_in = jogadas_caso2[j];
                 #(10 * clockPeriod);
                 botoes_in = 4&apos;b0000;
                 #(10 * clockPeriod);
@@ -1478,6 +1541,10 @@ endmodule
 
 
 // --- End of sync_rom_16x4.v ---</string>
+        </entry>
+        <entry>
+          <string>iverilogOptions</string>
+          <string>-I &quot;/home/baunilha/Repositories/PCS3635/experiment_06/deasafio_exp6/&quot;</string>
         </entry>
       </elementAttributes>
       <pos x="740" y="-520"/>
