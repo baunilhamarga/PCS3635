@@ -123,7 +123,7 @@ module playseq_unidade_controle (
 
     // Logica de saida (maquina Moore)
     always @* begin
-        zeraE         = (Eatual == inicial || Eatual == nova_seq) ? 1'b1 : 1'b0;
+        zeraE         = (Eatual == inicial || Eatual == nova_seq || Eatual == preparacao) ? 1'b1 : 1'b0;
         zeraR         = (Eatual == inicial) ? 1'b1 : 1'b0;
         registraR     = (Eatual == registra) ? 1'b1 : 1'b0;
         contaE        = (Eatual == proximo || Eatual == mostrou_led) ? 1'b1 : 1'b0;
@@ -133,7 +133,7 @@ module playseq_unidade_controle (
         perdeu        = (Eatual == fim_erro || Eatual == fim_timeout) ? 1'b1 : 1'b0;
         deu_timeout   = (Eatual == fim_timeout) ? 1'b1 : 1'b0;
         contaT        = (Eatual == espera) ? 1'b1: 1'b0;
-        zeraS         = (Eatual == preparacao) ? 1'b1 : 1'b0;
+        zeraS         = (Eatual == inicial) ? 1'b1 : 1'b0;
         contaS        = (Eatual == nova_seq) ? 1'b1 : 1'b0;
         nivel_uc      = (Eatual == preparacao) ? nivel : nivel_uc;
 		zeraT         = (Eatual == proximo || Eatual == nova_seq) ? 1'b1 : 1'b0;

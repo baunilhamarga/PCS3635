@@ -1026,7 +1026,7 @@ module playseq_unidade_controle (
 
     // Logica de saida (maquina Moore)
     always @* begin
-        zeraE         = (Eatual == inicial || Eatual == nova_seq) ? 1&apos;b1 : 1&apos;b0;
+        zeraE         = (Eatual == inicial || Eatual == nova_seq || Eatual == preparacao) ? 1&apos;b1 : 1&apos;b0;
         zeraR         = (Eatual == inicial) ? 1&apos;b1 : 1&apos;b0;
         registraR     = (Eatual == registra) ? 1&apos;b1 : 1&apos;b0;
         contaE        = (Eatual == proximo || Eatual == mostrou_led) ? 1&apos;b1 : 1&apos;b0;
@@ -1036,10 +1036,10 @@ module playseq_unidade_controle (
         perdeu        = (Eatual == fim_erro || Eatual == fim_timeout) ? 1&apos;b1 : 1&apos;b0;
         deu_timeout   = (Eatual == fim_timeout) ? 1&apos;b1 : 1&apos;b0;
         contaT        = (Eatual == espera) ? 1&apos;b1: 1&apos;b0;
-        zeraS         = (Eatual == preparacao) ? 1&apos;b1 : 1&apos;b0;
+        zeraS         = (Eatual == inicial) ? 1&apos;b1 : 1&apos;b0;
         contaS        = (Eatual == nova_seq) ? 1&apos;b1 : 1&apos;b0;
         nivel_uc      = (Eatual == preparacao) ? nivel : nivel_uc;
-		zeraT         = (Eatual == proximo || Eatual == nova_seq) ? 1&apos;b1 : 1&apos;b0;
+	zeraT         = (Eatual == proximo || Eatual == nova_seq) ? 1&apos;b1 : 1&apos;b0;
         controla_leds = (Eatual == mostra_leds) ? 1&apos;b1 : 1&apos;b0;
         zeraT_leds    = (Eatual == mostrou_led || Eatual == comecar_rodada || Eatual == zera_timeout) ? 1&apos;b1 : 1&apos;b0;
         contaT_leds   = (Eatual == mostra_leds || Eatual == espera_led) ? 1&apos;b1 : 1&apos;b0;
