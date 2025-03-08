@@ -45,7 +45,8 @@ module playseq_fluxo_dados (
     output sequenciaMenorQueEndereco,
     output [3:0] leds,
     output db_seletor_memoria,
-    output pare
+    output pare,
+    output [1:0] db_contagem_jogo
 );
 
     wire [3:0] s_endereco;
@@ -254,4 +255,5 @@ module playseq_fluxo_dados (
     assign db_sequencia = s_sequencia;
     assign db_jogadafeita = s_botoes;
     assign db_seletor_memoria = seletor_memoria;
+    assign db_contagem_jogo = s_contagem;
 endmodule

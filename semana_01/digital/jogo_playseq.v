@@ -34,8 +34,8 @@ module jogo_playseq (
     output [6:0] db_estado,
     output db_seletor_memoria,
     // Nossos debugs
-    output db_timeout,
-    output db_timeoutL
+    output db_pare,
+    output [1:0] db_contagem_jogo
 );
 
     wire [3:0] s_jogadafeita;
@@ -67,6 +67,9 @@ module jogo_playseq (
     wire [1:0] s_memoria_uc;
     wire s_carregaE;
     wire s_pare;
+    wire s_contaJ;
+    wire s_zeraJ;
+    wire [1:0] s_contagem_jogo;
 
     // Fluxo de Dados
     playseq_fluxo_dados FD (
@@ -79,8 +82,10 @@ module jogo_playseq (
         .contaE                    ( s_contaE           ),
         .contaS                    ( s_contaS           ),
         .contaT                    ( s_contaT           ),
+        .contaJ                    ( s_contaJ           ),
         .zeraE                     ( s_zeraE            ),
         .zeraS                     ( s_zeraS            ),
+        .zeraJ                     ( s_zeraJ            ),
         .carregaE                  ( s_carregaE         ),
         .controla_leds             ( s_controla_leds    ),
         .zeraT_leds                ( s_zeraT_leds       ),
@@ -101,7 +106,8 @@ module jogo_playseq (
         .sequenciaMenorQueEndereco ( s_menorS           ),
         .leds                      ( leds               ),
         .db_seletor_memoria        ( db_seletor_memoria ),
-        .pare                      ( s_pare             )
+        .pare                      ( s_pare             ),
+        .db_contagem_jogo          ( s_contagem_jogo    )
     );
 
     // Unidade de Controle
@@ -126,6 +132,8 @@ module jogo_playseq (
         .contaS        ( s_contaS       ),
         .zeraR         ( s_zeraR        ),
         .registraR     ( s_registraR    ),
+        .zeraJ         ( s_zeraJ        ),
+        .contaJ        ( s_contaJ       ),
         .ganhou        ( ganhou         ),
         .perdeu        ( perdeu         ),
         .pronto        ( pronto         ),
@@ -176,6 +184,6 @@ assign db_enderecoIgualSequencia = s_igualS;
 assign db_fimS = s_fimS;
 assign db_tem_jogada = s_tem_jogada;
 assign db_clock = clock;
-assign db_timeout = s_fim_timeout;
-assign db_timeoutL = s_timeoutL;
+assign db_pare = s_pare;
+assign db_contagem_jogo = s_contagem_jogo;
 endmodule

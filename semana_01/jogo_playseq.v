@@ -34,8 +34,8 @@ module jogo_playseq (
     output [6:0] db_estado,
     output db_seletor_memoria,
     // Nossos debugs
-    output db_timeout,
-    output db_timeoutL
+    output db_pare,
+    output [1:0] db_contagem_jogo
 );
 
     wire [3:0] s_jogadafeita;
@@ -69,6 +69,7 @@ module jogo_playseq (
     wire s_pare;
     wire s_contaJ;
     wire s_zeraJ;
+    wire [1:0] s_contagem_jogo;
 
     // Fluxo de Dados
     playseq_fluxo_dados FD (
@@ -105,7 +106,8 @@ module jogo_playseq (
         .sequenciaMenorQueEndereco ( s_menorS           ),
         .leds                      ( leds               ),
         .db_seletor_memoria        ( db_seletor_memoria ),
-        .pare                      ( s_pare             )
+        .pare                      ( s_pare             ),
+        .db_contagem_jogo          ( s_contagem_jogo    )
     );
 
     // Unidade de Controle
@@ -182,6 +184,6 @@ assign db_enderecoIgualSequencia = s_igualS;
 assign db_fimS = s_fimS;
 assign db_tem_jogada = s_tem_jogada;
 assign db_clock = clock;
-assign db_timeout = s_fim_timeout;
-assign db_timeoutL = s_timeoutL;
+assign db_pare = s_pare;
+assign db_contagem_jogo = s_contagem_jogo;
 endmodule

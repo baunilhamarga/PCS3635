@@ -24,9 +24,9 @@ module jogo_playseq_tb1;
     wire [6:0] db_jogadafeita_out;
     wire [6:0] db_sequencia_out;
     wire [6:0] db_estado_out;
-    wire       db_timeout_out;
-    wire       db_timeoutL_out;
     wire       db_seletor_memoria_out;
+    wire       db_pare_out;
+    wire [1:0] db_contagem_jogo_out;
 
     // Configuração do clock
     parameter clockPeriod = 1000; // in us, f=1KHz
@@ -60,9 +60,9 @@ module jogo_playseq_tb1;
         .db_jogadafeita(db_jogadafeita_out),
         .db_sequencia(db_sequencia_out),
         .db_estado(db_estado_out),
-        .db_timeout(db_timeout_out),
-        .db_timeoutL(db_timeoutL_out),
-        .db_seletor_memoria(db_seletor_memoria_out)
+        .db_seletor_memoria(db_seletor_memoria_out),
+        .db_pare(db_pare_out),
+        .db_contagem_jogo(db_contagem_jogo_out)
     );
 
     // Gabarito
