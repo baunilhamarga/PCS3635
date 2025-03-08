@@ -134,7 +134,7 @@ module playseq_unidade_controle (
         deu_timeout   = (Eatual == fim_timeout) ? 1'b1 : 1'b0;
         contaT        = (Eatual == espera) ? 1'b1: 1'b0;
         zeraS         = (Eatual == inicial) ? 1'b1 : 1'b0;
-        contaS        = (Eatual == nova_seq) ? 1'b1 : 1'b0;
+        contaS        = (Eatual == nova_seq || Eatual == comparacao) ? 1'b1 : 1'b0;
         nivel_uc      = (Eatual == preparacao) ? nivel : nivel_uc;
 		zeraT         = (Eatual == proximo || Eatual == nova_seq) ? 1'b1 : 1'b0;
         controla_leds = (Eatual == mostra_leds) ? 1'b1 : 1'b0;

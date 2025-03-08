@@ -67,6 +67,8 @@ module jogo_playseq (
     wire [1:0] s_memoria_uc;
     wire s_carregaE;
     wire s_pare;
+    wire s_contaJ;
+    wire s_zeraJ;
 
     // Fluxo de Dados
     playseq_fluxo_dados FD (
@@ -79,8 +81,10 @@ module jogo_playseq (
         .contaE                    ( s_contaE           ),
         .contaS                    ( s_contaS           ),
         .contaT                    ( s_contaT           ),
+        .contaJ                    ( s_contaJ           ),
         .zeraE                     ( s_zeraE            ),
         .zeraS                     ( s_zeraS            ),
+        .zeraJ                     ( s_zeraJ            ),
         .carregaE                  ( s_carregaE         ),
         .controla_leds             ( s_controla_leds    ),
         .zeraT_leds                ( s_zeraT_leds       ),
@@ -126,6 +130,8 @@ module jogo_playseq (
         .contaS        ( s_contaS       ),
         .zeraR         ( s_zeraR        ),
         .registraR     ( s_registraR    ),
+        .zeraJ         ( s_zeraJ        ),
+        .contaJ        ( s_contaJ       ),
         .ganhou        ( ganhou         ),
         .perdeu        ( perdeu         ),
         .pronto        ( pronto         ),

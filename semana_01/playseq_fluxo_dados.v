@@ -59,15 +59,53 @@ module playseq_fluxo_dados (
     wire [3:0] s_mem2;
     wire [3:0] s_mem3;
     wire [1:0] s_contagem;
+    wire [3:0] s_quant_inicial;
+    wire [3:0] s_seletor_final = {nivel, seletor_memoria};
 
     // dificuldade_quant
     mux4x2_n #( .BITS(1) ) mux (
         .D0 (~s_contagem[0] & ~s_contagem[1]),
-        .D1 (~s_contagem[0] & s_contagem[1]),
-        .D2 (&s_contagem[1:0]),
+        .D1 (s_contagem[0] & ~s_contagem[1]),
+        .D2 (~s_contagem[0] & s_contagem[1]),
         .D3 (1'b1),
         .SEL (nivel),
         .OUT (pare)
+    );
+
+    // decide o início para cada situação, sempre defasado de 1
+    mux12x4_n #( .BITS(4) ) mux_inicial (
+        .D0 (4'b0100), // feito
+        .D1 (4'b1000), // feito
+        .D2 (4'b0111), // feito
+        .D3 (4'b0100),
+        .D4 (4'b0101), //feito
+        .D5 (4'b1000), // feito
+        .D6 (4'b0101), // feito
+        .D7 (4'b0100),
+        .D8 (4'b0100), // feito
+        .D9 (4'b1000), // feito
+        .D10(4'b0011), // feito
+        .D11(4'b0100),
+        .SEL (s_seletor_final),
+        .OUT (s_quant_inicial)
+    );
+
+    // decide o final para cada situação
+    mux12x4_n #( .BITS(1) ) mux_final (
+        .D0 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
+        .D1 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
+        .D2 (~s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
+        .D3 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]),
+        .D4 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
+        .D5 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
+        .D6 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
+        .D7 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]),
+        .D8 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
+        .D9 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
+        .D10(~s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
+        .D11(s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]),
+        .SEL (s_seletor_final),
+        .OUT (fimE)
     );
 
     // mux n
@@ -95,7 +133,7 @@ module playseq_fluxo_dados (
         .enp   (contaE),
         .D     (4'b0),
         .Q     (s_endereco),
-        .rco   (fimE)
+        .rco   ()
     );
 
     // contador sequencias
@@ -105,7 +143,7 @@ module playseq_fluxo_dados (
         .ld    (~carregaE),
         .ent   (1'b1),
         .enp   (contaS),
-        .D     (4'b0101),
+        .D     (s_quant_inicial),
         .Q     (s_sequencia),
         .rco   (fimS)
     );
@@ -183,7 +221,7 @@ module playseq_fluxo_dados (
 
     contador_m #(.M(5000), .N(13)) contador_timeout_jogadas (
         .clock   (clock),
-        .zera_as (zeraC || zeraR),
+        .zera_as (zeraR),
         .zera_s  (zeraT),
         .conta   (contaT),
         .Q       (),
@@ -193,7 +231,7 @@ module playseq_fluxo_dados (
 
     contador_m #(.M(500), .N(9)) contador_timeout_leds (
         .clock   (clock),
-        .zera_as (zeraC || zeraR),
+        .zera_as (zeraR),
         .zera_s  (zeraT_leds),
         .conta   (contaT_leds),
         .Q       (),
@@ -203,7 +241,7 @@ module playseq_fluxo_dados (
 
     contador_m #(.M(4), .N(2)) contador_jogadas (
         .clock   (clock),
-        .zera_as (zeraC || zeraR), // precisa ser um zera diferente
+        .zera_as (zeraR), // precisa ser um zera diferente
         .zera_s  (zeraJ),
         .conta   (contaJ), // precisa ser um zera diferente
         .Q       (s_contagem),

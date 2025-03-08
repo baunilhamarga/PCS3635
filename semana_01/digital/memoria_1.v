@@ -19,21 +19,21 @@ module memoria_1 (clock, address, data_out);
     begin
         case (address)
             4'b0000: data_out = 4'b0001; // 4
-            4'b0001: data_out = 4'b0010; // 5
-            4'b0010: data_out = 4'b0100; // 6
-            4'b0011: data_out = 4'b1000; // 7 
+            4'b0001: data_out = 4'b0001; // 5
+            4'b0010: data_out = 4'b0010; // 6
+            4'b0011: data_out = 4'b0010; // 7 
             4'b0100: data_out = 4'b0100; // 8
-            4'b0101: data_out = 4'b0010; // 9
-            4'b0110: data_out = 4'b0001; // 10
-            4'b0111: data_out = 4'b0001; // 11
-            4'b1000: data_out = 4'b0010; // 12
-            4'b1001: data_out = 4'b0010; // 13
-            4'b1010: data_out = 4'b0100; // 14
-            4'b1011: data_out = 4'b0100; // 15
-            4'b1100: data_out = 4'b1000; // 16
-            4'b1101: data_out = 4'b1000; // 17
-            4'b1110: data_out = 4'b0001; // 18
-            4'b1111: data_out = 4'b0100; // 19
+            4'b0101: data_out = 4'b0100; // 9
+            4'b0110: data_out = 4'b1000; // 10
+            4'b0111: data_out = 4'b1000; // 11
+            4'b1000: data_out = 4'b0100; // 12
+            4'b1001: data_out = 4'b0100; // 13
+            4'b1010: data_out = 4'b0010; // 14
+            4'b1011: data_out = 4'b0010; // 15
+            4'b1100: data_out = 4'b0001; // 16
+            4'b1101: data_out = 4'b0001; // 17
+            4'b1110: data_out = 4'b0010; // 18
+            4'b1111: data_out = 4'b0010; // 19
         endcase
     end
 endmodule

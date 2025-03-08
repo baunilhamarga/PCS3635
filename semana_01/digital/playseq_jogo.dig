@@ -119,6 +119,8 @@ module jogo_playseq (
     wire [1:0] s_memoria_uc;
     wire s_carregaE;
     wire s_pare;
+    wire s_contaJ;
+    wire s_zeraJ;
 
     // Fluxo de Dados
     playseq_fluxo_dados FD (
@@ -131,8 +133,10 @@ module jogo_playseq (
         .contaE                    ( s_contaE           ),
         .contaS                    ( s_contaS           ),
         .contaT                    ( s_contaT           ),
+        .contaJ                    ( s_contaJ           ),
         .zeraE                     ( s_zeraE            ),
         .zeraS                     ( s_zeraS            ),
+        .zeraJ                     ( s_zeraJ            ),
         .carregaE                  ( s_carregaE         ),
         .controla_leds             ( s_controla_leds    ),
         .zeraT_leds                ( s_zeraT_leds       ),
@@ -178,6 +182,8 @@ module jogo_playseq (
         .contaS        ( s_contaS       ),
         .zeraR         ( s_zeraR        ),
         .registraR     ( s_registraR    ),
+        .zeraJ         ( s_zeraJ        ),
+        .contaJ        ( s_contaJ       ),
         .ganhou        ( ganhou         ),
         .perdeu        ( perdeu         ),
         .pronto        ( pronto         ),
@@ -231,6 +237,7 @@ assign db_clock = clock;
 assign db_timeout = s_fim_timeout;
 assign db_timeoutL = s_timeoutL;
 endmodule
+
 
 /* -----------------------------------------------------------------
  *  Arquivo   : comparador_85.v
@@ -745,8 +752,8 @@ module playseq_fluxo_dados (
     // dificuldade_quant
     mux4x2_n #( .BITS(1) ) mux (
         .D0 (~s_contagem[0] &amp; ~s_contagem[1]),
-        .D1 (~s_contagem[0] &amp; s_contagem[1]),
-        .D2 (&amp;s_contagem[1:0]),
+        .D1 (s_contagem[0] &amp; ~s_contagem[1]),
+        .D2 (~s_contagem[0] &amp; s_contagem[1]),
         .D3 (1&apos;b1),
         .SEL (nivel),
         .OUT (pare)
@@ -787,7 +794,7 @@ module playseq_fluxo_dados (
         .ld    (~carregaE),
         .ent   (1&apos;b1),
         .enp   (contaS),
-        .D     (4&apos;b0101),
+        .D     (4&apos;b0110),
         .Q     (s_sequencia),
         .rco   (fimS)
     );
@@ -865,7 +872,7 @@ module playseq_fluxo_dados (
 
     contador_m #(.M(5000), .N(13)) contador_timeout_jogadas (
         .clock   (clock),
-        .zera_as (zeraC || zeraR),
+        .zera_as (zeraR),
         .zera_s  (zeraT),
         .conta   (contaT),
         .Q       (),
@@ -875,7 +882,7 @@ module playseq_fluxo_dados (
 
     contador_m #(.M(500), .N(9)) contador_timeout_leds (
         .clock   (clock),
-        .zera_as (zeraC || zeraR),
+        .zera_as (zeraR),
         .zera_s  (zeraT_leds),
         .conta   (contaT_leds),
         .Q       (),
@@ -885,7 +892,7 @@ module playseq_fluxo_dados (
 
     contador_m #(.M(4), .N(2)) contador_jogadas (
         .clock   (clock),
-        .zera_as (zeraC || zeraR), // precisa ser um zera diferente
+        .zera_as (zeraR), // precisa ser um zera diferente
         .zera_s  (zeraJ),
         .conta   (contaJ), // precisa ser um zera diferente
         .Q       (s_contagem),
@@ -1037,7 +1044,7 @@ module playseq_unidade_controle (
         deu_timeout   = (Eatual == fim_timeout) ? 1&apos;b1 : 1&apos;b0;
         contaT        = (Eatual == espera) ? 1&apos;b1: 1&apos;b0;
         zeraS         = (Eatual == inicial) ? 1&apos;b1 : 1&apos;b0;
-        contaS        = (Eatual == nova_seq) ? 1&apos;b1 : 1&apos;b0;
+        contaS        = (Eatual == nova_seq || Eatual == comparacao) ? 1&apos;b1 : 1&apos;b0;
         nivel_uc      = (Eatual == preparacao) ? nivel : nivel_uc;
 	zeraT         = (Eatual == proximo || Eatual == nova_seq) ? 1&apos;b1 : 1&apos;b0;
         controla_leds = (Eatual == mostra_leds) ? 1&apos;b1 : 1&apos;b0;
