@@ -136,14 +136,14 @@ module playseq_unidade_controle (
         zeraS         = (Eatual == inicial) ? 1'b1 : 1'b0;
         contaS        = (Eatual == nova_seq || Eatual == comparacao) ? 1'b1 : 1'b0;
         nivel_uc      = (Eatual == preparacao) ? nivel : nivel_uc;
-		zeraT         = (Eatual == proximo || Eatual == nova_seq) ? 1'b1 : 1'b0;
+        zeraT         = (Eatual == proximo || Eatual == nova_seq || Eatual == fim_acerto || Eatual == fim_erro || Eatual == fim_timeout) ? 1'b1 : 1'b0;
         controla_leds = (Eatual == mostra_leds) ? 1'b1 : 1'b0;
         zeraT_leds    = (Eatual == mostrou_led || Eatual == comecar_rodada || Eatual == zera_timeout) ? 1'b1 : 1'b0;
         contaT_leds   = (Eatual == mostra_leds || Eatual == espera_led) ? 1'b1 : 1'b0;
         fase_preview  = (Eatual == mostra_leds || Eatual == mostrou_led || Eatual == zera_timeout || Eatual == comecar_rodada) ? 1'b1 : 1'b0;
         memoria_uc    = (Eatual == preparacao) ? memoria : memoria_uc;
         contaJ        = (Eatual == proximo) ? 1'b1 : 1'b0;
-        zeraJ         = (Eatual == nova_seq) ? 1'b1 : 1'b0;
+        zeraJ         = (Eatual == nova_seq || Eatual == fim_acerto || Eatual == fim_erro || Eatual == fim_timeout) ? 1'b1 : 1'b0;
 
         // Saida de depuracao (estado)
         case (Eatual)
