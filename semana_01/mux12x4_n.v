@@ -1,8 +1,8 @@
 /*------------------------------------------------------------------------
- * Arquivo   : mux4x2_n.v
+ * Arquivo   : mux12x4_n.v
  * Projeto   : PlaySeq
  *------------------------------------------------------------------------
- * Descricao : multiplexador 4x(2 bit de seletor) com entradas de n bits 
+ * Descricao : multiplexador 12x4(4 bit de seletor) com entradas de n bits 
  * (parametrizado) 
  * 
  *------------------------------------------------------------------------

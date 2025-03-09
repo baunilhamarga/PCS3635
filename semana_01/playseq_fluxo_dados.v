@@ -62,9 +62,10 @@ module playseq_fluxo_dados (
     wire [1:0] s_contagem;
     wire [3:0] s_quant_inicial;
     wire [3:0] s_seletor_final = {nivel, seletor_memoria};
+	 wire rco;
 
     // dificuldade_quant
-    mux4x2_n #( .BITS(1) ) mux (
+    mux4x2_n #( .BITS(1) ) mux_quant (
         .D0 (~s_contagem[0] & ~s_contagem[1]),
         .D1 (s_contagem[0] & ~s_contagem[1]),
         .D2 (~s_contagem[0] & s_contagem[1]),
@@ -93,18 +94,18 @@ module playseq_fluxo_dados (
 
     // decide o final para cada situação
     mux12x4_n #( .BITS(1) ) mux_final (
-        .D0 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
-        .D1 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
+        .D0 (rco), // feito
+        .D1 (rco), // feito
         .D2 (~s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
-        .D3 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]),
-        .D4 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
-        .D5 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
-        .D6 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
-        .D7 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]),
-        .D8 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
-        .D9 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
+        .D3 (rco),
+        .D4 (rco), // feito
+        .D5 (rco), // feito
+        .D6 (rco), // feito
+        .D7 (rco),
+        .D8 (rco), // feito
+        .D9 (rco), // feito
         .D10(~s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
-        .D11(s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]),
+        .D11(rco),
         .SEL (s_seletor_final),
         .OUT (fimE)
     );
@@ -134,7 +135,7 @@ module playseq_fluxo_dados (
         .enp   (contaE),
         .D     (4'b0),
         .Q     (s_endereco),
-        .rco   ()
+        .rco   (rco)
     );
 
     // contador sequencias
@@ -174,7 +175,7 @@ module playseq_fluxo_dados (
     );
 
     // dificuldade_seq
-    mux4x2_n #( .BITS(4) ) mux_jogo (
+    mux4x2_n #( .BITS(4) ) mux_seq (
       .D0(s_mem1),
       .D1(s_mem2),
       .D2(s_mem3),
