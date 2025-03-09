@@ -1,6 +1,6 @@
 `timescale 1us/1ns
 
-module jogo_playseq_tb1;
+module jogo_playseq_tb3;
 
     // Sinais para conectar com o DUT
     reg        clock_in   = 1;
@@ -65,26 +65,48 @@ module jogo_playseq_tb1;
         .db_contagem_jogo(db_contagem_jogo_out)
     );
 
-    // Gabarito
-    reg [3:0] jogadas[0:15];
+    // Gabarito 1 (memória 2 = jogo 3)
+    reg [3:0] jogadas1[0:15];
 
     initial begin
-        jogadas[0]  = 4'b0001;
-        jogadas[1]  = 4'b0001;
-        jogadas[2]  = 4'b0010;
-        jogadas[3]  = 4'b0010;
-        jogadas[4]  = 4'b0100;
-        jogadas[5]  = 4'b0100;
-        jogadas[6]  = 4'b1000;
-        jogadas[7]  = 4'b1000;
-        jogadas[8]  = 4'b0100;
-        jogadas[9]  = 4'b0100;
-        jogadas[10] = 4'b0010;
-        jogadas[11] = 4'b0010;
-        jogadas[12] = 4'b0001;
-        jogadas[13] = 4'b0001;
-        jogadas[14] = 4'b0010;
-        jogadas[15] = 4'b0010;
+        jogadas1[0]  = 4'b0001;
+        jogadas1[1]  = 4'b0010;
+        jogadas1[2]  = 4'b1000;
+        jogadas1[3]  = 4'b0100;
+        jogadas1[4]  = 4'b0100;
+        jogadas1[5]  = 4'b1000;
+        jogadas1[6]  = 4'b0010;
+        jogadas1[7]  = 4'b0001;
+        jogadas1[8]  = 4'b0001;
+        jogadas1[9]  = 4'b0010;
+        jogadas1[10] = 4'b1000;
+        jogadas1[11] = 4'b0100;
+        jogadas1[12] = 4'b0100;
+        jogadas1[13] = 4'b1000;
+        jogadas1[14] = 4'b0010;
+        jogadas1[15] = 4'b0001;
+    end
+
+    // Gabarito 2 (memória 0 = jogo 1)
+    reg [3:0] jogadas2[0:15];
+
+    initial begin
+        jogadas2[0]  = 4'b0001;
+        jogadas2[1]  = 4'b0001;
+        jogadas2[2]  = 4'b0010;
+        jogadas2[3]  = 4'b0010;
+        jogadas2[4]  = 4'b0100;
+        jogadas2[5]  = 4'b0100;
+        jogadas2[6]  = 4'b1000;
+        jogadas2[7]  = 4'b1000;
+        jogadas2[8]  = 4'b0100;
+        jogadas2[9]  = 4'b0100;
+        jogadas2[10] = 4'b0100; // Jogada errada
+        jogadas2[11] = 4'b0010;
+        jogadas2[12] = 4'b0001;
+        jogadas2[13] = 4'b0001;
+        jogadas2[14] = 4'b0010;
+        jogadas2[15] = 4'b0010;
     end
 
     // Variáveis de loop
@@ -113,8 +135,8 @@ module jogo_playseq_tb1;
         // Caso 2: Configuração das dificuldades
         caso = 2;
         #(2 * clock_period);
-        nivel_in = 2;  // Número de jogadas por rodada = nivel_in + 1
-        memoria_in = 0;  // Memória selecionada
+        nivel_in = 0;  // Número de jogadas por rodada = nivel_in + 1
+        memoria_in = 2;  // Memória selecionada
         #(2 * clock_period);
         jogar_in = 1;
         #(5 * clock_period);
@@ -123,18 +145,64 @@ module jogo_playseq_tb1;
 
         // num_jogadas = quantidade de termos da sequência mostrados
         // A cada rodada, esperamos num_jogadas segundos para mostrar a sequência
-        for (num_jogadas=5; num_jogadas<16; num_jogadas=num_jogadas+nivel_in+2) begin
+        for (num_jogadas=8; num_jogadas<16; num_jogadas=num_jogadas+nivel_in+2) begin
             caso = caso + 1;
             #(1_000_000 * num_jogadas);
             #(500_000);
             for (i = 0; i <= nivel_in && num_jogadas + i < 16; i = i + 1) begin
-                botoes_in = jogadas[num_jogadas + i];
+                botoes_in = jogadas1[num_jogadas + i];
                 #(500_000);
                 botoes_in = 4'b0000;
                 #(500_000);
             end
             #(1_000_000);
         end
+
+
+
+        // Caso 6: Configuração das novas dificuldades
+        caso = caso + 1;
+        #(2 * clock_period);
+        nivel_in = 1;  // Número de jogadas por rodada = nivel_in + 1
+        memoria_in = 0;  // Memória selecionada
+        #(2 * clock_period);
+        jogar_in = 1;
+        #(5 * clock_period);
+        jogar_in = 0;
+        #(10 * clock_period);
+
+        // O jogador erra no termo 11 da sequência
+        for (num_jogadas=6; num_jogadas<11; num_jogadas=num_jogadas+nivel_in+2) begin
+            caso = caso + 1;
+            #(1_000_000 * num_jogadas);
+            #(500_000);
+            for (i = 0; i <= nivel_in && num_jogadas + i < 16; i = i + 1) begin
+                botoes_in = jogadas2[num_jogadas + i];
+                #(500_000);
+                botoes_in = 4'b0000;
+                #(2 * clock_period);
+            end
+        end
+
+        // Caso 9: Configuração das novas dificuldades
+        caso = caso + 1;
+        #(2 * clock_period);
+        nivel_in = 1;  // Número de jogadas por rodada = nivel_in + 1
+        memoria_in = 0;  // Memória selecionada
+        #(2 * clock_period);
+        #(500_000);
+        jogar_in = 1;
+        #(5 * clock_period);
+        jogar_in = 0;
+        #(10 * clock_period);
+
+        // O jogador faz 1 jogada e espera o timeout
+        num_jogadas = 5;
+        #(1_000_000 * num_jogadas);
+        botoes_in = 4'b0100;
+        #(500_000);
+        botoes_in = 4'b0000;
+        #(6_000_000);
 
         // Final da simulação
         caso = 99;

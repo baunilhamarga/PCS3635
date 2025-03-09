@@ -1,6 +1,6 @@
 `timescale 1us/1ns
 
-module jogo_playseq_tb1;
+module jogo_playseq_tb2;
 
     // Sinais para conectar com o DUT
     reg        clock_in   = 1;
@@ -70,21 +70,21 @@ module jogo_playseq_tb1;
 
     initial begin
         jogadas[0]  = 4'b0001;
-        jogadas[1]  = 4'b0001;
-        jogadas[2]  = 4'b0010;
-        jogadas[3]  = 4'b0010;
-        jogadas[4]  = 4'b0100;
-        jogadas[5]  = 4'b0100;
-        jogadas[6]  = 4'b1000;
-        jogadas[7]  = 4'b1000;
-        jogadas[8]  = 4'b0100;
+        jogadas[1]  = 4'b0010;
+        jogadas[2]  = 4'b1000;
+        jogadas[3]  = 4'b0100;
+        jogadas[4]  = 4'b0010;
+        jogadas[5]  = 4'b1000;
+        jogadas[6]  = 4'b0100;
+        jogadas[7]  = 4'b0001;
+        jogadas[8]  = 4'b1000;
         jogadas[9]  = 4'b0100;
-        jogadas[10] = 4'b0010;
+        jogadas[10] = 4'b0001;
         jogadas[11] = 4'b0010;
-        jogadas[12] = 4'b0001;
+        jogadas[12] = 4'b0100;
         jogadas[13] = 4'b0001;
         jogadas[14] = 4'b0010;
-        jogadas[15] = 4'b0010;
+        jogadas[15] = 4'b1000;
     end
 
     // Variáveis de loop
@@ -113,8 +113,8 @@ module jogo_playseq_tb1;
         // Caso 2: Configuração das dificuldades
         caso = 2;
         #(2 * clock_period);
-        nivel_in = 2;  // Número de jogadas por rodada = nivel_in + 1
-        memoria_in = 0;  // Memória selecionada
+        nivel_in = 1;  // Número de jogadas por rodada = nivel_in + 1
+        memoria_in = 1;  // Memória selecionada
         #(2 * clock_period);
         jogar_in = 1;
         #(5 * clock_period);
@@ -123,7 +123,7 @@ module jogo_playseq_tb1;
 
         // num_jogadas = quantidade de termos da sequência mostrados
         // A cada rodada, esperamos num_jogadas segundos para mostrar a sequência
-        for (num_jogadas=5; num_jogadas<16; num_jogadas=num_jogadas+nivel_in+2) begin
+        for (num_jogadas=9; num_jogadas<16; num_jogadas=num_jogadas+nivel_in+2) begin
             caso = caso + 1;
             #(1_000_000 * num_jogadas);
             #(500_000);
