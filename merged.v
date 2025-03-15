@@ -18,6 +18,7 @@ module jogo_playseq (
     input [3:0] botoes,
     input [1:0] memoria,
     input [1:0] nivel,
+    input quer_escrever,
     output ganhou,
     output perdeu,
     output timeout,
@@ -42,7 +43,7 @@ module jogo_playseq (
     wire [3:0] s_jogadafeita;
     wire [3:0] s_contagem;
     wire [3:0] s_memoria;
-    wire [3:0] s_estado;
+    wire [4:0] s_estado;
     wire [3:0] s_sequencia;
     wire s_tem_jogada;
     wire s_fimE;
@@ -66,11 +67,13 @@ module jogo_playseq (
     wire s_contaT_leds;
     wire s_fase_preview;
     wire [1:0] s_memoria_uc;
-    wire s_carregaE;
+    wire s_carregaS;
     wire s_pare;
     wire s_contaJ;
     wire s_zeraJ;
     wire [1:0] s_contagem_jogo;
+    wire s_vai_escrever;
+    wire s_ram_escreve;
 
     // Fluxo de Dados
     playseq_fluxo_dados FD (
@@ -87,12 +90,14 @@ module jogo_playseq (
         .zeraE                     ( s_zeraE            ),
         .zeraS                     ( s_zeraS            ),
         .zeraJ                     ( s_zeraJ            ),
-        .carregaE                  ( s_carregaE         ),
+        .carregaS                  ( s_carregaS         ),
         .controla_leds             ( s_controla_leds    ),
         .zeraT_leds                ( s_zeraT_leds       ),
         .contaT_leds               ( s_contaT_leds      ),
         .fase_preview              ( s_fase_preview     ),
         .seletor_memoria           ( s_memoria_uc       ),
+        .ram_escreve               ( s_ram_escreve      ),
+        .quer_escrever             ( quer_escrever      ),
         .igual                     ( s_igualE           ),
         .enderecoIgualSequencia    ( s_igualS           ),
         .fimE                      ( s_fimE             ),
@@ -108,7 +113,8 @@ module jogo_playseq (
         .leds                      ( leds               ),
         .db_seletor_memoria        ( db_seletor_memoria ),
         .pare                      ( s_pare             ),
-        .db_contagem_jogo          ( s_contagem_jogo    )
+        .db_contagem_jogo          ( s_contagem_jogo    ),
+        .vai_escrever              ( s_vai_escrever     )
     );
 
     // Unidade de Controle
@@ -126,9 +132,10 @@ module jogo_playseq (
         .menorS        ( s_menorS       ),
         .memoria       ( memoria        ),
         .pare          ( s_pare         ),
+        .vai_escrever  ( s_vai_escrever ),
         .zeraE         ( s_zeraE        ),
         .contaE        ( s_contaE       ),
-        .carregaE      ( s_carregaE     ),
+        .carregaS      ( s_carregaS     ),
         .zeraS         ( s_zeraS        ),
         .contaS        ( s_contaS       ),
         .zeraR         ( s_zeraR        ),
@@ -147,7 +154,8 @@ module jogo_playseq (
         .zeraT_leds    ( s_zeraT_leds   ),
         .contaT_leds   ( s_contaT_leds  ),
         .fase_preview  ( s_fase_preview ),
-        .memoria_uc    ( s_memoria_uc   )
+        .memoria_uc    ( s_memoria_uc   ),
+        .ram_escreve   ( s_ram_escreve  )
     );
 
     // Display das botoes
@@ -169,7 +177,7 @@ module jogo_playseq (
     );
 
     // Display do estado atual
-    hexa7seg HEX5 (
+    hexa7seg5b HEX5 (
         .hexa    ( s_estado  ),
         .display ( db_estado )
     );
@@ -425,6 +433,77 @@ module hexa7seg (hexa, display);
 endmodule
 
 // --- End of hexa7seg.v ---
+
+// --- Start of hexa7seg5b.v ---
+/*--------------------------------------------------------------
+ * Arquivo   : hexa7seg5b.v
+ * Projeto   : PlaySeq
+ * -------------------------------------------------------------
+ * Descricao : decodificador hexa para 
+ *             display de 7 segmentos 
+ * 
+ * entrada: hexa - codigo binario de 5 bits
+ * saida: display - codigo de 7 bits para display de 7 segmentos
+ * ----------------------------------------------------------------
+ * dica de uso: mapeamento para displays da placa DE0-CV
+ *              bit 6 mais significativo é o bit a esquerda
+ *              p.ex. display(6) -> HEX0[6] ou HEX06
+ * ----------------------------------------------------------------
+ * Revisoes  :
+ *     Data        Versao  Autor             	Descricao
+ *     09/02/2021  1.0     Edson Midorikawa  	criacao
+ *     30/01/2025  2.0     Edson Midorikawa  	revisao p/ Verilog
+ * 	 11/02/2025  2.1 		Augusto Vaccarelli 	revisao
+ * ----------------------------------------------------------------
+ */
+
+module hexa7seg5b (hexa, display);
+    input      [4:0] hexa;
+    output reg [6:0] display;
+
+
+always @(*) begin
+    case (hexa)
+        5'b00000: display = 7'b1000000;  // 0
+        5'b00001: display = 7'b1111001;  // 1
+        5'b00010: display = 7'b0100100;  // 2
+        5'b00011: display = 7'b0110000;  // 3
+        5'b00100: display = 7'b0011001;  // 4
+        5'b00101: display = 7'b0010010;  // 5
+        5'b00110: display = 7'b0000010;  // 6
+        5'b00111: display = 7'b1111000;  // 7
+        5'b01000: display = 7'b0000000;  // 8
+        5'b01001: display = 7'b0010000;  // 9
+        5'b01010: display = 7'b0001000;  // A
+        5'b01011: display = 7'b0000011;  // B
+        5'b01100: display = 7'b1000110;  // C
+        5'b01101: display = 7'b0100001;  // D
+        5'b01110: display = 7'b0000110;  // E
+        5'b01111: display = 7'b0001110;  // F
+        5'b10000: display = 7'b1111110;  // 10
+        5'b10001: display = 7'b1111101;  // 11
+        5'b10010: display = 7'b1111011;  // 12
+        5'b10011: display = 7'b1110111;  // 13
+        5'b10100: display = 7'b1101111;  // 14
+        5'b10101: display = 7'b1011111;  // 15
+        5'b10110: display = 7'b0111111;  // 16
+        5'b10111: display = 7'b1111100;  // 17
+        5'b11000: display = 7'b1110011;  // 18
+        5'b11001: display = 7'b1100111;  // 19
+        5'b11010: display = 7'b1001111;  // 1A
+        5'b11011: display = 7'b0011111;  // 1B
+        5'b11100: display = 7'b1110001;  // 1C
+        5'b11101: display = 7'b1100011;  // 1D
+        5'b11110: display = 7'b1000111;  // 1E
+        5'b11111: display = 7'b0001111;  // 1F
+        default:  display = 7'b1111111;
+    endcase
+end
+
+endmodule
+
+
+// --- End of hexa7seg5b.v ---
 
 // --- Start of memoria_1.v ---
 //------------------------------------------------------------------
@@ -749,12 +828,14 @@ module playseq_fluxo_dados (
     input zeraE,
     input zeraS,
     input zeraJ,
-    input carregaE,
+    input carregaS,
     input controla_leds,
     input zeraT_leds,
     input contaT_leds,
     input fase_preview,
     input [1:0] seletor_memoria,
+    input ram_escreve,
+    input quer_escrever,
     output igual,
     output enderecoIgualSequencia,
     output fimE,
@@ -770,7 +851,8 @@ module playseq_fluxo_dados (
     output [3:0] leds,
     output db_seletor_memoria,
     output pare,
-    output [1:0] db_contagem_jogo
+    output [1:0] db_contagem_jogo,
+    output vai_escrever
 );
 
     wire [3:0] s_endereco;
@@ -783,12 +865,14 @@ module playseq_fluxo_dados (
     wire [3:0] s_mem1;
     wire [3:0] s_mem2;
     wire [3:0] s_mem3;
+    wire [3:0] s_mem4;
     wire [1:0] s_contagem;
     wire [3:0] s_quant_inicial;
     wire [3:0] s_seletor_final = {nivel, seletor_memoria};
+	wire rco;
 
     // dificuldade_quant
-    mux4x2_n #( .BITS(1) ) mux (
+    mux4x2_n #( .BITS(1) ) mux_quant (
         .D0 (~s_contagem[0] & ~s_contagem[1]),
         .D1 (s_contagem[0] & ~s_contagem[1]),
         .D2 (~s_contagem[0] & s_contagem[1]),
@@ -817,18 +901,18 @@ module playseq_fluxo_dados (
 
     // decide o final para cada situação
     mux12x4_n #( .BITS(1) ) mux_final (
-        .D0 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
-        .D1 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
+        .D0 (rco), // feito
+        .D1 (rco), // feito
         .D2 (~s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
-        .D3 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]),
-        .D4 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
-        .D5 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
-        .D6 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
-        .D7 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]),
-        .D8 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
-        .D9 (s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
+        .D3 (rco),
+        .D4 (rco), // feito
+        .D5 (rco), // feito
+        .D6 (rco), // feito
+        .D7 (rco),
+        .D8 (rco), // feito
+        .D9 (rco), // feito
         .D10(~s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]), // feito
-        .D11(s_endereco[0] & s_endereco[1] & s_endereco[2] & s_endereco[3]),
+        .D11(rco),
         .SEL (s_seletor_final),
         .OUT (fimE)
     );
@@ -858,14 +942,14 @@ module playseq_fluxo_dados (
         .enp   (contaE),
         .D     (4'b0),
         .Q     (s_endereco),
-        .rco   ()
+        .rco   (rco)
     );
 
     // contador sequencias
     contador_163 contLmt (
         .clock (clock),
         .clr   (~zeraS),
-        .ld    (~carregaE),
+        .ld    (~carregaS),
         .ent   (1'b1),
         .enp   (contaS),
         .D     (s_quant_inicial),
@@ -898,13 +982,20 @@ module playseq_fluxo_dados (
     );
 
     // dificuldade_seq
-    mux4x2_n #( .BITS(4) ) mux_jogo (
+    mux4x2_n #( .BITS(4) ) mux_seq (
       .D0(s_mem1),
       .D1(s_mem2),
       .D2(s_mem3),
-      .D3(s_mem1), // será memória personalizável mais para frente
+      .D3(s_mem4),
       .SEL(seletor_memoria),
       .OUT(s_dado)
+    );
+
+    mux2x1_n #( .BITS(1) ) mux_escrita (
+      .D0(1'b0),
+      .D1(quer_escrever),
+      .SEL(&seletor_memoria),
+      .OUT(vai_escrever)
     );
 
     // memória 1
@@ -928,6 +1019,15 @@ module playseq_fluxo_dados (
         .data_out (s_mem3)
     );
 
+    // memória 4
+    sync_ram_16x4_file memoria4 (
+    	.clk  (clock),
+    	.we   (ram_escreve),
+    	.data (s_botoes),
+    	.addr (s_endereco),
+    	.q    (s_mem4)
+    );
+
     // registrador
     registrador_4 regBotoes (
         .clock  (clock),
@@ -946,7 +1046,7 @@ module playseq_fluxo_dados (
 
     contador_m #(.M(5000), .N(13)) contador_timeout_jogadas (
         .clock   (clock),
-        .zera_as (zeraC || zeraR),
+        .zera_as (zeraR),
         .zera_s  (zeraT),
         .conta   (contaT),
         .Q       (),
@@ -956,7 +1056,7 @@ module playseq_fluxo_dados (
 
     contador_m #(.M(500), .N(9)) contador_timeout_leds (
         .clock   (clock),
-        .zera_as (zeraC || zeraR),
+        .zera_as (zeraR),
         .zera_s  (zeraT_leds),
         .conta   (contaT_leds),
         .Q       (),
@@ -966,7 +1066,7 @@ module playseq_fluxo_dados (
 
     contador_m #(.M(4), .N(2)) contador_jogadas (
         .clock   (clock),
-        .zera_as (zeraC || zeraR), // precisa ser um zera diferente
+        .zera_as (zeraR), // precisa ser um zera diferente
         .zera_s  (zeraJ),
         .conta   (contaJ), // precisa ser um zera diferente
         .Q       (s_contagem),
@@ -981,7 +1081,6 @@ module playseq_fluxo_dados (
     assign db_seletor_memoria = seletor_memoria;
     assign db_contagem_jogo = s_contagem;
 endmodule
-
 // --- End of playseq_fluxo_dados.v ---
 
 // --- Start of playseq_unidade_controle.v ---
@@ -1012,9 +1111,10 @@ module playseq_unidade_controle (
     input menorS,
     input [1:0] memoria,
     input pare,
+    input vai_escrever,
     output reg zeraE,
     output reg contaE,
-    output reg carregaE,
+    output reg carregaS,
     output reg zeraS,
     output reg contaS,
     output reg zeraR,
@@ -1024,7 +1124,7 @@ module playseq_unidade_controle (
     output reg ganhou,
     output reg perdeu,
     output reg pronto,
-    output reg [3:0] db_estado,
+    output reg [4:0] db_estado,
     output reg deu_timeout,
     output reg contaT,
     output reg [1:0] nivel_uc,
@@ -1033,48 +1133,57 @@ module playseq_unidade_controle (
     output reg zeraT_leds,
     output reg contaT_leds,
     output reg fase_preview,
-    output reg [1:0] memoria_uc
+    output reg [1:0] memoria_uc,
+    output reg ram_escreve
 );
 
     // Define estados
-    parameter inicial        = 4'b0000;  // 0
-    parameter preparacao     = 4'b0001;  // 1
-    parameter nova_seq       = 4'b0010;  // 2
-    parameter mostra_leds    = 4'b1011;  // B
-    parameter mostrou_led    = 4'b1100;  // C
-    parameter espera_led     = 4'b0111;  // 7
-    parameter zera_timeout   = 4'b1000;  // 8
-    parameter comecar_rodada = 4'b1101;  // D
-    parameter espera         = 4'b0011;  // 3
-    parameter registra       = 4'b0100;  // 4
-    parameter comparacao     = 4'b0101;  // 5
-    parameter proximo        = 4'b0110;  // 6
-    parameter fim_erro       = 4'b1110;  // E
-    parameter fim_acerto     = 4'b1010;  // A
-    parameter fim_timeout    = 4'b1111;  // F
+    parameter inicial          = 5'b00000;  // 0
+    parameter preparacao       = 5'b00001;  // 1
+    parameter registra_escrita = 5'b10001;  // overflow2
+    parameter escreve          = 5'b01001;  // 9
+    parameter espera_escrita   = 5'b10000;  // overflow
+    parameter zera_contador    = 5'b10010;  // overflow3
+    parameter nova_seq         = 5'b00010;  // 2
+    parameter mostra_leds      = 5'b01011;  // B
+    parameter mostrou_led      = 5'b01100;  // C
+    parameter espera_led       = 5'b00111;  // 7
+    parameter zera_timeout     = 5'b01000;  // 8
+    parameter comecar_rodada   = 5'b01101;  // D
+    parameter espera           = 5'b00011;  // 3
+    parameter registra         = 5'b00100;  // 4
+    parameter comparacao       = 5'b00101;  // 5
+    parameter proximo          = 5'b00110;  // 6
+    parameter fim_erro         = 5'b01110;  // E
+    parameter fim_acerto       = 5'b01010;  // A
+    parameter fim_timeout      = 5'b01111;  // F
 
     // Variaveis de estado
-    reg [3:0] Eatual, Eprox;
+    reg [4:0] Eatual, Eprox;
 
     reg [14*8-1:0] Eatual_str;
     always@(Eatual) begin
         case(Eatual)
-            inicial:        Eatual_str = "inicial";
-            preparacao:     Eatual_str = "preparacao";
-            nova_seq:       Eatual_str = "nova_seq";
-            mostra_leds:    Eatual_str = "mostra_leds";
-            mostrou_led:    Eatual_str = "mostrou_leds";
-            espera_led:     Eatual_str = "espera_leds";
-            zera_timeout:   Eatual_str = "zera_timeout";
-            comecar_rodada: Eatual_str = "comecar_rodada";
-            espera:         Eatual_str = "espera";
-            registra:       Eatual_str = "registra";
-            comparacao:     Eatual_str = "comparacao";
-            proximo:        Eatual_str = "proximo";
-            fim_acerto:     Eatual_str = "fim_acerto";
-            fim_erro:       Eatual_str = "fim_erro";
-            fim_timeout:    Eatual_str = "fim_timeout";
-            default:        Eatual_str = "UNKNOWN";
+            inicial:          Eatual_str = "inicial";
+            preparacao:       Eatual_str = "preparacao";
+            registra_escrita: Eatual_str = "registra_escrita";
+            escreve:          Eatual_str = "escreve";
+            espera_escrita:   Eatual_str = "espera_escrita";
+            zera_contador:    Eatual_str = "zera_contador";
+            nova_seq:         Eatual_str = "nova_seq";
+            mostra_leds:      Eatual_str = "mostra_leds";
+            mostrou_led:      Eatual_str = "mostrou_leds";
+            espera_led:       Eatual_str = "espera_leds";
+            zera_timeout:     Eatual_str = "zera_timeout";
+            comecar_rodada:   Eatual_str = "comecar_rodada";
+            espera:           Eatual_str = "espera";
+            registra:         Eatual_str = "registra";
+            comparacao:       Eatual_str = "comparacao";
+            proximo:          Eatual_str = "proximo";
+            fim_acerto:       Eatual_str = "fim_acerto";
+            fim_erro:         Eatual_str = "fim_erro";
+            fim_timeout:      Eatual_str = "fim_timeout";
+            default:          Eatual_str = "UNKNOWN";
         endcase
     end
 
@@ -1089,32 +1198,36 @@ module playseq_unidade_controle (
     // Logica de proximo estado
     always @* begin
         case (Eatual)
-            inicial:        Eprox = jogar ? preparacao : inicial;
-            preparacao:     Eprox = mostra_leds;
-            nova_seq:       Eprox = espera_led;
-            mostra_leds:    Eprox = timeoutL ? (fimE ? comecar_rodada : mostrou_led) : mostra_leds;
-            mostrou_led:    Eprox = espera_led;
-            espera_led:     Eprox = menorS ? comecar_rodada : (timeoutL ? zera_timeout : espera_led);
-            zera_timeout:   Eprox = mostra_leds;
-            comecar_rodada: Eprox = espera;
-            espera:         Eprox = timeout ? fim_timeout : (tem_jogada ? registra : espera);
-            registra:       Eprox = comparacao;
-            comparacao:     Eprox = igualE ? (fimE ? fim_acerto : (pare ? nova_seq : proximo)) : fim_erro;
-            proximo:        Eprox = espera;
-            fim_acerto:     Eprox = jogar ? preparacao : fim_acerto;
-            fim_erro:       Eprox = jogar ? preparacao : fim_erro;
-            fim_timeout:    Eprox = jogar ? preparacao : fim_timeout;
-            default:        Eprox = inicial;
+            inicial:          Eprox = jogar ? preparacao : inicial;
+            preparacao:       Eprox = vai_escrever? espera_escrita : mostra_leds;
+            registra_escrita: Eprox = escreve;
+            escreve:          Eprox = espera_escrita;
+            espera_escrita:   Eprox = fimE ? zera_contador : (tem_jogada ? registra_escrita : espera_escrita);
+            zera_contador:    Eprox = jogar ? mostra_leds : zera_contador;
+            nova_seq:         Eprox = espera_led;
+            mostra_leds:      Eprox = timeoutL ? (fimE ? comecar_rodada : mostrou_led) : mostra_leds;
+            mostrou_led:      Eprox = espera_led;
+            espera_led:       Eprox = menorS ? comecar_rodada : (timeoutL ? zera_timeout : espera_led);
+            zera_timeout:     Eprox = mostra_leds;
+            comecar_rodada:   Eprox = espera;
+            espera:           Eprox = timeout ? fim_timeout : (tem_jogada ? registra : espera);
+            registra:         Eprox = comparacao;
+            comparacao:       Eprox = igualE ? (fimE ? fim_acerto : (pare ? nova_seq : proximo)) : fim_erro;
+            proximo:          Eprox = espera;
+            fim_acerto:       Eprox = jogar ? preparacao : fim_acerto;
+            fim_erro:         Eprox = jogar ? preparacao : fim_erro;
+            fim_timeout:      Eprox = jogar ? preparacao : fim_timeout;
+            default:          Eprox = inicial;
         endcase
     end
 
     // Logica de saida (maquina Moore)
     always @* begin
-        zeraE         = (Eatual == inicial || Eatual == nova_seq || Eatual == preparacao) ? 1'b1 : 1'b0;
+        zeraE         = (Eatual == inicial || Eatual == nova_seq || Eatual == preparacao || Eatual == zera_contador) ? 1'b1 : 1'b0;
         zeraR         = (Eatual == inicial) ? 1'b1 : 1'b0;
-        registraR     = (Eatual == registra) ? 1'b1 : 1'b0;
-        contaE        = (Eatual == proximo || Eatual == mostrou_led) ? 1'b1 : 1'b0;
-        carregaE      = (Eatual == preparacao) ? 1'b1 : 1'b0;
+        registraR     = (Eatual == registra || Eatual == registra_escrita) ? 1'b1 : 1'b0;
+        contaE        = (Eatual == proximo || Eatual == mostrou_led || Eatual == escreve) ? 1'b1 : 1'b0;
+        carregaS      = (Eatual == preparacao) ? 1'b1 : 1'b0;
         pronto        = (Eatual == fim_acerto || Eatual == fim_erro || Eatual == fim_timeout) ? 1'b1 : 1'b0;
         ganhou        = (Eatual == fim_acerto) ? 1'b1 : 1'b0;
         perdeu        = (Eatual == fim_erro || Eatual == fim_timeout) ? 1'b1 : 1'b0;
@@ -1123,33 +1236,38 @@ module playseq_unidade_controle (
         zeraS         = (Eatual == inicial) ? 1'b1 : 1'b0;
         contaS        = (Eatual == nova_seq || Eatual == comparacao) ? 1'b1 : 1'b0;
         nivel_uc      = (Eatual == preparacao) ? nivel : nivel_uc;
-		zeraT         = (Eatual == proximo || Eatual == nova_seq) ? 1'b1 : 1'b0;
+		zeraT         = (Eatual == proximo || Eatual == nova_seq || Eatual == fim_acerto || Eatual == fim_erro || Eatual == fim_timeout) ? 1'b1 : 1'b0;
         controla_leds = (Eatual == mostra_leds) ? 1'b1 : 1'b0;
         zeraT_leds    = (Eatual == mostrou_led || Eatual == comecar_rodada || Eatual == zera_timeout) ? 1'b1 : 1'b0;
         contaT_leds   = (Eatual == mostra_leds || Eatual == espera_led) ? 1'b1 : 1'b0;
         fase_preview  = (Eatual == mostra_leds || Eatual == mostrou_led || Eatual == zera_timeout || Eatual == comecar_rodada) ? 1'b1 : 1'b0;
         memoria_uc    = (Eatual == preparacao) ? memoria : memoria_uc;
         contaJ        = (Eatual == proximo) ? 1'b1 : 1'b0;
-        zeraJ         = (Eatual == nova_seq) ? 1'b1 : 1'b0;
+        zeraJ         = (Eatual == nova_seq || Eatual == fim_acerto || Eatual == fim_erro || Eatual == fim_timeout) ? 1'b1 : 1'b0;
+        ram_escreve   = (Eatual == escreve) ? 1'b1 : 1'b0;
 
         // Saida de depuracao (estado)
         case (Eatual)
-            inicial:        db_estado = 4'b0000;  // 0
-            preparacao:     db_estado = 4'b0001;  // 1
-            nova_seq:       db_estado = 4'b0010;  // 2
-            mostra_leds:    db_estado = 4'b1011;  // B
-            mostrou_led:    db_estado = 4'b1100;  // C
-            espera_led:     db_estado = 4'b0111;  // 7
-            zera_timeout:   db_estado = 4'b1000;  // 8
-            comecar_rodada: db_estado = 4'b1101;  // D
-            espera:         db_estado = 4'b0011;  // 3
-            registra:       db_estado = 4'b0100;  // 4
-            comparacao:     db_estado = 4'b0101;  // 5
-            proximo:        db_estado = 4'b0110;  // 6
-            fim_acerto:     db_estado = 4'b1010;  // A
-            fim_erro:       db_estado = 4'b1110;  // E
-            fim_timeout:    db_estado = 4'b1111;  // F (deu ruim)
-            default:        db_estado = 4'b1001;  // 9
+            inicial:          db_estado = 5'b00000;  // 0
+            preparacao:       db_estado = 5'b00001;  // 1
+            registra_escrita: db_estado = 5'b10001;  // overflow2
+            escreve:          db_estado = 5'b01001;  // 9
+            espera_escrita:   db_estado = 5'b10000;  // overflow
+            zera_contador:    db_estado = 5'b10010;  // overflow3
+            nova_seq:         db_estado = 5'b00010;  // 2
+            mostra_leds:      db_estado = 5'b01011;  // B
+            mostrou_led:      db_estado = 5'b01100;  // C
+            espera_led:       db_estado = 5'b00111;  // 7
+            zera_timeout:     db_estado = 5'b01000;  // 8
+            comecar_rodada:   db_estado = 5'b01101;  // D
+            espera:           db_estado = 5'b00011;  // 3
+            registra:         db_estado = 5'b00100;  // 4
+            comparacao:       db_estado = 5'b00101;  // 5
+            proximo:          db_estado = 5'b00110;  // 6
+            fim_acerto:       db_estado = 5'b01010;  // A
+            fim_erro:         db_estado = 5'b01110;  // E
+            fim_timeout:      db_estado = 5'b01111;  // F (deu ruim)
+            default:          db_estado = 5'b00000;  // default
         endcase
     end
 endmodule
@@ -1189,4 +1307,46 @@ module registrador_4 (
 
 endmodule
 // --- End of registrador_4.v ---
+
+// --- Start of sync_ram_16x4.v ---
+//------------------------------------------------------------------
+// Arquivo   : sync_ram_16x4v
+// Projeto   : PlaySeq
+ 
+//------------------------------------------------------------------
+// Descricao : RAM sincrona 16x4
+//             com conteudo inicial pre-programado             
+//------------------------------------------------------------------
+// Revisoes  :
+//     Data        Versao  Autor             Descricao
+//     15/03/2025  1.0     Ana Vitória       versao inicial
+//------------------------------------------------------------------
+//
+
+module sync_ram_16x4_file
+(
+    input        clk,
+    input        we,
+    input  [3:0] data,
+    input  [3:0] addr,
+    output [3:0] q
+);
+
+    // Variavel RAM (armazena dados)
+    reg [3:0] ram[15:0];
+
+    // Registra endereco de acesso
+    reg [3:0] addr_reg;
+
+    always @ (posedge clk)
+    begin
+        if (we)
+            ram[addr] <= data;
+
+        addr_reg <= addr;
+    end
+
+    assign q = ram[addr_reg];
+endmodule
+// --- End of sync_ram_16x4.v ---
 
