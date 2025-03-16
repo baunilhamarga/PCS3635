@@ -137,8 +137,8 @@ module jogo_playseq_tb2;
             #(1_000_000 * num_jogadas);
             #(500_000);
             for (i = 0; i <= nivel_in && num_jogadas + i < 16; i = i + 1) begin
-                if (num_jogadas == 11) begin
-                    #(10000 * clock_period);
+                if (num_jogadas + i == 12) begin
+                    #(10500 * clock_period);
                 end
                 botoes_in = jogadas[num_jogadas + i];
                 #(500_000);
@@ -165,8 +165,8 @@ module jogo_playseq_tb2;
             #(1_000_000 * num_jogadas);
             #(500_000);
             for (i = 0; i <= nivel_in && num_jogadas + i < 16; i = i + 1) begin
-                if (num_jogadas == 10) begin
-                    #(5000 * clock_period);
+                if (num_jogadas + i == 10) begin
+                    #(5500 * clock_period);
                 end
                 botoes_in = jogadas[num_jogadas + i];
                 #(500_000);

@@ -139,6 +139,7 @@ module jogo_playseq_tb1;
         #(2 * clock_period);
         jogar_in = 1;
         #(5 * clock_period);
+        jogar_in = 0;
 
         // num_jogadas = quantidade de termos da sequência mostrados
         // A cada rodada, esperamos num_jogadas segundos para mostrar a sequência
@@ -154,13 +155,13 @@ module jogo_playseq_tb1;
             end
             #(1_000_000);
         end
-        
-        jogar_in = 0;
-        #(5 * clock_period);
+
+        #(10 * clock_period);
         quer_escrever_in = 0;
         #(2 * clock_period);
-        #(2 * clock_period);
         jogar_in = 1;
+        #(5 * clock_period);
+        jogar_in = 0;
         #(5 * clock_period);
 
         // num_jogadas = quantidade de termos da sequência mostrados
