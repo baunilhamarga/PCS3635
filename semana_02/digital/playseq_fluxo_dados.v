@@ -33,6 +33,7 @@ module playseq_fluxo_dados (
     input [1:0] seletor_memoria,
     input ram_escreve,
     input quer_escrever,
+    input [1:0] timeoutD,
     output igual,
     output enderecoIgualSequencia,
     output fimE,
@@ -67,6 +68,10 @@ module playseq_fluxo_dados (
     wire [3:0] s_quant_inicial;
     wire [3:0] s_seletor_final = {nivel, seletor_memoria};
 	wire rco;
+    wire fim_dois_e_meios;
+    wire fim_5s;
+    wire fim_10s;
+    wire fim_20s;
 
     // dificuldade_quant
     mux4x2_n #( .BITS(1) ) mux_quant (
@@ -76,6 +81,16 @@ module playseq_fluxo_dados (
         .D3 (1'b1),
         .SEL (nivel),
         .OUT (pare)
+    );
+
+    // dificuldade_ms
+    mux4x2_n #( .BITS(1) ) mux_timeout (
+        .D0 (fim_20s),
+        .D1 (fim_10s),
+        .D2 (fim_5s),
+        .D3 (fim_dois_e_meios),
+        .SEL (timeoutD),
+        .OUT (controle_timeout)
     );
 
     // decide o início para cada situação, sempre defasado de 1
@@ -220,7 +235,7 @@ module playseq_fluxo_dados (
     sync_ram_16x4_file memoria4 (
     	.clk  (clock),
     	.we   (ram_escreve),
-    	.data (s_botoes),
+    	.data (botoes),
     	.addr (s_endereco),
     	.q    (s_mem4)
     );
@@ -247,8 +262,18 @@ module playseq_fluxo_dados (
         .zera_s  (zeraT),
         .conta   (contaT),
         .Q       (),
-        .fim     (controle_timeout),
-        .meio    ()
+        .fim     (fim_5s),
+        .meio    (fim_dois_e_meios)
+    );
+
+    contador_m #(.M(20000), .N(15)) contador_timeout_jogadas_facil (
+        .clock   (clock),
+        .zera_as (zeraR),
+        .zera_s  (zeraT),
+        .conta   (contaT),
+        .Q       (),
+        .fim     (fim_20s),
+        .meio    (fim_10s)
     );
 
     contador_m #(.M(500), .N(9)) contador_timeout_leds (

@@ -29,7 +29,7 @@ always @(*) begin
         2'b01:    OUT = D1;
         2'b10:    OUT = D2;
         2'b11:    OUT = D3;
-        default: OUT = {BITS{1'b1}}; // todos os bits em 1
+        default: OUT = {BITS{1'b0}}; // todos os bits em 1
     endcase
 end
 

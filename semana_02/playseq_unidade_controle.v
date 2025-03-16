@@ -54,7 +54,6 @@ module playseq_unidade_controle (
     // Define estados
     parameter inicial          = 5'b00000;  // 0
     parameter preparacao       = 5'b00001;  // 1
-    parameter registra_escrita = 5'b10001;  // overflow2
     parameter escreve          = 5'b01001;  // 9
     parameter espera_escrita   = 5'b10000;  // overflow
     parameter zera_contador    = 5'b10010;  // overflow3
@@ -80,7 +79,6 @@ module playseq_unidade_controle (
         case(Eatual)
             inicial:          Eatual_str = "inicial";
             preparacao:       Eatual_str = "preparacao";
-            registra_escrita: Eatual_str = "registra_escrita";
             escreve:          Eatual_str = "escreve";
             espera_escrita:   Eatual_str = "espera_escrita";
             zera_contador:    Eatual_str = "zera_contador";
@@ -113,10 +111,9 @@ module playseq_unidade_controle (
     always @* begin
         case (Eatual)
             inicial:          Eprox = jogar ? preparacao : inicial;
-            preparacao:       Eprox = vai_escrever ? espera_escrita : mostra_leds;
-            registra_escrita: Eprox = escreve;
+            preparacao:       Eprox = vai_escrever? espera_escrita : mostra_leds;
             escreve:          Eprox = fimE ? zera_contador : espera_escrita;
-            espera_escrita:   Eprox = tem_jogada ? registra_escrita : espera_escrita;
+            espera_escrita:   Eprox = tem_jogada ? escreve : espera_escrita;
             zera_contador:    Eprox = jogar ? mostra_leds : zera_contador;
             nova_seq:         Eprox = espera_led;
             mostra_leds:      Eprox = timeoutL ? (fimE ? comecar_rodada : mostrou_led) : mostra_leds;
@@ -139,7 +136,7 @@ module playseq_unidade_controle (
     always @* begin
         zeraE         = (Eatual == inicial || Eatual == nova_seq || Eatual == preparacao || Eatual == zera_contador) ? 1'b1 : 1'b0;
         zeraR         = (Eatual == inicial) ? 1'b1 : 1'b0;
-        registraR     = (Eatual == registra || Eatual == registra_escrita) ? 1'b1 : 1'b0;
+        registraR     = (Eatual == registra) ? 1'b1 : 1'b0;
         contaE        = (Eatual == proximo || Eatual == mostrou_led || Eatual == escreve) ? 1'b1 : 1'b0;
         carregaS      = (Eatual == preparacao) ? 1'b1 : 1'b0;
         pronto        = (Eatual == fim_acerto || Eatual == fim_erro || Eatual == fim_timeout) ? 1'b1 : 1'b0;
@@ -164,7 +161,6 @@ module playseq_unidade_controle (
         case (Eatual)
             inicial:          db_estado = 5'b00000;  // 0
             preparacao:       db_estado = 5'b00001;  // 1
-            registra_escrita: db_estado = 5'b10001;  // overflow2
             escreve:          db_estado = 5'b01001;  // 9
             espera_escrita:   db_estado = 5'b10000;  // overflow
             zera_contador:    db_estado = 5'b10010;  // overflow3
