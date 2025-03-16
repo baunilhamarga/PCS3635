@@ -18,6 +18,7 @@ module jogo_playseq (
     input [3:0] botoes,
     input [1:0] memoria,
     input [1:0] nivel,
+    input [1:0] timeoutD,
     input quer_escrever,
     output ganhou,
     output perdeu,
@@ -37,7 +38,9 @@ module jogo_playseq (
     output db_seletor_memoria,
     // Nossos debugs
     output db_pare,
-    output [1:0] db_contagem_jogo
+    output [1:0] db_contagem_jogo,
+    output [6:0] vitorias,
+    output [6:0] derrotas 
 );
 
     wire [3:0] s_jogadafeita;
@@ -74,6 +77,11 @@ module jogo_playseq (
     wire [1:0] s_contagem_jogo;
     wire s_vai_escrever;
     wire s_ram_escreve;
+    wire s_conta_ganhar;
+    wire s_conta_perder;
+    wire s_zera_metricas;
+    wire [3:0] s_vitorias;
+    wire [3:0] s_derrotas;
 
     // Fluxo de Dados
     playseq_fluxo_dados FD (
@@ -98,6 +106,10 @@ module jogo_playseq (
         .seletor_memoria           ( s_memoria_uc       ),
         .ram_escreve               ( s_ram_escreve      ),
         .quer_escrever             ( quer_escrever      ),
+        .timeoutD                  ( timeoutD           ),
+        .conta_ganhar              ( s_conta_ganhar     ),
+        .conta_perder              ( s_conta_perder     ),
+        .zera_metricas             ( s_zera_metricas    ),
         .igual                     ( s_igualE           ),
         .enderecoIgualSequencia    ( s_igualS           ),
         .fimE                      ( s_fimE             ),
@@ -114,7 +126,9 @@ module jogo_playseq (
         .db_seletor_memoria        ( db_seletor_memoria ),
         .pare                      ( s_pare             ),
         .db_contagem_jogo          ( s_contagem_jogo    ),
-        .vai_escrever              ( s_vai_escrever     )
+        .vai_escrever              ( s_vai_escrever     ),
+        .ganhos                    ( s_vitorias         ),
+        .perdas                    ( s_derrotas         )
     );
 
     // Unidade de Controle
@@ -155,7 +169,10 @@ module jogo_playseq (
         .contaT_leds   ( s_contaT_leds  ),
         .fase_preview  ( s_fase_preview ),
         .memoria_uc    ( s_memoria_uc   ),
-        .ram_escreve   ( s_ram_escreve  )
+        .ram_escreve   ( s_ram_escreve  ),
+        .conta_ganhar  ( s_conta_ganhar ),
+        .conta_perder  ( s_conta_perder ),
+        .zera_metricas ( s_zera_metricas)
     );
 
     // Display das botoes
@@ -186,6 +203,18 @@ module jogo_playseq (
     hexa7seg HEX3 (
         .hexa    ( s_sequencia  ),
         .display ( db_sequencia )
+    );
+
+    // Display de vitórias
+    hexa7seg HEX4 (
+        .hexa    ( s_vitorias  ),
+        .display ( vitorias )
+    );
+
+    // Display de derrotas
+    hexa7seg HEX6 (
+        .hexa    ( s_derrotas  ),
+        .display ( derrotas )
     );
 
 assign db_chavesIgualMemoria = s_igualE;
@@ -793,7 +822,7 @@ always @(*) begin
         2'b01:    OUT = D1;
         2'b10:    OUT = D2;
         2'b11:    OUT = D3;
-        default: OUT = {BITS{1'b1}}; // todos os bits em 1
+        default: OUT = {BITS{1'b0}}; // todos os bits em 1
     endcase
 end
 
@@ -836,6 +865,10 @@ module playseq_fluxo_dados (
     input [1:0] seletor_memoria,
     input ram_escreve,
     input quer_escrever,
+    input [1:0] timeoutD,
+    input conta_ganhar,
+    input conta_perder,
+    input zera_metricas,
     output igual,
     output enderecoIgualSequencia,
     output fimE,
@@ -852,7 +885,9 @@ module playseq_fluxo_dados (
     output db_seletor_memoria,
     output pare,
     output [1:0] db_contagem_jogo,
-    output vai_escrever
+    output vai_escrever,
+    output [3:0] ganhos,
+    output [3:0] perdas
 );
 
     wire [3:0] s_endereco;
@@ -870,6 +905,10 @@ module playseq_fluxo_dados (
     wire [3:0] s_quant_inicial;
     wire [3:0] s_seletor_final = {nivel, seletor_memoria};
 	wire rco;
+    wire fim_dois_e_meios;
+    wire fim_5s;
+    wire fim_10s;
+    wire fim_20s;
 
     // dificuldade_quant
     mux4x2_n #( .BITS(1) ) mux_quant (
@@ -879,6 +918,16 @@ module playseq_fluxo_dados (
         .D3 (1'b1),
         .SEL (nivel),
         .OUT (pare)
+    );
+
+    // dificuldade_ms
+    mux4x2_n #( .BITS(1) ) mux_timeout (
+        .D0 (fim_20s),
+        .D1 (fim_10s),
+        .D2 (fim_5s),
+        .D3 (fim_dois_e_meios),
+        .SEL (timeoutD),
+        .OUT (controle_timeout)
     );
 
     // decide o início para cada situação, sempre defasado de 1
@@ -1023,7 +1072,7 @@ module playseq_fluxo_dados (
     sync_ram_16x4_file memoria4 (
     	.clk  (clock),
     	.we   (ram_escreve),
-    	.data (s_botoes),
+    	.data (botoes),
     	.addr (s_endereco),
     	.q    (s_mem4)
     );
@@ -1050,8 +1099,18 @@ module playseq_fluxo_dados (
         .zera_s  (zeraT),
         .conta   (contaT),
         .Q       (),
-        .fim     (controle_timeout),
-        .meio    ()
+        .fim     (fim_5s),
+        .meio    (fim_dois_e_meios)
+    );
+
+    contador_m #(.M(20000), .N(15)) contador_timeout_jogadas_facil (
+        .clock   (clock),
+        .zera_as (zeraR),
+        .zera_s  (zeraT),
+        .conta   (contaT),
+        .Q       (),
+        .fim     (fim_20s),
+        .meio    (fim_10s)
     );
 
     contador_m #(.M(500), .N(9)) contador_timeout_leds (
@@ -1072,6 +1131,30 @@ module playseq_fluxo_dados (
         .Q       (s_contagem),
         .fim     (),
         .meio    ()
+    );
+
+        // contador métricas ganhar
+    contador_163 contGanha (
+        .clock (clock),
+        .clr   (~zera_metricas),
+        .ld    (1'b1),
+        .ent   (1'b1),
+        .enp   (conta_ganhar),
+        .D     (4'b0),
+        .Q     (ganhos),
+        .rco   ()
+    );
+
+    // contador métricas perder
+    contador_163 contPerde (
+        .clock (clock),
+        .clr   (~zera_metricas),
+        .ld    (1'b1),
+        .ent   (1'b1),
+        .enp   (conta_perder),
+        .D     (4'b0),
+        .Q     (perdas),
+        .rco   ()
     );
 
     assign db_memoria  = s_dado;
@@ -1134,16 +1217,18 @@ module playseq_unidade_controle (
     output reg contaT_leds,
     output reg fase_preview,
     output reg [1:0] memoria_uc,
-    output reg ram_escreve
+    output reg ram_escreve,
+    output reg conta_ganhar,
+    output reg conta_perder,
+    output reg zera_metricas
 );
 
     // Define estados
     parameter inicial          = 5'b00000;  // 0
     parameter preparacao       = 5'b00001;  // 1
-    parameter registra_escrita = 5'b10001;  // overflow2
     parameter escreve          = 5'b01001;  // 9
-    parameter espera_escrita   = 5'b10000;  // overflow
-    parameter zera_contador    = 5'b10010;  // overflow3
+    parameter espera_escrita   = 5'b10000;  // 10
+    parameter zera_contador    = 5'b10010;  // 12
     parameter nova_seq         = 5'b00010;  // 2
     parameter mostra_leds      = 5'b01011;  // B
     parameter mostrou_led      = 5'b01100;  // C
@@ -1157,6 +1242,8 @@ module playseq_unidade_controle (
     parameter fim_erro         = 5'b01110;  // E
     parameter fim_acerto       = 5'b01010;  // A
     parameter fim_timeout      = 5'b01111;  // F
+    parameter metricas_perder    = 5'b11111; // 1F
+    parameter metricas_ganhar  = 5'b11010; // 1A
 
     // Variaveis de estado
     reg [4:0] Eatual, Eprox;
@@ -1166,7 +1253,6 @@ module playseq_unidade_controle (
         case(Eatual)
             inicial:          Eatual_str = "inicial";
             preparacao:       Eatual_str = "preparacao";
-            registra_escrita: Eatual_str = "registra_escrita";
             escreve:          Eatual_str = "escreve";
             espera_escrita:   Eatual_str = "espera_escrita";
             zera_contador:    Eatual_str = "zera_contador";
@@ -1183,6 +1269,8 @@ module playseq_unidade_controle (
             fim_acerto:       Eatual_str = "fim_acerto";
             fim_erro:         Eatual_str = "fim_erro";
             fim_timeout:      Eatual_str = "fim_timeout";
+            metricas_perder:    Eatual_str = "metricas_perder";
+            metricas_ganhar:  Eatual_str = "metricas_ganhar";
             default:          Eatual_str = "UNKNOWN";
         endcase
     end
@@ -1200,9 +1288,8 @@ module playseq_unidade_controle (
         case (Eatual)
             inicial:          Eprox = jogar ? preparacao : inicial;
             preparacao:       Eprox = vai_escrever? espera_escrita : mostra_leds;
-            registra_escrita: Eprox = escreve;
             escreve:          Eprox = fimE ? zera_contador : espera_escrita;
-            espera_escrita:   Eprox = tem_jogada ? registra_escrita : espera_escrita;
+            espera_escrita:   Eprox = tem_jogada ? escreve : espera_escrita;
             zera_contador:    Eprox = jogar ? mostra_leds : zera_contador;
             nova_seq:         Eprox = espera_led;
             mostra_leds:      Eprox = timeoutL ? (fimE ? comecar_rodada : mostrou_led) : mostra_leds;
@@ -1214,9 +1301,11 @@ module playseq_unidade_controle (
             registra:         Eprox = comparacao;
             comparacao:       Eprox = igualE ? (fimE ? fim_acerto : (pare ? nova_seq : proximo)) : fim_erro;
             proximo:          Eprox = espera;
-            fim_acerto:       Eprox = jogar ? preparacao : fim_acerto;
-            fim_erro:         Eprox = jogar ? preparacao : fim_erro;
-            fim_timeout:      Eprox = jogar ? preparacao : fim_timeout;
+            fim_acerto:       Eprox = jogar ? metricas_ganhar : fim_acerto;
+            fim_erro:         Eprox = jogar ? metricas_perder : fim_erro;
+            fim_timeout:      Eprox = jogar ? metricas_perder : fim_timeout;
+            metricas_perder:  Eprox = preparacao;
+            metricas_ganhar:  Eprox = preparacao;
             default:          Eprox = inicial;
         endcase
     end
@@ -1225,7 +1314,7 @@ module playseq_unidade_controle (
     always @* begin
         zeraE         = (Eatual == inicial || Eatual == nova_seq || Eatual == preparacao || Eatual == zera_contador) ? 1'b1 : 1'b0;
         zeraR         = (Eatual == inicial) ? 1'b1 : 1'b0;
-        registraR     = (Eatual == registra || Eatual == registra_escrita) ? 1'b1 : 1'b0;
+        registraR     = (Eatual == registra) ? 1'b1 : 1'b0;
         contaE        = (Eatual == proximo || Eatual == mostrou_led || Eatual == escreve) ? 1'b1 : 1'b0;
         carregaS      = (Eatual == preparacao) ? 1'b1 : 1'b0;
         pronto        = (Eatual == fim_acerto || Eatual == fim_erro || Eatual == fim_timeout) ? 1'b1 : 1'b0;
@@ -1245,12 +1334,14 @@ module playseq_unidade_controle (
         contaJ        = (Eatual == proximo) ? 1'b1 : 1'b0;
         zeraJ         = (Eatual == nova_seq || Eatual == fim_acerto || Eatual == fim_erro || Eatual == fim_timeout) ? 1'b1 : 1'b0;
         ram_escreve   = (Eatual == escreve) ? 1'b1 : 1'b0;
+        conta_ganhar  = (Eatual == metricas_ganhar) ? 1'b1 : 1'b0;
+        conta_perder  = (Eatual == metricas_perder) ? 1'b1 : 1'b0;
+        zera_metricas = (Eatual == inicial) ? 1'b1 : 1'b0;
 
         // Saida de depuracao (estado)
         case (Eatual)
             inicial:          db_estado = 5'b00000;  // 0
             preparacao:       db_estado = 5'b00001;  // 1
-            registra_escrita: db_estado = 5'b10001;  // overflow2
             escreve:          db_estado = 5'b01001;  // 9
             espera_escrita:   db_estado = 5'b10000;  // overflow
             zera_contador:    db_estado = 5'b10010;  // overflow3
@@ -1267,6 +1358,8 @@ module playseq_unidade_controle (
             fim_acerto:       db_estado = 5'b01010;  // A
             fim_erro:         db_estado = 5'b01110;  // E
             fim_timeout:      db_estado = 5'b01111;  // F (deu ruim)
+            metricas_perder:    db_estado = 5'b11111;  // 1F
+            metricas_ganhar:  db_estado = 5'b11010;  // 1A
             default:          db_estado = 5'b00000;  // default
         endcase
     end

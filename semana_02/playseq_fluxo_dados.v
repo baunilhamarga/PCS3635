@@ -33,7 +33,10 @@ module playseq_fluxo_dados (
     input [1:0] seletor_memoria,
     input ram_escreve,
     input quer_escrever,
-    input timeoutD,
+    input [1:0] timeoutD,
+    input conta_ganhar,
+    input conta_perder,
+    input zera_metricas,
     output igual,
     output enderecoIgualSequencia,
     output fimE,
@@ -50,7 +53,9 @@ module playseq_fluxo_dados (
     output db_seletor_memoria,
     output pare,
     output [1:0] db_contagem_jogo,
-    output vai_escrever
+    output vai_escrever,
+    output [3:0] ganhos,
+    output [3:0] perdas
 );
 
     wire [3:0] s_endereco;
@@ -295,6 +300,30 @@ module playseq_fluxo_dados (
         .Q       (s_contagem),
         .fim     (),
         .meio    ()
+    );
+
+    // contador métricas ganhar
+    contador_163 contGanha (
+        .clock (clock),
+        .clr   (~zera_metricas),
+        .ld    (1'b1),
+        .ent   (1'b1),
+        .enp   (conta_ganhar),
+        .D     (4'b0),
+        .Q     (ganhos),
+        .rco   ()
+    );
+
+    // contador métricas perder
+    contador_163 contPerde (
+        .clock (clock),
+        .clr   (~zera_metricas),
+        .ld    (1'b1),
+        .ent   (1'b1),
+        .enp   (conta_perder),
+        .D     (4'b0),
+        .Q     (perdas),
+        .rco   ()
     );
 
     assign db_memoria  = s_dado;

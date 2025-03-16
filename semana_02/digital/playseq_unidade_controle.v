@@ -48,15 +48,18 @@ module playseq_unidade_controle (
     output reg contaT_leds,
     output reg fase_preview,
     output reg [1:0] memoria_uc,
-    output reg ram_escreve
+    output reg ram_escreve,
+    output reg conta_ganhar,
+    output reg conta_perder,
+    output reg zera_metricas
 );
 
     // Define estados
     parameter inicial          = 5'b00000;  // 0
     parameter preparacao       = 5'b00001;  // 1
     parameter escreve          = 5'b01001;  // 9
-    parameter espera_escrita   = 5'b10000;  // overflow
-    parameter zera_contador    = 5'b10010;  // overflow3
+    parameter espera_escrita   = 5'b10000;  // 10
+    parameter zera_contador    = 5'b10010;  // 12
     parameter nova_seq         = 5'b00010;  // 2
     parameter mostra_leds      = 5'b01011;  // B
     parameter mostrou_led      = 5'b01100;  // C
@@ -70,6 +73,8 @@ module playseq_unidade_controle (
     parameter fim_erro         = 5'b01110;  // E
     parameter fim_acerto       = 5'b01010;  // A
     parameter fim_timeout      = 5'b01111;  // F
+    parameter metricas_perder    = 5'b11111; // 1F
+    parameter metricas_ganhar  = 5'b11010; // 1A
 
     // Variaveis de estado
     reg [4:0] Eatual, Eprox;
@@ -95,6 +100,8 @@ module playseq_unidade_controle (
             fim_acerto:       Eatual_str = "fim_acerto";
             fim_erro:         Eatual_str = "fim_erro";
             fim_timeout:      Eatual_str = "fim_timeout";
+            metricas_perder:    Eatual_str = "metricas_perder";
+            metricas_ganhar:  Eatual_str = "metricas_ganhar";
             default:          Eatual_str = "UNKNOWN";
         endcase
     end
@@ -125,9 +132,11 @@ module playseq_unidade_controle (
             registra:         Eprox = comparacao;
             comparacao:       Eprox = igualE ? (fimE ? fim_acerto : (pare ? nova_seq : proximo)) : fim_erro;
             proximo:          Eprox = espera;
-            fim_acerto:       Eprox = jogar ? preparacao : fim_acerto;
-            fim_erro:         Eprox = jogar ? preparacao : fim_erro;
-            fim_timeout:      Eprox = jogar ? preparacao : fim_timeout;
+            fim_acerto:       Eprox = jogar ? metricas_ganhar : fim_acerto;
+            fim_erro:         Eprox = jogar ? metricas_perder : fim_erro;
+            fim_timeout:      Eprox = jogar ? metricas_perder : fim_timeout;
+            metricas_perder:  Eprox = preparacao;
+            metricas_ganhar:  Eprox = preparacao;
             default:          Eprox = inicial;
         endcase
     end
@@ -156,6 +165,9 @@ module playseq_unidade_controle (
         contaJ        = (Eatual == proximo) ? 1'b1 : 1'b0;
         zeraJ         = (Eatual == nova_seq || Eatual == fim_acerto || Eatual == fim_erro || Eatual == fim_timeout) ? 1'b1 : 1'b0;
         ram_escreve   = (Eatual == escreve) ? 1'b1 : 1'b0;
+        conta_ganhar  = (Eatual == metricas_ganhar) ? 1'b1 : 1'b0;
+        conta_perder  = (Eatual == metricas_perder) ? 1'b1 : 1'b0;
+        zera_metricas = (Eatual == inicial) ? 1'b1 : 1'b0;
 
         // Saida de depuracao (estado)
         case (Eatual)
@@ -177,6 +189,8 @@ module playseq_unidade_controle (
             fim_acerto:       db_estado = 5'b01010;  // A
             fim_erro:         db_estado = 5'b01110;  // E
             fim_timeout:      db_estado = 5'b01111;  // F (deu ruim)
+            metricas_perder:    db_estado = 5'b11111;  // 1F
+            metricas_ganhar:  db_estado = 5'b11010;  // 1A
             default:          db_estado = 5'b00000;  // default
         endcase
     end

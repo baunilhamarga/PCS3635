@@ -37,7 +37,9 @@ module jogo_playseq (
     output db_seletor_memoria,
     // Nossos debugs
     output db_pare,
-    output [1:0] db_contagem_jogo
+    output [1:0] db_contagem_jogo,
+    output [6:0] vitorias,
+    output [6:0] derrotas 
 );
 
     wire [3:0] s_jogadafeita;
@@ -74,6 +76,11 @@ module jogo_playseq (
     wire [1:0] s_contagem_jogo;
     wire s_vai_escrever;
     wire s_ram_escreve;
+    wire s_conta_ganhar;
+    wire s_conta_perder;
+    wire s_zera_metricas;
+    wire [3:0] s_vitorias;
+    wire [3:0] s_derrotas;
 
     // Fluxo de Dados
     playseq_fluxo_dados FD (
@@ -99,6 +106,9 @@ module jogo_playseq (
         .ram_escreve               ( s_ram_escreve      ),
         .quer_escrever             ( quer_escrever      ),
         .timeoutD                  ( timeoutD           ),
+        .conta_ganhar              ( s_conta_ganhar     ),
+        .conta_perder              ( s_conta_perder     ),
+        .zera_metricas             ( s_zera_metricas    ),
         .igual                     ( s_igualE           ),
         .enderecoIgualSequencia    ( s_igualS           ),
         .fimE                      ( s_fimE             ),
@@ -115,7 +125,9 @@ module jogo_playseq (
         .db_seletor_memoria        ( db_seletor_memoria ),
         .pare                      ( s_pare             ),
         .db_contagem_jogo          ( s_contagem_jogo    ),
-        .vai_escrever              ( s_vai_escrever     )
+        .vai_escrever              ( s_vai_escrever     ),
+        .ganhos                    ( s_vitorias         ),
+        .perdas                    ( s_derrotas         )
     );
 
     // Unidade de Controle
@@ -156,7 +168,10 @@ module jogo_playseq (
         .contaT_leds   ( s_contaT_leds  ),
         .fase_preview  ( s_fase_preview ),
         .memoria_uc    ( s_memoria_uc   ),
-        .ram_escreve   ( s_ram_escreve  )
+        .ram_escreve   ( s_ram_escreve  ),
+        .conta_ganhar  ( s_conta_ganhar ),
+        .conta_perder  ( s_conta_perder ),
+        .zera_metricas ( s_zera_metricas)
     );
 
     // Display das botoes
@@ -187,6 +202,18 @@ module jogo_playseq (
     hexa7seg HEX3 (
         .hexa    ( s_sequencia  ),
         .display ( db_sequencia )
+    );
+
+    // Display de vitórias
+    hexa7seg HEX4 (
+        .hexa    ( s_vitorias  ),
+        .display ( vitorias )
+    );
+
+    // Display de derrotas
+    hexa7seg HEX6 (
+        .hexa    ( s_derrotas  ),
+        .display ( derrotas )
     );
 
 assign db_chavesIgualMemoria = s_igualE;

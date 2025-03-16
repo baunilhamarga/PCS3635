@@ -10,6 +10,7 @@ module jogo_playseq_tb1;
     reg  [1:0] nivel_in   = 2'b00;
     reg  [1:0] memoria_in = 2'b11;
     reg        quer_escrever_in = 1;
+    reg  [1:0] timeoutD_in = 2'b10;
 
     wire       ganhou_out;
     wire       perdeu_out;
@@ -28,6 +29,8 @@ module jogo_playseq_tb1;
     wire       db_seletor_memoria_out;
     wire       db_pare_out;
     wire [1:0] db_contagem_jogo_out;
+    wire [6:0] vitorias_out;
+    wire [6:0] derrotas_out;
 
     // Configuração do clock
     parameter clock_period = 1000; // in us, f=1KHz
@@ -46,6 +49,7 @@ module jogo_playseq_tb1;
         .botoes(botoes_in),
         .nivel(nivel_in),
         .memoria(memoria_in),
+        .timeoutD(timeoutD_in),
         .quer_escrever(quer_escrever_in),
         .ganhou(ganhou_out),
         .perdeu(perdeu_out),
@@ -64,7 +68,9 @@ module jogo_playseq_tb1;
         .db_estado(db_estado_out),
         .db_seletor_memoria(db_seletor_memoria_out),
         .db_pare(db_pare_out),
-        .db_contagem_jogo(db_contagem_jogo_out)
+        .db_contagem_jogo(db_contagem_jogo_out),
+        .vitorias(vitorias_out),
+        .derrotas(derrotas_out)
     );
 
     // Gabarito
@@ -130,6 +136,29 @@ module jogo_playseq_tb1;
             botoes_in = 4'b0000;
         end
 
+        #(2 * clock_period);
+        jogar_in = 1;
+        #(5 * clock_period);
+
+        // num_jogadas = quantidade de termos da sequência mostrados
+        // A cada rodada, esperamos num_jogadas segundos para mostrar a sequência
+        for (num_jogadas=5; num_jogadas<16; num_jogadas=num_jogadas+nivel_in+2) begin
+            caso = caso + 1;
+            #(1_000_000 * num_jogadas);
+            #(500_000);
+            for (i = 0; i <= nivel_in && num_jogadas + i < 16; i = i + 1) begin
+                botoes_in = jogadas[num_jogadas + i];
+                #(500_000);
+                botoes_in = 4'b0000;
+                #(500_000);
+            end
+            #(1_000_000);
+        end
+        
+        jogar_in = 0;
+        #(5 * clock_period);
+        quer_escrever_in = 0;
+        #(2 * clock_period);
         #(2 * clock_period);
         jogar_in = 1;
         #(5 * clock_period);
