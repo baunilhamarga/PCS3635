@@ -1201,8 +1201,8 @@ module playseq_unidade_controle (
             inicial:          Eprox = jogar ? preparacao : inicial;
             preparacao:       Eprox = vai_escrever? espera_escrita : mostra_leds;
             registra_escrita: Eprox = escreve;
-            escreve:          Eprox = espera_escrita;
-            espera_escrita:   Eprox = fimE ? zera_contador : (tem_jogada ? registra_escrita : espera_escrita);
+            escreve:          Eprox = fimE ? zera_contador : espera_escrita;
+            espera_escrita:   Eprox = tem_jogada ? registra_escrita : espera_escrita;
             zera_contador:    Eprox = jogar ? mostra_leds : zera_contador;
             nova_seq:         Eprox = espera_led;
             mostra_leds:      Eprox = timeoutL ? (fimE ? comecar_rodada : mostrou_led) : mostra_leds;
