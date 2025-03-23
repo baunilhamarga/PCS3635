@@ -14,21 +14,8 @@ module jogo_playseq_tb2;
 
     wire       ganhou_out;
     wire       perdeu_out;
-    wire       pronto_out;
     wire [3:0] leds_out;
     wire       db_clock_out;
-    wire       db_tem_jogada_out;
-    wire       db_chavesIgualMemoria_out;
-    wire       db_enderecoIgualSequencia_out;
-    wire       db_fimS_out;
-    wire [6:0] db_contagem_out;
-    wire [6:0] db_memoria_out;
-    wire [6:0] db_jogadafeita_out;
-    wire [6:0] db_sequencia_out;
-    wire [6:0] db_estado_out;
-    wire       db_seletor_memoria_out;
-    wire       db_pare_out;
-    wire [1:0] db_contagem_jogo_out;
     wire [6:0] vitorias_out;
     wire [6:0] derrotas_out;
 
@@ -53,22 +40,8 @@ module jogo_playseq_tb2;
         .quer_escrever(quer_escrever_in),
         .ganhou(ganhou_out),
         .perdeu(perdeu_out),
-        .timeout(timeout_out),
-        .pronto(pronto_out),
         .leds(leds_out),
         .db_clock(db_clock_out),
-        .db_tem_jogada(db_tem_jogada_out),
-        .db_chavesIgualMemoria(db_chavesIgualMemoria_out),
-        .db_enderecoIgualSequencia(db_enderecoIgualSequencia_out),
-        .db_fimS(db_fimS_out),
-        .db_contagem(db_contagem_out),
-        .db_memoria(db_memoria_out),
-        .db_jogadafeita(db_jogadafeita_out),
-        .db_sequencia(db_sequencia_out),
-        .db_estado(db_estado_out),
-        .db_seletor_memoria(db_seletor_memoria_out),
-        .db_pare(db_pare_out),
-        .db_contagem_jogo(db_contagem_jogo_out),
         .vitorias(vitorias_out),
         .derrotas(derrotas_out)
     );

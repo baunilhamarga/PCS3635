@@ -12,7 +12,6 @@ add wave -noupdate -color Magenta -height 30 /jogo_playseq_tb2/dut/FD/tem_jogada
 add wave -noupdate -divider Resultado
 add wave -noupdate -color Cyan -height 30 /jogo_playseq_tb2/ganhou_out
 add wave -noupdate -color Cyan -height 30 /jogo_playseq_tb2/perdeu_out
-add wave -noupdate -color Cyan -height 30 /jogo_playseq_tb2/pronto_out
 add wave -noupdate -divider Saidas
 add wave -noupdate -color {Medium Orchid} -height 30 /jogo_playseq_tb2/leds_out
 add wave -noupdate -divider FD
@@ -23,11 +22,6 @@ add wave -noupdate -color Khaki -height 30 /jogo_playseq_tb2/dut/FD/s_sequencia
 add wave -noupdate -divider UC
 add wave -noupdate -radix ascii -height 30 /jogo_playseq_tb2/dut/UC/Eatual_str
 add wave -noupdate -color {Pale Green} /jogo_playseq_tb2/dut/UC/controla_leds
-add wave -noupdate -divider Depuracao
-add wave -noupdate -color Blue -height 30 /jogo_playseq_tb2/db_chavesIgualMemoria_out
-add wave -noupdate -color Blue -height 30 /jogo_playseq_tb2/db_enderecoIgualSequencia_out
-add wave -noupdate -color Blue -height 30 /jogo_playseq_tb2/db_fimS_out
-add wave -noupdate -color Blue -height 30 /jogo_playseq_tb2/db_seletor_memoria_out
 TreeUpdate [SetDefaultTree]
 WaveRestoreCursors {{Cursor 1} {146529500000 ns} 0} {{Cursor 2} {296203174716 ns} 0}
 quietly wave cursor active 1

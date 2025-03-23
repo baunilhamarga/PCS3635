@@ -12,7 +12,6 @@ add wave -noupdate -color Magenta -height 30 /jogo_playseq_tb1/dut/FD/tem_jogada
 add wave -noupdate -divider Resultado
 add wave -noupdate -color Cyan -height 30 /jogo_playseq_tb1/ganhou_out
 add wave -noupdate -color Cyan -height 30 /jogo_playseq_tb1/perdeu_out
-add wave -noupdate -color Cyan -height 30 /jogo_playseq_tb1/pronto_out
 add wave -noupdate -divider Saidas
 add wave -noupdate -color {Medium Orchid} -height 30 /jogo_playseq_tb1/leds_out
 add wave -noupdate -divider FD
@@ -24,11 +23,6 @@ add wave -noupdate -color Khaki -height 30 /jogo_playseq_tb1/dut/FD/buzzer
 add wave -noupdate -divider UC
 add wave -noupdate -height 30 -radix ascii /jogo_playseq_tb1/dut/UC/Eatual_str
 add wave -noupdate -color {Pale Green} /jogo_playseq_tb1/dut/UC/controla_leds
-add wave -noupdate -divider Depuracao
-add wave -noupdate -color Blue -height 30 /jogo_playseq_tb1/db_chavesIgualMemoria_out
-add wave -noupdate -color Blue -height 30 /jogo_playseq_tb1/db_enderecoIgualSequencia_out
-add wave -noupdate -color Blue -height 30 /jogo_playseq_tb1/db_fimS_out
-add wave -noupdate -color Blue -height 30 /jogo_playseq_tb1/db_seletor_memoria_out
 add wave -noupdate -divider Buzzer
 add wave -noupdate -color Gold -radix decimal /jogo_playseq_tb1/dut/FD/tone_freq
 add wave -noupdate -color Gold -radix decimal /jogo_playseq_tb1/dut/FD/buzzer_inst/freq

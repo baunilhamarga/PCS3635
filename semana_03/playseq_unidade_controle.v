@@ -189,7 +189,7 @@ module playseq_unidade_controle (
             fim_acerto:       db_estado = 5'b01010;  // A
             fim_erro:         db_estado = 5'b01110;  // E
             fim_timeout:      db_estado = 5'b01111;  // F (deu ruim)
-            metricas_perder:    db_estado = 5'b11111;  // 1F
+            metricas_perder:  db_estado = 5'b11111;  // 1F
             metricas_ganhar:  db_estado = 5'b11010;  // 1A
             default:          db_estado = 5'b00000;  // default
         endcase
