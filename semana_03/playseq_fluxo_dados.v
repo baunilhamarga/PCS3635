@@ -12,6 +12,7 @@
 //
 
 module playseq_fluxo_dados (
+    input clockFPGA,
     input clock,
     input [3:0] botoes,
     input [1:0] nivel,
@@ -339,9 +340,9 @@ module playseq_fluxo_dados (
     );
 
     square_wave #(
-        .CLK_FREQ(1_000)
+        .CLK_FREQ(50_000)
     ) buzzer_inst (
-        .clk(clock),
+        .clk(clockFPGA),
         .rst(zera_metricas),
         .freq(tone_freq),
         .out(buzzer)
@@ -353,14 +354,9 @@ module playseq_fluxo_dados (
     assign db_jogadafeita = s_botoes;
     assign db_seletor_memoria = seletor_memoria;
     assign db_contagem_jogo = s_contagem;
-//    assign tone_freq =  (leds[0]) ? 440 :
-//                        (leds[1]) ? 494 :
-//                        (leds[2]) ? 523 :
-//                        (leds[3]) ? 587 :
-//                        0;
-    assign tone_freq =  (leds[0]) ? 50 :
-                        (leds[1]) ? 100 :
-                        (leds[2]) ? 200 :
-                        (leds[3]) ? 500 :
+    assign tone_freq =  (leds[0]) ? 440 :
+                        (leds[1]) ? 494 :
+                        (leds[2]) ? 523 :
+                        (leds[3]) ? 587 :
                         0;
 endmodule

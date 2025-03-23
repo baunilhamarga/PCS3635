@@ -86,13 +86,14 @@ module jogo_playseq (
     wire clock;
 
     // Clock de 50 MHz para 1 KHz
-    clock_div_50M_to_1k divisor (
+    clock_div divisor (
         .clock_in(clockFPGA),
         .clock_out(clock)
     );
 
     // Fluxo de Dados
     playseq_fluxo_dados FD (
+        .clockFPGA                 ( clockFPGA          ),
         .clock                     ( clock              ),
         .botoes                    ( botoes             ),
         .nivel                     ( s_nivel_uc         ),

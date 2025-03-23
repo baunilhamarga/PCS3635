@@ -35,7 +35,7 @@ module jogo_playseq_tb1;
     wire [6:0] derrotas_out;
 
     // Configuração do clock
-    parameter clock_period = 1000; // in us, f=1KHz
+    parameter clock_period = 20; // in us, f=50kHz
 
     // Identificação do caso de teste
     reg [31:0] caso = 0;
@@ -45,7 +45,7 @@ module jogo_playseq_tb1;
 
     // Instanciação do DUT
     jogo_playseq dut (
-        .clock(clock_in),
+        .clockFPGA(clock_in),
         .reset(reset_in),
         .jogar(jogar_in),
         .botoes(botoes_in),
@@ -112,26 +112,25 @@ module jogo_playseq_tb1;
         reset_in = 0;
         jogar_in = 0;
         botoes_in = 4'b0000;
-        #(clock_period);
+        #(500_000);
 
         // Caso 1: Reset do circuito
         caso = 1;
         @(negedge clock_in);
         reset_in = 1;
-        #(clock_period);
+        #(500_000);
         reset_in = 0;
-        #(10 * clock_period);
+        #(500_000);
 
         // Caso 2: Configuração das dificuldades
         caso = 2;
-        #(2 * clock_period);
         nivel_in = 2;  // Número de jogadas por rodada = nivel_in + 1
         memoria_in = 3;  // Memória selecionada
-        #(2 * clock_period);
+        #(500_000);
         jogar_in = 1;
-        #(5 * clock_period);
+        #(500_000);
         jogar_in = 0;
-        #(10 * clock_period);
+        #(500_000);
 
         for (num_jogadas=0; num_jogadas<16; num_jogadas=num_jogadas+1) begin
             #(500_000);
@@ -140,9 +139,9 @@ module jogo_playseq_tb1;
             botoes_in = 4'b0000;
         end
 
-        #(2 * clock_period);
+        #(500_000);
         jogar_in = 1;
-        #(5 * clock_period);
+        #(500_000);
         jogar_in = 0;
 
         // num_jogadas = quantidade de termos da sequência mostrados
@@ -160,13 +159,13 @@ module jogo_playseq_tb1;
             #(1_000_000);
         end
 
-        #(10 * clock_period);
+        #(500_000);
         quer_escrever_in = 0;
-        #(2 * clock_period);
+        #(500_000);
         jogar_in = 1;
-        #(5 * clock_period);
+        #(500_000);
         jogar_in = 0;
-        #(5 * clock_period);
+        #(500_000);
 
         // num_jogadas = quantidade de termos da sequência mostrados
         // A cada rodada, esperamos num_jogadas segundos para mostrar a sequência

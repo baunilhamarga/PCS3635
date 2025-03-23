@@ -43,7 +43,7 @@ module jogo_playseq_tb2;
 
     // Instanciação do DUT
     jogo_playseq dut (
-        .clock(clock_in),
+        .clockFPGA(clock_in),
         .reset(reset_in),
         .jogar(jogar_in),
         .botoes(botoes_in),

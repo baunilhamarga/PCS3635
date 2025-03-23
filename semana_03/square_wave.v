@@ -4,7 +4,7 @@ module square_wave #(
     input wire clk,
     input wire rst,
     input wire [31:0] freq,        // Desired frequency in Hz
-    output reg out                 // Output to active buzzer
+    output out                 // Output to active buzzer
 );
     reg        out_reg = 0;
     reg [31:0] counter = 0;
