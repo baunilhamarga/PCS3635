@@ -10,7 +10,7 @@
 //     15/03/2025  1.0     Ana Vitória       versao inicial
 //------------------------------------------------------------------
 
-module sync_ram_16x4_file
+module sync_ram_16x4
 (
     input        clk,
     input        we,

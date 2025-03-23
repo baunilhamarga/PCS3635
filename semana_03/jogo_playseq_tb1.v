@@ -11,11 +11,13 @@ module jogo_playseq_tb1;
     reg  [1:0] memoria_in = 2'b11;
     reg        quer_escrever_in = 1;
     reg  [1:0] timeoutD_in = 2'b10;
+    reg        ignora_timeout_in = 0;
 
     wire       ganhou_out;
     wire       perdeu_out;
     wire       pronto_out;
     wire [3:0] leds_out;
+    wire       buzzer_out;
     wire       db_clock_out;
     wire       db_tem_jogada_out;
     wire       db_chavesIgualMemoria_out;
@@ -56,6 +58,8 @@ module jogo_playseq_tb1;
         .timeout(timeout_out),
         .pronto(pronto_out),
         .leds(leds_out),
+        .buzzer(buzzer_out),
+        .ignora_timeout(ignora_timeout_in),
         .db_clock(db_clock_out),
         .db_tem_jogada(db_tem_jogada_out),
         .db_chavesIgualMemoria(db_chavesIgualMemoria_out),
