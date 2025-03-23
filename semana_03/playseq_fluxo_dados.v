@@ -51,6 +51,7 @@ module playseq_fluxo_dados (
     output controle_timeout_led,
     output sequenciaMenorQueEndereco,
     output [3:0] leds,
+    output buzzer,
     output db_seletor_memoria,
     output pare,
     output [1:0] db_contagem_jogo,
@@ -73,12 +74,13 @@ module playseq_fluxo_dados (
     wire [1:0] s_contagem;
     wire [3:0] s_quant_inicial;
     wire [3:0] s_seletor_final = {nivel, seletor_memoria};
-	wire rco;
+    wire rco;
     wire fim_dois_e_meios;
     wire fim_5s;
     wire fim_10s;
     wire fim_20s;
     wire s_controle_timeout;
+    wire [31:0] tone_freq;
 
     // dificuldade_quant
     mux4x2_n #( .BITS(1) ) mux_quant (
@@ -89,7 +91,7 @@ module playseq_fluxo_dados (
         .SEL (nivel),
         .OUT (pare)
     );
-    
+
     // dificuldade_ms
     mux4x2_n #( .BITS(1) ) mux_timeout (
         .D0 (fim_20s),
@@ -247,13 +249,13 @@ module playseq_fluxo_dados (
     );
 
     // memória 4
-    sync_ram_16x4_file memoria4
+    sync_ram_16x4 memoria4
     (
-    	.clk  (clock),
-    	.we   (ram_escreve),
-    	.data (botoes),
-    	.addr (s_endereco),
-    	.q    (s_mem4)
+        .clk  (clock),
+        .we   (ram_escreve),
+        .data (botoes),
+        .addr (s_endereco),
+        .q    (s_mem4)
     );
 
     // registrador
@@ -336,10 +338,29 @@ module playseq_fluxo_dados (
         .rco   ()
     );
 
+    square_wave #(
+        .CLK_FREQ(1_000)
+    ) buzzer_inst (
+        .clk(clock),
+        .rst(zera_metricas),
+        .freq(tone_freq),
+        .out(buzzer)
+    );
+
     assign db_memoria  = s_dado;
     assign db_contagem = s_endereco;
     assign db_sequencia = s_sequencia;
     assign db_jogadafeita = s_botoes;
     assign db_seletor_memoria = seletor_memoria;
     assign db_contagem_jogo = s_contagem;
+//    assign tone_freq =  (leds[0]) ? 440 :
+//                        (leds[1]) ? 494 :
+//                        (leds[2]) ? 523 :
+//                        (leds[3]) ? 587 :
+//                        0;
+    assign tone_freq =  (leds[0]) ? 50 :
+                        (leds[1]) ? 100 :
+                        (leds[2]) ? 200 :
+                        (leds[3]) ? 500 :
+                        0;
 endmodule
