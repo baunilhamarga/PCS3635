@@ -247,7 +247,7 @@ module playseq_fluxo_dados (
     );
 
     // memória 4
-    sync_ram_16x4_file #(.BINFILE("ram_init.txt")) memoria4
+    sync_ram_16x4_file memoria4
     (
     	.clk  (clock),
     	.we   (ram_escreve),

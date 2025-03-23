@@ -38,7 +38,7 @@
         </entry>
         <entry>
           <string>externalInputs</string>
-          <string>clock,reset,jogar,botoes:4,memoria:2,nivel:2,timeoutD:2,quer_escrever,ignora_timeout</string>
+          <string>clockFPGA,reset,jogar,botoes:4,memoria:2,nivel:2,timeoutD:2,quer_escrever,ignora_timeout</string>
         </entry>
         <entry>
           <string>Width</string>
@@ -64,7 +64,7 @@
 //------------------------------------------------------------------
 //
 module jogo_playseq (
-    input clock,
+    input clockFPGA,
     input reset,
     input jogar,
     input [3:0] botoes,
@@ -135,6 +135,13 @@ module jogo_playseq (
     wire s_zera_metricas;
     wire [3:0] s_vitorias;
     wire [3:0] s_derrotas;
+    wire clock;
+
+    // Clock de 50 MHz para 1 KHz
+    clock_div_50M_to_1k divisor (
+        .clock_in(clockFPGA),
+        .clock_out(clock)
+    );
 
     // Fluxo de Dados
     playseq_fluxo_dados FD (
@@ -163,7 +170,7 @@ module jogo_playseq (
         .conta_ganhar              ( s_conta_ganhar     ),
         .conta_perder              ( s_conta_perder     ),
         .zera_metricas             ( s_zera_metricas    ),
-        .ignora_timeout            ( ignora_timeout     ), 
+        .ignora_timeout            ( ignora_timeout     ),
         .igual                     ( s_igualE           ),
         .enderecoIgualSequencia    ( s_igualS           ),
         .fimE                      ( s_fimE             ),
@@ -280,6 +287,42 @@ assign db_pare = s_pare;
 assign db_contagem_jogo = s_contagem_jogo;
 endmodule
 // --- End of jogo_playseq.v ---
+
+// --- Start of clock_div_50M_to_1k.v ---
+//------------------------------------------------------------------
+// Arquivo   : clock_div_50M_to_1k.v
+// Projeto   : PlaySeq
+//------------------------------------------------------------------
+// Descricao : Contador divisor de clock de 50 MHz para 1KHz
+//          
+//------------------------------------------------------------------
+// Revisoes  :
+//     Data        Versao  Autor             Descricao
+//     22/03/2025  1.0     Ana Vitória       versao inicial
+//------------------------------------------------------------------
+//
+
+module clock_div_50M_to_1k (
+    input clock_in,   // Clock de entrada (50 MHz)
+    output reg clock_out  // Clock de saída (1 kHz)
+);
+
+    reg [27:0] counter = 28&apos;d0;
+    parameter DIVISOR = 28&apos;d15;  // Divisor para gerar 1 kHz a partir de 50 MHz
+
+    always @(posedge clock_in) begin
+        counter &lt;= counter + 28&apos;d1;
+
+        if(counter &gt;= (DIVISOR - 1))  
+            counter &lt;= 28&apos;d0;
+
+        // Gera o sinal de saída (1 kHz)
+        clock_out &lt;= (counter &lt; DIVISOR / 2) ? 1&apos;b1 : 1&apos;b0;
+    end
+endmodule
+
+
+// --- End of clock_div_50M_to_1k.v ---
 
 // --- Start of comparador_85.v ---
 /* -----------------------------------------------------------------
@@ -1466,9 +1509,8 @@ endmodule
 
 // --- Start of sync_ram_16x4.v ---
 //------------------------------------------------------------------
-// Arquivo   : sync_ram_16x4v
+// Arquivo   : sync_ram_16x4.v
 // Projeto   : PlaySeq
- 
 //------------------------------------------------------------------
 // Descricao : RAM sincrona 16x4
 //             com conteudo inicial pre-programado             
@@ -1477,7 +1519,6 @@ endmodule
 //     Data        Versao  Autor             Descricao
 //     15/03/2025  1.0     Ana Vitória       versao inicial
 //------------------------------------------------------------------
-//
 
 module sync_ram_16x4_file
 (
@@ -1491,11 +1532,18 @@ module sync_ram_16x4_file
     // Variavel RAM (armazena dados)
     reg [3:0] ram[15:0];
 
+    // Inicializa manualmente os valores da RAM (Verilog-2005 compatível)
+    initial begin
+        ram[0]  = 4&apos;b0001; ram[1]  = 4&apos;b0010; ram[2]  = 4&apos;b0100; ram[3]  = 4&apos;b1000;
+        ram[4]  = 4&apos;b0001; ram[5]  = 4&apos;b0010; ram[6]  = 4&apos;b0100; ram[7]  = 4&apos;b1000;
+        ram[8]  = 4&apos;b0001; ram[9]  = 4&apos;b0010; ram[10] = 4&apos;b0100; ram[11] = 4&apos;b1000;
+        ram[12] = 4&apos;b0001; ram[13] = 4&apos;b0010; ram[14] = 4&apos;b0100; ram[15] = 4&apos;b1000;
+    end
+
     // Registra endereco de acesso
     reg [3:0] addr_reg;
 
-    always @ (posedge clk)
-    begin
+    always @ (posedge clk) begin
         if (we)
             ram[addr] &lt;= data;
 
@@ -1503,7 +1551,9 @@ module sync_ram_16x4_file
     end
 
     assign q = ram[addr_reg];
+
 endmodule
+
 // --- End of sync_ram_16x4.v ---</string>
         </entry>
         <entry>
@@ -1854,7 +1904,7 @@ endmodule
         </entry>
         <entry>
           <string>Frequency</string>
-          <int>1000</int>
+          <int>50000</int>
         </entry>
       </elementAttributes>
       <pos x="500" y="-520"/>

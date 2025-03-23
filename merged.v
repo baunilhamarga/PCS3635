@@ -12,7 +12,7 @@
 //------------------------------------------------------------------
 //
 module jogo_playseq (
-    input clock,
+    input clockFPGA,
     input reset,
     input jogar,
     input [3:0] botoes,
@@ -83,6 +83,13 @@ module jogo_playseq (
     wire s_zera_metricas;
     wire [3:0] s_vitorias;
     wire [3:0] s_derrotas;
+    wire clock;
+
+    // Clock de 50 MHz para 1 KHz
+    clock_div_50M_to_1k divisor (
+        .clock_in(clockFPGA),
+        .clock_out(clock)
+    );
 
     // Fluxo de Dados
     playseq_fluxo_dados FD (
@@ -111,7 +118,7 @@ module jogo_playseq (
         .conta_ganhar              ( s_conta_ganhar     ),
         .conta_perder              ( s_conta_perder     ),
         .zera_metricas             ( s_zera_metricas    ),
-        .ignora_timeout            ( ignora_timeout     ), 
+        .ignora_timeout            ( ignora_timeout     ),
         .igual                     ( s_igualE           ),
         .enderecoIgualSequencia    ( s_igualS           ),
         .fimE                      ( s_fimE             ),
@@ -228,6 +235,42 @@ assign db_pare = s_pare;
 assign db_contagem_jogo = s_contagem_jogo;
 endmodule
 // --- End of jogo_playseq.v ---
+
+// --- Start of clock_div_50M_to_1k.v ---
+//------------------------------------------------------------------
+// Arquivo   : clock_div_50M_to_1k.v
+// Projeto   : PlaySeq
+//------------------------------------------------------------------
+// Descricao : Contador divisor de clock de 50 MHz para 1KHz
+//          
+//------------------------------------------------------------------
+// Revisoes  :
+//     Data        Versao  Autor             Descricao
+//     22/03/2025  1.0     Ana Vitória       versao inicial
+//------------------------------------------------------------------
+//
+
+module clock_div_50M_to_1k (
+    input clock_in,   // Clock de entrada (50 MHz)
+    output reg clock_out  // Clock de saída (1 kHz)
+);
+
+    reg [27:0] counter = 28'd0;
+    parameter DIVISOR = 28'd17;  // Divisor para gerar 1 kHz a partir de 50 MHz
+
+    always @(posedge clock_in) begin
+        counter <= counter + 28'd1;
+
+        if(counter >= (DIVISOR - 1))  
+            counter <= 28'd0;
+
+        // Gera o sinal de saída (1 kHz)
+        clock_out <= (counter < DIVISOR / 2) ? 1'b1 : 1'b0;
+    end
+endmodule
+
+
+// --- End of clock_div_50M_to_1k.v ---
 
 // --- Start of comparador_85.v ---
 /* -----------------------------------------------------------------

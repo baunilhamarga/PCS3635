@@ -11,7 +11,7 @@
 //------------------------------------------------------------------
 //
 module jogo_playseq (
-    input clock,
+    input clockFPGA,
     input reset,
     input jogar,
     input [3:0] botoes,
@@ -82,6 +82,13 @@ module jogo_playseq (
     wire s_zera_metricas;
     wire [3:0] s_vitorias;
     wire [3:0] s_derrotas;
+    wire clock;
+
+    // Clock de 50 MHz para 1 KHz
+    clock_div_50M_to_1k divisor (
+        .clock_in(clockFPGA),
+        .clock_out(clock)
+    );
 
     // Fluxo de Dados
     playseq_fluxo_dados FD (
