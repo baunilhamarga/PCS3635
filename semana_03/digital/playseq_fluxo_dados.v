@@ -12,6 +12,7 @@
 //
 
 module playseq_fluxo_dados (
+    input clockFPGA,
     input clock,
     input [3:0] botoes,
     input [1:0] nivel,
@@ -51,6 +52,7 @@ module playseq_fluxo_dados (
     output controle_timeout_led,
     output sequenciaMenorQueEndereco,
     output [3:0] leds,
+    output buzzer,
     output db_seletor_memoria,
     output pare,
     output [1:0] db_contagem_jogo,
@@ -79,6 +81,7 @@ module playseq_fluxo_dados (
     wire fim_10s;
     wire fim_20s;
     wire s_controle_timeout;
+    wire [31:0] tone_freq;
 
     // dificuldade_quant
     mux4x2_n #( .BITS(1) ) mux_quant (
@@ -335,10 +338,24 @@ module playseq_fluxo_dados (
         .rco   ()
     );
 
+    square_wave #(
+        .CLK_FREQ(50_000)
+    ) buzzer_inst (
+        .clk(clockFPGA),
+        .rst(zera_metricas),
+        .freq(tone_freq),
+        .out(buzzer)
+    );
+
     assign db_memoria  = s_dado;
     assign db_contagem = s_endereco;
     assign db_sequencia = s_sequencia;
     assign db_jogadafeita = s_botoes;
     assign db_seletor_memoria = seletor_memoria;
     assign db_contagem_jogo = s_contagem;
+    assign tone_freq =  (leds[0]) ? 440 :
+                        (leds[1]) ? 494 :
+                        (leds[2]) ? 523 :
+                        (leds[3]) ? 587 :
+                        0;
 endmodule

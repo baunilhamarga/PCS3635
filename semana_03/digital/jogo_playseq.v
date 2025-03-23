@@ -22,25 +22,11 @@ module jogo_playseq (
     input ignora_timeout,
     output ganhou,
     output perdeu,
-    output timeout,
-    output pronto,
     output [3:0] leds,
+    output buzzer,
     output db_clock,
-    output db_tem_jogada,
-    output db_chavesIgualMemoria,
-    output db_enderecoIgualSequencia,
-    output db_fimS,
-    output [6:0] db_contagem,
-    output [6:0] db_memoria,
-    output [6:0] db_jogadafeita,
-    output [6:0] db_sequencia,
-    output [6:0] db_estado,
-    output db_seletor_memoria,
-    // Nossos debugs
-    output db_pare,
-    output [1:0] db_contagem_jogo,
     output [6:0] vitorias,
-    output [6:0] derrotas 
+    output [6:0] derrotas
 );
 
     wire [3:0] s_jogadafeita;
@@ -85,13 +71,14 @@ module jogo_playseq (
     wire clock;
 
     // Clock de 50 MHz para 1 KHz
-    clock_div_50M_to_1k divisor (
+    clock_div divisor (
         .clock_in(clockFPGA),
         .clock_out(clock)
     );
 
     // Fluxo de Dados
     playseq_fluxo_dados FD (
+        .clockFPGA                 ( clockFPGA          ),
         .clock                     ( clock              ),
         .botoes                    ( botoes             ),
         .nivel                     ( s_nivel_uc         ),
@@ -131,6 +118,7 @@ module jogo_playseq (
         .controle_timeout_led      ( s_timeoutL         ),
         .sequenciaMenorQueEndereco ( s_menorS           ),
         .leds                      ( leds               ),
+        .buzzer                    ( buzzer             ),
         .db_seletor_memoria        ( db_seletor_memoria ),
         .pare                      ( s_pare             ),
         .db_contagem_jogo          ( s_contagem_jogo    ),
@@ -183,36 +171,6 @@ module jogo_playseq (
         .zera_metricas ( s_zera_metricas)
     );
 
-    // Display das botoes
-    hexa7seg HEX2 (
-        .hexa    ( s_jogadafeita  ),
-        .display ( db_jogadafeita )
-    );
-
-    // Display dos endereços codificados
-    hexa7seg HEX0 (
-        .hexa    ( s_contagem  ),
-        .display ( db_contagem )
-    );
-
-    // Display do conteúdo em uma posição de memória
-    hexa7seg HEX1 (
-        .hexa    ( s_memoria  ),
-        .display ( db_memoria )
-    );
-
-    // Display do estado atual
-    hexa7seg5b HEX5 (
-        .hexa    ( s_estado  ),
-        .display ( db_estado )
-    );
-
-    // Display da sequência atual
-    hexa7seg HEX3 (
-        .hexa    ( s_sequencia  ),
-        .display ( db_sequencia )
-    );
-
     // Display de vitórias
     hexa7seg HEX4 (
         .hexa    ( s_vitorias  ),
@@ -225,11 +183,5 @@ module jogo_playseq (
         .display ( derrotas )
     );
 
-assign db_chavesIgualMemoria = s_igualE;
-assign db_enderecoIgualSequencia = s_igualS;
-assign db_fimS = s_fimS;
-assign db_tem_jogada = s_tem_jogada;
-assign db_clock = clock;
-assign db_pare = s_pare;
-assign db_contagem_jogo = s_contagem_jogo;
+    assign db_clock = clock;
 endmodule
