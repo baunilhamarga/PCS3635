@@ -8,19 +8,21 @@ module jogo_playseq_tb2;
     reg        jogar_in   = 0;
     reg  [3:0] botoes_in  = 4'b0000;
     reg  [1:0] nivel_in   = 2'b00;
-    reg  [1:0] memoria_in = 2'b00;
-    reg        quer_escrever_in = 0;
+    reg  [1:0] memoria_in = 2'b11;
+    reg        quer_escrever_in = 1;
     reg  [1:0] timeoutD_in = 2'b10;
+    reg        ignora_timeout_in = 0;
 
     wire       ganhou_out;
     wire       perdeu_out;
     wire [3:0] leds_out;
+    wire       buzzer_out;
     wire       db_clock_out;
     wire [6:0] vitorias_out;
     wire [6:0] derrotas_out;
 
     // Configuração do clock
-    parameter clock_period = 1000; // in us, f=1KHz
+    parameter clock_period = 20; // in us, f=50kHz
 
     // Identificação do caso de teste
     reg [31:0] caso = 0;
@@ -41,6 +43,8 @@ module jogo_playseq_tb2;
         .ganhou(ganhou_out),
         .perdeu(perdeu_out),
         .leds(leds_out),
+        .buzzer(buzzer_out),
+        .ignora_timeout(ignora_timeout_in),
         .db_clock(db_clock_out),
         .vitorias(vitorias_out),
         .derrotas(derrotas_out)
@@ -81,27 +85,27 @@ module jogo_playseq_tb2;
         reset_in = 0;
         jogar_in = 0;
         botoes_in = 4'b0000;
-        #(clock_period);
+        #(500_000);
 
         // Caso 1: Reset do circuito
         caso = 1;
         @(negedge clock_in);
         reset_in = 1;
-        #(clock_period);
+        #(500_000);
         reset_in = 0;
-        #(10 * clock_period);
+        #(500_000);
 
         // Caso 2: Configuração das dificuldades
         caso = 2;
-        #(2 * clock_period);
         nivel_in = 1;  // Número de jogadas por rodada = nivel_in + 1
         memoria_in = 1;  // Memória selecionada
         timeoutD_in = 1;  // Timeout de 10 segundos
-        #(2 * clock_period);
+        ignora_timeout_in = 1;
+        #(500_000);
         jogar_in = 1;
-        #(5 * clock_period);
+        #(500_000);
         jogar_in = 0;
-        #(10 * clock_period);
+        #(500_000);
 
         // num_jogadas = quantidade de termos da sequência mostrados
         // A cada rodada, esperamos num_jogadas segundos para mostrar a sequência
@@ -111,35 +115,11 @@ module jogo_playseq_tb2;
             #(500_000);
             for (i = 0; i <= nivel_in && num_jogadas + i < 16; i = i + 1) begin
                 if (num_jogadas + i == 12) begin
-                    #(10500 * clock_period);
+                    #(12_500_000);
                 end
-                botoes_in = jogadas[num_jogadas + i];
-                #(500_000);
-                botoes_in = 4'b0000;
-                #(500_000);
-            end
-            #(1_000_000);
-        end
-
-        #(2 * clock_period);
-        nivel_in = 1;  // Número de jogadas por rodada = nivel_in + 1
-        memoria_in = 1;  // Memória selecionada
-        timeoutD_in = 2;  // Timeout de 5 segundos
-        #(2 * clock_period);
-        jogar_in = 1;
-        #(5 * clock_period);
-        jogar_in = 0;
-        #(10 * clock_period);
-
-        // num_jogadas = quantidade de termos da sequência mostrados
-        // A cada rodada, esperamos num_jogadas segundos para mostrar a sequência
-        for (num_jogadas=9; num_jogadas<16; num_jogadas=num_jogadas+nivel_in+2) begin
-            caso = caso + 1;
-            #(1_000_000 * num_jogadas);
-            #(500_000);
-            for (i = 0; i <= nivel_in && num_jogadas + i < 16; i = i + 1) begin
-                if (num_jogadas + i == 10) begin
-                    #(5500 * clock_period);
+                else if (num_jogadas + i == 15) begin
+                    ignora_timeout_in = 0;
+                    #(15_000_000);
                 end
                 botoes_in = jogadas[num_jogadas + i];
                 #(500_000);
