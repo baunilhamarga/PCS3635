@@ -355,9 +355,25 @@ module playseq_fluxo_dados (
     assign db_jogadafeita = s_botoes;
     assign db_seletor_memoria = seletor_memoria;
     assign db_contagem_jogo = s_contagem;
-    assign tone_freq =  (leds[0]) ? 440 :
-                        (leds[1]) ? 494 :
-                        (leds[2]) ? 523 :
-                        (leds[3]) ? 587 :
-                        0;
+
+    // Define the frequencies for each LED.
+    wire [31:0] freq0 = leds[0] ? 440 : 0;
+    wire [31:0] freq1 = leds[1] ? 494 : 0;
+    wire [31:0] freq2 = leds[2] ? 523 : 0;
+    wire [31:0] freq3 = leds[3] ? 587 : 0;
+
+    // Sum the frequencies.
+    wire [31:0] freq_sum = freq0 + freq1 + freq2 + freq3;
+
+    // Count the number of active LEDs.
+    wire [2:0] active_count;
+    assign active_count = (leds[0] ? 1 : 0) +
+                        (leds[1] ? 1 : 0) +
+                        (leds[2] ? 1 : 0) +
+                        (leds[3] ? 1 : 0);
+
+    // Compute the tone frequency as the average if any LED is active,
+    // otherwise output 0.
+    assign tone_freq = (active_count == 0) ? 0 : (freq_sum / active_count);
+
 endmodule
