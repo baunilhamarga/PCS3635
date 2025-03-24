@@ -340,10 +340,11 @@ module playseq_fluxo_dados (
     );
 
     square_wave #(
-        .CLK_FREQ(50_000)
+        .CLK_FREQ(50_000_000),
+        .DUTY_CYCLE(50)
     ) buzzer_inst (
         .clk(clockFPGA),
-        .rst(zera_metricas),
+        .rst(~(|tone_freq)),
         .freq(tone_freq),
         .out(buzzer)
     );
