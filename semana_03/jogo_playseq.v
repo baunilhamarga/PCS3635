@@ -71,7 +71,7 @@ module jogo_playseq (
     wire clock;
 
     // Clock de 50 MHz para 1 KHz
-    clock_div divisor (
+    clock_div #(.DIVISOR(28'd50_000)) divisor (
         .clock_in(clockFPGA),
         .clock_out(clock)
     );
