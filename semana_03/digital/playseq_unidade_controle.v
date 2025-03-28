@@ -128,15 +128,15 @@ module playseq_unidade_controle (
             espera_led:       Eprox = menorS ? comecar_rodada : (timeoutL ? zera_timeout : espera_led);
             zera_timeout:     Eprox = mostra_leds;
             comecar_rodada:   Eprox = espera;
-            espera:           Eprox = timeout ? fim_timeout : (tem_jogada ? registra : espera);
+            espera:           Eprox = timeout ? metricas_perder : (tem_jogada ? registra : espera);
             registra:         Eprox = comparacao;
-            comparacao:       Eprox = igualE ? (fimE ? fim_acerto : (pare ? nova_seq : proximo)) : fim_erro;
+            comparacao:       Eprox = igualE ? (fimE ? metricas_ganhar : (pare ? nova_seq : proximo)) : metricas_perder;
             proximo:          Eprox = espera;
-            fim_acerto:       Eprox = jogar ? metricas_ganhar : fim_acerto;
-            fim_erro:         Eprox = jogar ? metricas_perder : fim_erro;
-            fim_timeout:      Eprox = jogar ? metricas_perder : fim_timeout;
-            metricas_perder:  Eprox = preparacao;
-            metricas_ganhar:  Eprox = preparacao;
+            fim_acerto:       Eprox = jogar ? preparacao : fim_acerto;
+            fim_erro:         Eprox = jogar ? preparacao : fim_erro;
+            fim_timeout:      Eprox = jogar ? preparacao : fim_timeout;
+            metricas_perder:  Eprox = timeout ? fim_timeout : fim_erro;
+            metricas_ganhar:  Eprox = fim_acerto;
             default:          Eprox = inicial;
         endcase
     end
@@ -189,7 +189,7 @@ module playseq_unidade_controle (
             fim_acerto:       db_estado = 5'b01010;  // A
             fim_erro:         db_estado = 5'b01110;  // E
             fim_timeout:      db_estado = 5'b01111;  // F (deu ruim)
-            metricas_perder:    db_estado = 5'b11111;  // 1F
+            metricas_perder:  db_estado = 5'b11111;  // 1F
             metricas_ganhar:  db_estado = 5'b11010;  // 1A
             default:          db_estado = 5'b00000;  // default
         endcase

@@ -100,7 +100,7 @@ module playseq_unidade_controle (
             fim_acerto:       Eatual_str = "fim_acerto";
             fim_erro:         Eatual_str = "fim_erro";
             fim_timeout:      Eatual_str = "fim_timeout";
-            metricas_perder:  Eatual_str = "metricas_perder";
+            metricas_perder:    Eatual_str = "metricas_perder";
             metricas_ganhar:  Eatual_str = "metricas_ganhar";
             default:          Eatual_str = "UNKNOWN";
         endcase
@@ -128,15 +128,15 @@ module playseq_unidade_controle (
             espera_led:       Eprox = menorS ? comecar_rodada : (timeoutL ? zera_timeout : espera_led);
             zera_timeout:     Eprox = mostra_leds;
             comecar_rodada:   Eprox = espera;
-            espera:           Eprox = timeout ? fim_timeout : (tem_jogada ? registra : espera);
+            espera:           Eprox = timeout ? metricas_perder : (tem_jogada ? registra : espera);
             registra:         Eprox = comparacao;
-            comparacao:       Eprox = igualE ? (fimE ? fim_acerto : (pare ? nova_seq : proximo)) : fim_erro;
+            comparacao:       Eprox = igualE ? (fimE ? metricas_ganhar : (pare ? nova_seq : proximo)) : metricas_perder;
             proximo:          Eprox = espera;
-            fim_acerto:       Eprox = jogar ? metricas_ganhar : fim_acerto;
-            fim_erro:         Eprox = jogar ? metricas_perder : fim_erro;
-            fim_timeout:      Eprox = jogar ? metricas_perder : fim_timeout;
-            metricas_perder:  Eprox = preparacao;
-            metricas_ganhar:  Eprox = preparacao;
+            fim_acerto:       Eprox = jogar ? preparacao : fim_acerto;
+            fim_erro:         Eprox = jogar ? preparacao : fim_erro;
+            fim_timeout:      Eprox = jogar ? preparacao : fim_timeout;
+            metricas_perder:  Eprox = timeout ? fim_timeout : fim_erro;
+            metricas_ganhar:  Eprox = fim_acerto;
             default:          Eprox = inicial;
         endcase
     end
